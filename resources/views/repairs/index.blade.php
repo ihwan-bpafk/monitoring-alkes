@@ -1,0 +1,391 @@
+@extends('layouts.app')
+
+@section('content')
+<style>
+    /* Fix Modal Scroll & Layout */
+    .modal-dialog-scrollable .modal-content {
+        max-height: 95vh;
+    }
+    .modal-body {
+        overflow-y: auto !important;
+        background-color: #f8f9fa;
+    }
+    /* Style List Nama File */
+    .file-name-list li {
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        margin-bottom: 5px;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .card-info-alkes {
+        border-left: 4px solid #0d6efd;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="text-primary fw-bold"><i class="bi bi-display me-2"></i>Monitoring Perbaikan Alkes</h4>
+    <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
+        <i class="bi bi-plus-lg"></i> Tambah Laporan
+    </button>
+</div>
+
+@if(session('success'))
+    <div class="alert alert-success border-0 shadow-sm alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+<div class="card shadow-sm border-0" style="border-radius: 12px;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th class="ps-3" width="50">No</th>
+                        <th>RS / Lokasi / Petugas</th>
+                        <th>Identitas Alat & Penyedia</th>
+                        <th width="300">Log Progress Terbaru</th>
+                        <th class="text-center">Berkas</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($repairs as $r)
+                    <tr>
+                        <td class="ps-3 text-muted">{{ $loop->iteration }}</td>
+                        <td>
+                            <div class="fw-bold text-dark text-uppercase">{{ $r->nama_rs ?? '-' }}</div>
+                            <div class="small text-muted"><i class="bi bi-geo-alt"></i> {{ $r->lokasi ?? '-' }}</div>
+                            <div class="small mt-1 text-primary fw-bold"><i class="bi bi-person-badge"></i> {{ $r->input_by ?? 'System' }}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-primary">{{ $r->nama_alkes ?? '-' }}</div>
+                            <small class="text-muted d-block">SN: <strong>{{ $r->serial_number ?? '-' }}</strong></small>
+                            <small class="text-muted d-block">Merk/Model: {{ $r->merek }} / {{ $r->tipe_model }}</small>
+                            <small class="text-dark d-block mt-1"><i class="bi bi-truck"></i> Penyedia: <strong>{{ $r->nama_penyedia ?? '-' }}</strong></small>
+                        </td>
+                        <td>
+                            <div class="p-2 bg-light rounded border shadow-sm" style="max-height: 120px; overflow-y: auto; font-size: 0.8rem;">
+                                @foreach($r->histories as $h)
+                                <div class="mb-2 pb-2 {{ !$loop->last ? 'border-bottom' : '' }}">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="badge bg-primary" style="font-size: 0.6rem;">{{ $h->status_perbaikan }}</span>
+                                        <small class="text-muted" style="font-size: 0.65rem;">{{ $h->created_at->format('d/m/y H:i') }}</small>
+                                    </div>
+                                    <div class="text-dark fw-medium">{{ $h->keterangan_perubahan }}</div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            @if($r->file_bap)
+                                <a href="{{ asset('storage/'.$r->file_bap) }}" target="_blank" class="btn btn-sm btn-outline-danger shadow-sm py-0">
+                                    <i class="bi bi-file-pdf"></i> BAP
+                                </a>
+                            @else
+                                <span class="text-muted small italic">- No File -</span>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group shadow-sm">
+                                <button class="btn btn-primary btn-sm fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $r->id }}">Update</button>
+                                <button class="btn btn-danger btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalHapus{{ $r->id }}"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <div class="modal fade" id="modalUpdate{{ $r->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content border-0">
+                                <div class="modal-header bg-secondary py-2 text-dark border-0">
+                                    <h6 class="modal-title fw-bold"><i class="bi bi-arrow-repeat me-2"></i>Update Progress: {{ $r->nama_alkes }}</h6>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form action="{{ route('repairs.updateStatus', $r->id) }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <div class="card border-0 shadow-sm p-3 mb-3 card-info-alkes">
+                                                    <h6 class="fw-bold border-bottom pb-2 text-primary">Informasi Unit</h6>
+                                                    <div class="mb-2 small"><span class="text-muted">RS:</span><br><strong>{{ $r->nama_rs }}</strong></div>
+                                                    <div class="mb-2 small"><span class="text-muted">Penyedia:</span><br><strong>{{ $r->nama_penyedia ?? '-' }}</strong></div>
+                                                    
+                                                    <label class="small fw-bold d-block mt-3 mb-2">Foto Kondisi Terkini:</label>
+                                                    <div class="row g-2">
+                                                        @if($r->foto_kondisi && is_array($r->foto_kondisi))
+                                                            @foreach($r->foto_kondisi as $path)
+                                                                <div class="col-6">
+                                                                    <a href="{{ asset('storage/'.$path) }}" target="_blank">
+                                                                        <img src="{{ asset('storage/'.$path) }}" class="img-fluid rounded border shadow-sm">
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
+                                                        @else
+                                                            <div class="col-12 text-muted small p-3 bg-white text-center rounded border border-dashed">Belum ada foto.</div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card border-0 shadow-sm p-3">
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small fw-bold">Petugas Update</label>
+                                                            <input type="text" name="petugas" class="form-control form-control-sm" value="{{ Auth::user()->name }}" required>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small fw-bold">Status Baru</label>
+                                                            <select name="status_perbaikan" class="form-select form-select-sm" required>
+                                                                <option value="Selesai Diperbaiki" {{ $r->status_perbaikan == 'Selesai Diperbaiki' ? 'selected' : '' }}>Selesai Diperbaiki</option>
+                                                                <option value="Dalam Proses" {{ $r->status_perbaikan == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses Perbaikan</option>
+                                                                <option value="Harus Diganti" {{ $r->status_perbaikan == 'Harus Diganti' ? 'selected' : '' }}>Harus Diganti (BAP Teknisi)</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-12 mb-2">
+                                                            <label class="small fw-bold">Keterangan Log Progres</label>
+                                                            <textarea name="keterangan_log" class="form-control form-control-sm" rows="2" placeholder="Detail pekerjaan hari ini..." required></textarea>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small fw-bold">Respon Penyedia</label>
+                                                            <select name="respon_penyedia" class="form-select form-select-sm">
+                                                                <option value="">-- Pilih --</option>
+                                                                <option value="Datang" {{ $r->respon_penyedia == 'Datang' ? 'selected' : '' }}>Datang</option>
+                                                                <option value="Tidak Datang" {{ $r->respon_penyedia == 'Tidak Datang' ? 'selected' : '' }}>Tidak Datang</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small fw-bold">Tindakan Penyedia</label>
+                                                            <textarea name="tindakan_penyedia" class="form-control form-control-sm" rows="1">{{ $r->tindakan_penyedia }}</textarea>
+                                                        </div>
+                                                        <div class="col-md-12 mb-3">
+                                                            <label class="small fw-bold">Rencana Tindak Lanjut (RTL)</label>
+                                                            <textarea name="rtl" class="form-control form-control-sm" rows="2">{{ $r->rtl }}</textarea>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3 file-upload-wrapper">
+                                                            <label class="small fw-bold text-danger"><i class="bi bi-file-pdf"></i> Ganti File BAP</label>
+                                                            <input type="file" name="file_bap" class="form-control form-control-sm foto-input" accept=".pdf,.doc,.docx">
+                                                            <div class="mt-2 p-2 bg-light border rounded d-none file-preview-container">
+                                                                <small class="fw-bold text-primary file-name-text"></small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3 file-upload-wrapper">
+                                                            <label class="small fw-bold text-success"><i class="bi bi-camera"></i> Tambah Foto Kondisi</label>
+                                                            <input type="file" name="foto_kondisi[]" class="form-control form-control-sm foto-input" multiple accept="image/*">
+                                                            <div class="mt-2 p-2 bg-light border rounded d-none file-preview-container">
+                                                                <span class="badge bg-success count-badge mb-2">0 Foto</span>
+                                                                <ul class="list-unstyled mb-0 file-name-list"></ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-white border-top">
+                                        <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">SIMPAN UPDATE</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="modalHapus{{ $r->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content border-0 shadow">
+                                <div class="modal-header bg-danger text-white py-2 border-0">
+                                    <h6 class="modal-title small">Konfirmasi Hapus</h6>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="mb-0">Hapus data laporan <strong>{{ $r->nama_alkes }}</strong>?</p>
+                                </div>
+                                <div class="modal-footer justify-content-center border-0 pb-3">
+                                    <form action="{{ route('repairs.destroy', $r->id) }}" method="POST">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-danger px-4 shadow-sm">Ya, Hapus</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white py-3 border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus me-2"></i> Input Laporan Perbaikan Baru</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('repairs.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasi Lokasi</h6></div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Petugas Input</label>
+                            <input type="text" name="input_by" class="form-control" value="{{ Auth::user()->name }}" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold text-muted">Tanggal Input (Otomatis)</label>
+                            <input type="date" class="form-control bg-light" value="{{ date('Y-m-d') }}" disabled>
+                            <input type="hidden" name="tanggal_input" value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Nama Rumah Sakit</label>
+                            <input type="text" name="nama_rs" class="form-control" placeholder="RSUD..." required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Lokasi (Kab/Kota)</label>
+                            <input type="text" name="lokasi" class="form-control" placeholder="Medan">
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">2. Identitas Alat & Penyedia</h6></div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Nama Alat Kesehatan</label>
+                            <input type="text" name="nama_alkes" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Serial Number (SN)</label>
+                            <input type="text" name="serial_number" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Nama Penyedia (Vendor)</label>
+                            <input type="text" name="nama_penyedia" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Kategori</label>
+                            <select name="kategori" class="form-select">
+                                <option value="">-- Pilih --</option>
+                                <option value="Elektromedik">Elektromedik</option>
+                                <option value="Radiologi">Radiologi</option>
+                                <option value="Laboratorium">Laboratorium</option>
+                                <option value="Penunjang">Penunjang</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Merek</label>
+                            <input type="text" name="merek" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Tipe/Model</label>
+                            <input type="text" name="tipe_model" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Grade Kerusakan</label>
+                            <select name="grade_kerusakan" class="form-select">
+                                <option value="Bisa Dipakai">Bisa Dipakai</option>
+                                <option value="Rusak Ringan">Rusak Ringan</option>
+                                <option value="Rusak Berat">Rusak Berat</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Kondisi Kontrak</label>
+                            <select name="kondisi_kontrak" class="form-select">
+                                <option value="Garansi">Garansi</option>
+                                <option value="Tidak Garansi">Tidak Garansi</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">3. Status, Respon & Berkas</h6></div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Status Awal</label>
+                            <select name="status_perbaikan" class="form-select" required>
+                                <option value="Selesai Diperbaiki">Selesai Diperbaiki</option>
+                                <option value="Dalam Proses">Dalam Proses Perbaikan</option>
+                                <option value="Harus Diganti">Harus di Ganti (BAP)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Komponen Rusak</label>
+                            <input type="text" name="komponen" class="form-control" placeholder="Mainboard, Sensor, dll">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Respon Penyedia</label>
+                            <select name="respon_penyedia" class="form-select">
+                                <option value="">-- Pilih --</option>
+                                <option value="Datang">Datang</option>
+                                <option value="Tidak Datang">Tidak Datang</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label small fw-bold">Tindakan Penyedia</label>
+                            <textarea name="tindakan_penyedia" class="form-control" rows="1" placeholder="Pengecekan, perbaikan..."></textarea>
+                        </div>
+                        <div class="col-md-3 mb-3 file-upload-wrapper">
+                            <label class="form-label small fw-bold text-danger"><i class="bi bi-file-pdf"></i> Upload BAP (PDF)</label>
+                            <input type="file" name="file_bap" class="form-control foto-input" accept=".pdf,.doc,.docx">
+                            <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
+                                <small class="d-block fw-bold file-name-text text-primary"></small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3 file-upload-wrapper">
+                            <label class="form-label small fw-bold text-success"><i class="bi bi-camera"></i> Foto Kondisi (Banyak)</label>
+                            <input type="file" name="foto_kondisi[]" class="form-control foto-input" multiple accept="image/*">
+                            <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
+                                <span class="badge bg-success count-badge mb-2">0 Foto</span>
+                                <ul class="list-unstyled mb-0 file-name-list"></ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Keterangan Lain</label>
+                            <textarea name="keterangan_lain" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-white border-top py-3">
+                    <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">SIMPAN DATA</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.classList.contains('foto-input')) {
+            const input = e.target;
+            const wrapper = input.closest('.file-upload-wrapper');
+            const container = wrapper.querySelector('.file-preview-container');
+            const list = wrapper.querySelector('.file-name-list');
+            const badge = wrapper.querySelector('.count-badge');
+            const nameText = wrapper.querySelector('.file-name-text');
+            
+            if (input.files.length > 0) {
+                container.classList.remove('d-none');
+                if (list) {
+                    list.innerHTML = '';
+                    badge.innerText = input.files.length + ' Foto Dipilih';
+                    Array.from(input.files).forEach((file, index) => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="bi bi-image me-2 text-success"></i><span class="text-truncate">${index+1}. ${file.name}</span>`;
+                        list.appendChild(li);
+                    });
+                } else if (nameText) {
+                    nameText.innerHTML = `<i class="bi bi-file-check me-2 text-danger"></i>${input.files[0].name}`;
+                }
+            } else {
+                container.classList.add('d-none');
+            }
+        }
+    });
+</script>
+@endsection
