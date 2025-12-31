@@ -29,6 +29,7 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () { return redirect()->route('repairs.index'); });
-    Route::resource('repairs', RepairController::class);
     Route::post('repairs/{id}/update-status', [RepairController::class, 'updateStatus'])->name('repairs.updateStatus');
+    Route::get('/repairs/export', [RepairController::class, 'exportExcel'])->name('repairs.export');
+    Route::resource('repairs', RepairController::class);
 });

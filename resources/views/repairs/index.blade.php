@@ -25,13 +25,35 @@
     .card-info-alkes {
         border-left: 4px solid #0d6efd;
     }
+    .pagination { margin-bottom: 0; }
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="text-primary fw-bold"><i class="bi bi-display me-2"></i>Monitoring Perbaikan Alkes</h4>
-    <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
-        <i class="bi bi-plus-lg"></i> Tambah Laporan
-    </button>
+    <div>
+        <a href="{{ route('repairs.export', ['search' => request('search')]) }}" class="btn btn-success shadow-sm fw-bold me-2">
+            <i class="bi bi-file-earmark-excel"></i> Export Excel
+        </a>
+        <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
+            <i class="bi bi-plus-lg"></i> Tambah Laporan
+        </button>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-5">
+        <form action="{{ route('repairs.index') }}" method="GET" class="d-flex shadow-sm rounded">
+            <input type="text" name="search" class="form-control border-0" placeholder="Cari RS, Alat, SN, atau Lokasi..." value="{{ request('search') }}">
+            <button class="btn btn-white bg-white border-0 text-primary" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+            @if(request('search'))
+                <a href="{{ route('repairs.index') }}" class="btn btn-white bg-white border-0 text-danger">
+                    <i class="bi bi-x-circle"></i>
+                </a>
+            @endif
+        </form>
+    </div>
 </div>
 
 @if(session('success'))
@@ -56,9 +78,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($repairs as $r)
+                    @forelse($repairs as $r)
                     <tr>
-                        <td class="ps-3 text-muted">{{ $loop->iteration }}</td>
+                        <td class="ps-3 text-muted">
+                            {{ $loop->iteration + ($repairs->currentPage() - 1) * $repairs->perPage() }}
+                        </td>
                         <td>
                             <div class="fw-bold text-dark text-uppercase">{{ $r->nama_rs ?? '-' }}</div>
                             <div class="small text-muted"><i class="bi bi-geo-alt"></i> {{ $r->lokasi ?? '-' }}</div>
@@ -67,8 +91,11 @@
                         <td>
                             <div class="fw-bold text-primary">{{ $r->nama_alkes ?? '-' }}</div>
                             <small class="text-muted d-block">SN: <strong>{{ $r->serial_number ?? '-' }}</strong></small>
+                            <small class="fw-bold text-dark d-block">Grade Kerusakan: {{ $r->grade_kerusakan }}</small>
                             <small class="text-muted d-block">Merk/Model: {{ $r->merek }} / {{ $r->tipe_model }}</small>
                             <small class="text-dark d-block mt-1"><i class="bi bi-truck"></i> Penyedia: <strong>{{ $r->nama_penyedia ?? '-' }}</strong></small>
+                            <small class="text-dark d-block mt-1">Respon Penyedia : {{ $r->respon_penyedia }}</small>
+                            <small class="text-dark d-block mt-1">Tindakan Penyedia : {{ $r->tindakan_penyedia }}</small>
                         </td>
                         <td>
                             <div class="p-2 bg-light rounded border shadow-sm" style="max-height: 120px; overflow-y: auto; font-size: 0.8rem;">
@@ -94,6 +121,9 @@
                         </td>
                         <td class="text-center">
                             <div class="btn-group shadow-sm">
+                                <button class="btn btn-info btn-sm text-white fw-bold px-2" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $r->id }}">
+                                    <i class="bi bi-eye"></i> Detail
+                                </button>
                                 <button class="btn btn-primary btn-sm fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $r->id }}">Update</button>
                                 <button class="btn btn-danger btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalHapus{{ $r->id }}"><i class="bi bi-trash"></i></button>
                             </div>
@@ -109,14 +139,13 @@
                                 </div>
                                 <form action="{{ route('repairs.updateStatus', $r->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    <div class="modal-body">
+                                    <div class="modal-body p-4">
                                         <div class="row g-3">
                                             <div class="col-md-4">
                                                 <div class="card border-0 shadow-sm p-3 mb-3 card-info-alkes">
                                                     <h6 class="fw-bold border-bottom pb-2 text-primary">Informasi Unit</h6>
                                                     <div class="mb-2 small"><span class="text-muted">RS:</span><br><strong>{{ $r->nama_rs }}</strong></div>
                                                     <div class="mb-2 small"><span class="text-muted">Penyedia:</span><br><strong>{{ $r->nama_penyedia ?? '-' }}</strong></div>
-                                                    
                                                     <label class="small fw-bold d-block mt-3 mb-2">Foto Kondisi Terkini:</label>
                                                     <div class="row g-2">
                                                         @if($r->foto_kondisi && is_array($r->foto_kondisi))
@@ -171,14 +200,14 @@
                                                         <div class="col-md-6 mb-3 file-upload-wrapper">
                                                             <label class="small fw-bold text-danger"><i class="bi bi-file-pdf"></i> Ganti File BAP</label>
                                                             <input type="file" name="file_bap" class="form-control form-control-sm foto-input" accept=".pdf,.doc,.docx">
-                                                            <div class="mt-2 p-2 bg-light border rounded d-none file-preview-container">
+                                                            <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
                                                                 <small class="fw-bold text-primary file-name-text"></small>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 mb-3 file-upload-wrapper">
-                                                            <label class="small fw-bold text-success"><i class="bi bi-camera"></i> Tambah Foto Kondisi</label>
+                                                            <label class="small fw-bold text-success"><i class="bi bi-camera"></i> Tambah Foto</label>
                                                             <input type="file" name="foto_kondisi[]" class="form-control form-control-sm foto-input" multiple accept="image/*">
-                                                            <div class="mt-2 p-2 bg-light border rounded d-none file-preview-container">
+                                                            <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
                                                                 <span class="badge bg-success count-badge mb-2">0 Foto</span>
                                                                 <ul class="list-unstyled mb-0 file-name-list"></ul>
                                                             </div>
@@ -205,7 +234,7 @@
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body text-center py-4">
-                                    <p class="mb-0">Hapus data laporan <strong>{{ $r->nama_alkes }}</strong>?</p>
+                                    <p class="mb-0 text-muted">Hapus laporan <strong>{{ $r->nama_alkes }}</strong>?</p>
                                 </div>
                                 <div class="modal-footer justify-content-center border-0 pb-3">
                                     <form action="{{ route('repairs.destroy', $r->id) }}" method="POST">
@@ -216,10 +245,197 @@
                             </div>
                         </div>
                     </div>
-                    @endforeach
+                    <div class="modal fade" id="modalDetail{{ $r->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-info text-white py-3 border-0">
+                                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle me-2"></i> Rincian Laporan: {{ $r->nama_alkes }}</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                
+                                <div class="modal-body p-4">
+                                    <div class="row g-4">
+                                        
+                                        <div class="col-md-7">
+                                            <div class="card border-0 shadow-sm mb-4 card-info-alkes">
+                                                <div class="card-body">
+                                                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Informasi Lokasi & Penginput</h6>
+                                                    <div class="row mb-2">
+                                                        <div class="col-sm-4 text-muted small">Rumah Sakit</div>
+                                                        <div class="col-sm-8 fw-bold">{{ $r->nama_rs ?? '-' }}</div>
+                                                    </div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-sm-4 text-muted small">Kabupaten/Kota</div>
+                                                        <div class="col-sm-8 fw-bold">{{ $r->lokasi ?? '-' }}</div>
+                                                    </div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-sm-4 text-muted small">Petugas Input</div>
+                                                        <div class="col-sm-8 text-dark">{{ $r->input_by ?? '-' }}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4 text-muted small">Tanggal Lapor</div>
+                                                        <div class="col-sm-8 text-dark">{{ $r->tanggal_input ? \Carbon\Carbon::parse($r->tanggal_input)->format('d F Y') : '-' }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="card border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-cpu-fill me-2"></i>Identitas Alat Kesehatan</h6>
+                                                    <div class="row g-3">
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Nama Alat</label>
+                                                            <span class="fw-bold text-primary">{{ $r->nama_alkes ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Serial Number (SN)</label>
+                                                            <span class="fw-bold text-dark">{{ $r->serial_number ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Merek / Brand</label>
+                                                            <span>{{ $r->merek ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Tipe / Model</label>
+                                                            <span>{{ $r->tipe_model ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Kategori</label>
+                                                            <span class="badge bg-light text-dark border">{{ $r->kategori ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Grade Kerusakan</label>
+                                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">{{ $r->grade_kerusakan ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Nama Penyedia</label>
+                                                            <span class="text-info fw-bold">{{ $r->nama_penyedia ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="text-muted small d-block">Kondisi Kontrak</label>
+                                                            <span>{{ $r->kondisi_kontrak ?? '-' }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <div class="card border-0 shadow-sm mb-4">
+                                                <div class="card-body">
+                                                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-graph-up-arrow me-2"></i>Status & Respon Terkini</h6>
+                                                    <div class="mb-3">
+                                                        <label class="text-muted small d-block">Status Perbaikan</label>
+                                                        <span class="badge bg-primary fs-6">{{ $r->status_perbaikan ?? '-' }}</span>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="text-muted small d-block">Komponen Rusak</label>
+                                                        <div class="p-2 bg-light rounded border small">{{ $r->komponen ?? '-' }}</div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-6">
+                                                            <label class="text-muted small d-block">Respon Penyedia</label>
+                                                            <span class="fw-bold">{{ $r->respon_penyedia ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="text-muted small d-block">Tindakan</label>
+                                                            <span class="fw-bold">{{ $r->tindakan_penyedia ?? '-' }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="text-muted small d-block text-danger fw-bold">Rencana Tindak Lanjut (RTL)</label>
+                                                        <p class="text-dark small border-start border-danger border-3 ps-2">{{ $r->rtl ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        <label class="text-muted small d-block">Keterangan Lain</label>
+                                                        <small class="text-muted italic">{{ $r->keterangan_lain ?? '-' }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="card border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-file-earmark-medical me-2"></i>Dokumentasi Berkas</h6>
+                                                    <div class="mb-3">
+                                                        @if($r->file_bap)
+                                                            <a href="{{ asset('storage/'.$r->file_bap) }}" target="_blank" class="btn btn-sm btn-outline-danger w-100 shadow-sm">
+                                                                <i class="bi bi-file-pdf-fill me-2"></i>Buka Dokumen BAP (PDF/Word)
+                                                            </a>
+                                                        @else
+                                                            <div class="p-2 border rounded bg-light text-center small text-muted italic">BAP belum diupload</div>
+                                                        @endif
+                                                    </div>
+                                                    <label class="text-muted small d-block mb-2">Foto Kondisi Alat:</label>
+                                                    <div class="row g-2">
+                                                        @if($r->foto_kondisi && is_array($r->foto_kondisi))
+                                                            @foreach($r->foto_kondisi as $path)
+                                                                <div class="col-4">
+                                                                    <a href="{{ asset('storage/'.$path) }}" target="_blank">
+                                                                        <img src="{{ asset('storage/'.$path) }}" class="img-fluid rounded border shadow-sm" style="height: 70px; width: 100%; object-fit: cover;">
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
+                                                        @else
+                                                            <div class="col-12 p-3 bg-light rounded text-center small text-muted border-dashed">Tidak ada foto.</div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <div class="card border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <h6 class="fw-bold text-dark mb-4"><i class="bi bi-clock-history me-2"></i>Timeline History Perbaikan</h6>
+                                                    <div class="position-relative ps-4 border-start ms-2">
+                                                        @forelse($r->histories as $h)
+                                                            <div class="mb-4 position-relative">
+                                                                <div class="position-absolute bg-primary rounded-circle" style="width: 12px; height: 12px; left: -31px; top: 5px; border: 2px solid white;"></div>
+                                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                    <span class="badge bg-primary shadow-sm" style="font-size: 0.7rem;">{{ $h->status_perbaikan }}</span>
+                                                                    <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ $h->created_at->format('d/m/Y H:i') }} WIB</small>
+                                                                </div>
+                                                                <div class="bg-light p-2 rounded border small text-dark">
+                                                                    {{ $h->keterangan_perubahan }}
+                                                                    <div class="mt-1 text-muted fw-bold" style="font-size: 0.65rem;">Diperbarui oleh: {{ $h->user_nama }}</div>
+                                                                </div>
+                                                            </div>
+                                                        @empty
+                                                            <div class="text-center py-3 text-muted small">Belum ada riwayat perubahan.</div>
+                                                        @endforelse
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer bg-light border-0 py-3">
+                                    <button type="button" class="btn btn-secondary px-4 fw-bold shadow-sm" data-bs-dismiss="modal">Tutup Detail</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted small italic">Data tidak ditemukan.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="small text-muted">
+        Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
+    </div>
+    <div>
+        {{ $repairs->links('pagination::bootstrap-5') }}
     </div>
 </div>
 
@@ -315,7 +531,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Komponen Rusak</label>
-                            <input type="text" name="komponen" class="form-control" placeholder="Mainboard, Sensor, dll">
+                            <input type="text" name="komponen" class="form-control" placeholder="Sensor, dll">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Respon Penyedia</label>
@@ -327,25 +543,25 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Tindakan Penyedia</label>
-                            <textarea name="tindakan_penyedia" class="form-control" rows="1" placeholder="Pengecekan, perbaikan..."></textarea>
+                            <textarea name="tindakan_penyedia" class="form-control" rows="1" placeholder="Analisa awal..."></textarea>
                         </div>
-                        <div class="col-md-3 mb-3 file-upload-wrapper">
+                        <div class="col-md-6 mb-3 file-upload-wrapper">
                             <label class="form-label small fw-bold text-danger"><i class="bi bi-file-pdf"></i> Upload BAP (PDF)</label>
                             <input type="file" name="file_bap" class="form-control foto-input" accept=".pdf,.doc,.docx">
                             <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
                                 <small class="d-block fw-bold file-name-text text-primary"></small>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3 file-upload-wrapper">
+                        <div class="col-md-6 mb-3 file-upload-wrapper">
                             <label class="form-label small fw-bold text-success"><i class="bi bi-camera"></i> Foto Kondisi (Banyak)</label>
                             <input type="file" name="foto_kondisi[]" class="form-control foto-input" multiple accept="image/*">
                             <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
                                 <span class="badge bg-success count-badge mb-2">0 Foto</span>
-                                <ul class="list-unstyled mb-0 file-name-list"></ul>
+                                <ul class="list-unstyled mb-0 small file-name-list mt-2"></ul>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">Keterangan Lain</label>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label small fw-bold">Keterangan Lain-lain</label>
                             <textarea name="keterangan_lain" class="form-control" rows="2"></textarea>
                         </div>
                     </div>

@@ -6,17 +6,48 @@ use App\Models\Repair;
 use App\Models\RepairHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Exports\RepairExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RepairController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Load data dengan history terbaru di atas (Eager Loading)
-        $repairs = Repair::with(['histories' => function($q) {
+        $search = $request->query('search');
+
+        $query = Repair::with(['histories' => function($q) {
             $q->latest();
-        }])->latest()->get();
+        }]);
+
+        // Logika Pencarian berdasarkan beberapa kolom
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_rs', 'like', "%{$search}%")
+                ->orWhere('nama_alkes', 'like', "%{$search}%")
+                ->orWhere('serial_number', 'like', "%{$search}%")
+                ->orWhere('lokasi', 'like', "%{$search}%")
+                ->orWhere('nama_penyedia', 'like', "%{$search}%");
+            });
+        }
+
+        // Pagination 20 data per halaman + keep query search saat pindah halaman
+        $repairs = $query->latest()->paginate(20)->withQueryString();
 
         return view('repairs.index', compact('repairs'));
+    }
+
+    public function show($id)
+    {
+        // Mengambil data perbaikan beserta history-nya berdasarkan ID
+        $repair = Repair::with(['histories' => function($q) {
+            $q->latest();
+        }])->findOrFail($id);
+
+        // Jika Anda ingin menampilkan data dalam format JSON (untuk kebutuhan AJAX detail)
+        return response()->json($repair);
+        
+        // ATAU jika Anda ingin menampilkan di halaman terpisah (tapi kita pakai modal, jadi ini opsional)
+        // return view('repairs.show', compact('repair'));
     }
 
     public function store(Request $request)
@@ -105,5 +136,13 @@ class RepairController extends Controller
         $repair->delete();
 
         return redirect()->back()->with('success', 'Data laporan dan file terkait berhasil dihapus.');
+    }
+    public function exportExcel(Request $request)
+    {
+        $search = $request->query('search');
+        $nama_file = 'Laporan_Monitoring_Alkes_' . date('Ymd_His') . '.xlsx';
+        
+        // Kirim $search ke class RepairExport
+        return Excel::download(new RepairExport($search), $nama_file);
     }
 }
