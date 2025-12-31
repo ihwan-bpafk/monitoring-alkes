@@ -144,12 +144,54 @@ class RepairController extends Controller
 
         return redirect()->back()->with('success', 'Data laporan dan file terkait berhasil dihapus.');
     }
+
     public function exportExcel(Request $request)
     {
-        $search = $request->query('search');
-        $nama_file = 'Laporan_Monitoring_Alkes_' . date('Ymd_His') . '.xlsx';
-        
-        // Kirim $search ke class RepairExport
-        return Excel::download(new RepairExport($search), $nama_file);
+        $filters = [
+            'nama_rs'          => $request->nama_rs,
+            'nama_alkes'       => $request->nama_alkes,
+            'status_perbaikan' => $request->status_perbaikan,
+            'grade_kerusakan'  => $request->grade_kerusakan,
+            'respon_penyedia'  => $request->respon_penyedia,
+        ];
+
+        $fileName = 'Laporan_BPAFK_' . date('Ymd_His') . '.xlsx';
+        return Excel::download(new RepairExport($filters), $fileName);
+    }
+
+    // Method untuk memuat halaman pertama kali
+    public function reportPage()
+    {
+        // Ambil SEMUA data tanpa limit
+        $repairs = Repair::latest()->get(); 
+        return view('repairs.report', compact('repairs'));
+    }
+
+    // Method untuk filter AJAX
+    public function previewExport(Request $request)
+    {
+        $query = Repair::query();
+
+        if ($request->nama_rs) {
+            $query->where('nama_rs', 'like', '%' . $request->nama_rs . '%');
+        }
+        if ($request->nama_alkes) {
+            $query->where('nama_alkes', 'like', '%' . $request->nama_alkes . '%');
+        }
+        if ($request->status_perbaikan) {
+            $query->where('status_perbaikan', $request->status_perbaikan);
+        }
+        if ($request->grade_kerusakan) {
+            $query->where('grade_kerusakan', $request->grade_kerusakan);
+        }
+        if ($request->respon_penyedia) {
+            $query->where('respon_penyedia', $request->respon_penyedia);
+        }
+
+        // Ambil SEMUA data hasil filter (hapus take(5))
+        $repairs = $query->latest()->get();
+
+        // Render view baris tabel dan kirim sebagai response teks/html
+        return view('repairs._report_rows', compact('repairs'))->render();
     }
 }

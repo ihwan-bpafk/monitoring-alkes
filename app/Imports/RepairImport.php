@@ -31,7 +31,6 @@ class RepairImport implements OnEachRow, WithHeadingRow
             'kondisi_kontrak' => $data['kondisi_kontrak'] ?? '-',
             'respon_penyedia' => $data['respon_penyedia'] ?? '-',
             'tindakan_penyedia' => $data['tindakan_penyedia'] ?? '-',
-            'tindakan_penyedia' => $data['tindakan_penyedia'] ?? '-',
             'rtl' => $data['rtl'] ?? '-',
             'keterangan_lain' => $data['keterangan_lain'] ?? '-',
         ]);

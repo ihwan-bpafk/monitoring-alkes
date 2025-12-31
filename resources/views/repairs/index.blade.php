@@ -31,8 +31,8 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="text-primary fw-bold"><i class="bi bi-display me-2"></i>Monitoring Perbaikan Alkes</h4>
     <div>
-        <a href="{{ route('repairs.export', ['search' => request('search')]) }}" class="btn btn-success shadow-sm fw-bold me-2">
-            <i class="bi bi-file-earmark-excel"></i> Export Excel
+        <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold me-2">
+            <i class="bi bi-file-earmark-excel"></i> Reporting
         </a>
         <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
             <i class="bi bi-plus-lg"></i> Tambah Laporan
@@ -172,6 +172,7 @@
                                                         <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Update Status Alat</label>
                                                             <select name="status_perbaikan" class="form-select form-select-sm" required>
+                                                                <option value="Berfungsi" {{ $r->status_perbaikan == 'Berfungsi' ? 'selected' : '' }}>Berfungsi</option>
                                                                 <option value="Selesai Diperbaiki" {{ $r->status_perbaikan == 'Selesai Diperbaiki' ? 'selected' : '' }}>Selesai Diperbaiki</option>
                                                                 <option value="Dalam Proses" {{ $r->status_perbaikan == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses Perbaikan</option>
                                                                 <option value="Harus Diganti" {{ $r->status_perbaikan == 'Harus Diganti' ? 'selected' : '' }}>Harus Diganti (BAP Teknisi)</option>
@@ -195,7 +196,7 @@
                                                             <select name="respon_penyedia" class="form-select form-select-sm">
                                                                 <option value="">-- Pilih --</option>
                                                                 <option value="Datang" {{ $r->respon_penyedia == 'Datang' ? 'selected' : '' }}>Datang</option>
-                                                                <option value="Tidak Datang" {{ $r->respon_penyedia == 'Tidak Datang' ? 'selected' : '' }}>Tidak Datang</option>
+                                                                <option value="Belum Datang" {{ $r->respon_penyedia == 'Belum Datang' ? 'selected' : '' }}>Belum Datang</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-6 mb-2">
@@ -526,8 +527,8 @@
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Kondisi Kontrak</label>
                             <select name="kondisi_kontrak" class="form-select">
-                                <option value="Garansi">Garansi</option>
-                                <option value="Tidak Garansi">Tidak Garansi</option>
+                                <option value="Garansi" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi') ? 'selected' : '' }}>Garansi</option>
+                                <option value="Garansi Habis" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi Habis') ? 'selected' : '' }}>Garansi Habis</option>
                             </select>
                         </div>
                     </div>
@@ -535,8 +536,9 @@
                     <div class="row">
                         <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">3. Status, Respon & Berkas</h6></div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Status Awal</label>
+                            <label class="form-label small fw-bold">Update Status Alat</label>
                             <select name="status_perbaikan" class="form-select" required>
+                                <option value="Berfungsi">Berfungsi</option>
                                 <option value="Selesai Diperbaiki">Selesai Diperbaiki</option>
                                 <option value="Dalam Proses">Dalam Proses Perbaikan</option>
                                 <option value="Harus Diganti">Harus di Ganti (BAP)</option>
@@ -546,10 +548,10 @@
                             <label class="form-label small fw-bold">Komponen Rusak</label>
                             <select name="respon_penyedia" class="form-select form-select-sm">
                                 <option value="">-- Pilih --</option>
-                                <option value="Power Supply" {{ $r->komponen == 'Power Supply' ? 'selected' : '' }}>Power Supply</option>
-                                <option value="Mainboard" {{ $r->komponen == 'Mainboard' ? 'selected' : '' }}>Mainboard</option>
-                                <option value="Aksesoris" {{ $r->komponen == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
-                                <option value="Lainnya" {{ $r->komponen == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                <option value="Power Supply">Power Supply</option>
+                                <option value="Mainboard">Mainboard</option>
+                                <option value="Aksesoris">Aksesoris</option>
+                                <option value="Lainnya">Lainnya</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
@@ -557,7 +559,7 @@
                             <select name="respon_penyedia" class="form-select">
                                 <option value="">-- Pilih --</option>
                                 <option value="Datang">Datang</option>
-                                <option value="Tidak Datang">Tidak Datang</option>
+                                <option value="Belum Datang">Belum Datang</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">

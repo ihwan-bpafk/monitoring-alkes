@@ -31,5 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', function () { return redirect()->route('repairs.index'); });
     Route::post('repairs/{id}/update-status', [RepairController::class, 'updateStatus'])->name('repairs.updateStatus');
     Route::get('/repairs/export', [RepairController::class, 'exportExcel'])->name('repairs.export');
+    Route::get('/repairs/report', [RepairController::class, 'reportPage'])->name('repairs.report');
+    Route::get('/repairs/report-preview', [RepairController::class, 'previewExport'])->name('repairs.reportPreview');
     Route::resource('repairs', RepairController::class);
 });

@@ -14,22 +14,33 @@ class RepairExport implements FromCollection, WithHeadings, WithMapping, WithSty
 {
 
     // Tambahkan properti di dalam class
-    protected $search;
+    protected $filters;
 
-    public function __construct($search = null)
+    // Konstruktor untuk menerima filter
+    public function __construct($filters = [])
     {
-        $this->search = $search;
+        $this->filters = $filters;
     }
 
     public function collection()
     {
         $query = Repair::query();
 
-        if ($this->search) {
-            $query->where('nama_rs', 'like', "%{$this->search}%")
-                ->orWhere('nama_alkes', 'like', "%{$this->search}%")
-                ->orWhere('serial_number', 'like', "%{$this->search}%")
-                ->orWhere('lokasi', 'like', "%{$this->search}%");
+        if (!empty($this->filters['nama_rs'])) {
+            $query->where('nama_rs', 'like', '%' . $this->filters['nama_rs'] . '%');
+        }
+        if (!empty($this->filters['nama_alkes'])) {
+            $query->where('nama_alkes', 'like', '%' . $this->filters['nama_alkes'] . '%');
+        }
+        if (!empty($this->filters['status_perbaikan'])) {
+            $query->where('status_perbaikan', $this->filters['status_perbaikan']);
+        }
+        if (!empty($this->filters['grade_kerusakan'])) {
+            $query->where('grade_kerusakan', $this->filters['grade_kerusakan']);
+        }
+        // TAMBAHKAN LOGIKA INI
+        if (!empty($this->filters['respon_penyedia'])) {
+            $query->where('respon_penyedia', $this->filters['respon_penyedia']);
         }
 
         return $query->latest()->get();
@@ -79,31 +90,27 @@ class RepairExport implements FromCollection, WithHeadings, WithMapping, WithSty
     // Memberikan Warna & Styling
     public function styles(Worksheet $sheet)
     {
-        // Bold Header (Baris ke-4)
-        $sheet->getStyle('A4:O4')->getFont()->setBold(true);
-        $sheet->getStyle('A1:A2')->getFont()->setSize(14)->setBold(true);
+        // Styling Judul Besar
+        $sheet->getStyle('A1:A2')->getFont()->setBold(true)->setSize(14);
+        
+        // Styling Header Tabel (Baris ke-4) - Menjangkau Kolom A sampai R
+        $sheet->getStyle('A4:R4')->getFont()->setBold(true);
+        $sheet->getStyle('A4:R4')->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('E2EFDA');
 
-        // Tambahkan Auto Filter pada Header
-        $sheet->setAutoFilter('A4:O4');
+        // Tambahkan Auto Filter agar user Excel bisa menyaring data sendiri
+        $sheet->setAutoFilter('A4:R4');
 
-        // Mewarnai Baris Berdasarkan Status
-        $rows = $sheet->getHighestRow();
-        for ($i = 5; $i <= $rows; $i++) {
-            $status = $sheet->getCell('K' . $i)->getValue();
-            
-            if ($status == 'Selesai Diperbaiki') {
-                $sheet->getStyle('A'.$i.':O'.$i)->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('C6EFCE'); // Hijau Muda
-            } elseif ($status == 'Harus Diganti') {
-                $sheet->getStyle('A'.$i.':O'.$i)->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFC7CE'); // Merah Muda
-            } elseif ($status == 'Dalam Proses') {
-                $sheet->getStyle('A'.$i.':O'.$i)->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFEB9C'); // Kuning
-            }
-        }
+        // Tambahkan Border ke seluruh data
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        $highestRow = $sheet->getHighestRow();
+        $sheet->getStyle('A4:R' . $highestRow)->applyFromArray($styleArray);
     }
 }
