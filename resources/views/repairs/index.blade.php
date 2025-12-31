@@ -133,7 +133,7 @@
                     <div class="modal fade" id="modalUpdate{{ $r->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content border-0">
-                                <div class="modal-header bg-secondary py-2 text-dark border-0">
+                                <div class="modal-header bg-primary py-2 text-dark border-0">
                                     <h6 class="modal-title fw-bold"><i class="bi bi-arrow-repeat me-2"></i>Update Progress: {{ $r->nama_alkes }}</h6>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
@@ -170,16 +170,25 @@
                                                             <input type="text" name="petugas" class="form-control form-control-sm" value="{{ Auth::user()->name }}" required>
                                                         </div>
                                                         <div class="col-md-6 mb-2">
-                                                            <label class="small fw-bold">Status Baru</label>
+                                                            <label class="small fw-bold">Update Status Alat</label>
                                                             <select name="status_perbaikan" class="form-select form-select-sm" required>
                                                                 <option value="Selesai Diperbaiki" {{ $r->status_perbaikan == 'Selesai Diperbaiki' ? 'selected' : '' }}>Selesai Diperbaiki</option>
                                                                 <option value="Dalam Proses" {{ $r->status_perbaikan == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses Perbaikan</option>
                                                                 <option value="Harus Diganti" {{ $r->status_perbaikan == 'Harus Diganti' ? 'selected' : '' }}>Harus Diganti (BAP Teknisi)</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-12 mb-2">
+                                                        <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Keterangan Log Progres</label>
                                                             <textarea name="keterangan_log" class="form-control form-control-sm" rows="2" placeholder="Detail pekerjaan hari ini..." required></textarea>
+                                                        </div><div class="col-md-6 mb-2">
+                                                            <label class="small fw-bold">Komponen</label>
+                                                            <select name="respon_penyedia" class="form-select form-select-sm">
+                                                                <option value="">-- Pilih --</option>
+                                                                <option value="Power Supply" {{ $r->komponen == 'Power Supply' ? 'selected' : '' }}>Power Supply</option>
+                                                                <option value="Mainboard" {{ $r->komponen == 'Mainboard' ? 'selected' : '' }}>Mainboard</option>
+                                                                <option value="Aksesoris" {{ $r->komponen == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
+                                                                <option value="Lainnya" {{ $r->komponen == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                                            </select>
                                                         </div>
                                                         <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Respon Penyedia</label>
@@ -193,9 +202,13 @@
                                                             <label class="small fw-bold">Tindakan Penyedia</label>
                                                             <textarea name="tindakan_penyedia" class="form-control form-control-sm" rows="1">{{ $r->tindakan_penyedia }}</textarea>
                                                         </div>
-                                                        <div class="col-md-12 mb-3">
+                                                        <div class="col-md-6 mb-3">
                                                             <label class="small fw-bold">Rencana Tindak Lanjut (RTL)</label>
                                                             <textarea name="rtl" class="form-control form-control-sm" rows="2">{{ $r->rtl }}</textarea>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="small fw-bold">Keterangan Lain-lain</label>
+                                                            <textarea name="keterangan_lain" class="form-control" rows="2"></textarea>
                                                         </div>
                                                         <div class="col-md-6 mb-3 file-upload-wrapper">
                                                             <label class="small fw-bold text-danger"><i class="bi bi-file-pdf"></i> Ganti File BAP</label>
@@ -248,7 +261,7 @@
                     <div class="modal fade" id="modalDetail{{ $r->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content border-0 shadow-lg">
-                                <div class="modal-header bg-info text-white py-3 border-0">
+                                <div class="modal-header bg-primary text-white py-3 border-0">
                                     <h5 class="modal-title fw-bold"><i class="bi bi-info-circle me-2"></i> Rincian Laporan: {{ $r->nama_alkes }}</h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                 </div>
@@ -325,7 +338,7 @@
                                                 <div class="card-body">
                                                     <h6 class="fw-bold text-primary mb-3"><i class="bi bi-graph-up-arrow me-2"></i>Status & Respon Terkini</h6>
                                                     <div class="mb-3">
-                                                        <label class="text-muted small d-block">Status Perbaikan</label>
+                                                        <label class="text-muted small d-block">Status</label>
                                                         <span class="badge bg-primary fs-6">{{ $r->status_perbaikan ?? '-' }}</span>
                                                     </div>
                                                     <div class="mb-3">
@@ -531,7 +544,13 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Komponen Rusak</label>
-                            <input type="text" name="komponen" class="form-control" placeholder="Sensor, dll">
+                            <select name="respon_penyedia" class="form-select form-select-sm">
+                                <option value="">-- Pilih --</option>
+                                <option value="Power Supply" {{ $r->komponen == 'Power Supply' ? 'selected' : '' }}>Power Supply</option>
+                                <option value="Mainboard" {{ $r->komponen == 'Mainboard' ? 'selected' : '' }}>Mainboard</option>
+                                <option value="Aksesoris" {{ $r->komponen == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
+                                <option value="Lainnya" {{ $r->komponen == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                            </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Respon Penyedia</label>

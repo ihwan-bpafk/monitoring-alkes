@@ -81,24 +81,25 @@ class RepairController extends Controller
     {
         $repair = Repair::findOrFail($id);
         
-        // Data dasar yang diupdate
+        // Simpan data lama untuk perbandingan di history (opsional)
+        $komponenLama = $repair->komponen;
+
+        // 1. Update Data Dasar
         $repair->status_perbaikan = $request->status_perbaikan;
         $repair->rtl = $request->rtl;
-        $repair->komponen = $request->Komponen; // Sesuai name="Komponen" di view
+        $repair->komponen = $request->komponen; // Mengambil dari input value tadi
         $repair->kondisi_kontrak = $request->kondisi_kontrak;
+        $repair->respon_penyedia = $request->respon_penyedia;
         $repair->tindakan_penyedia = $request->tindakan_penyedia;
 
-        // 1. Update/Ganti File BAP
+        // 2. Logika File BAP & Foto (Tetap sama seperti sebelumnya)
         if ($request->hasFile('file_bap')) {
-            if ($repair->file_bap) {
-                Storage::disk('public')->delete($repair->file_bap);
-            }
+            if ($repair->file_bap) { Storage::disk('public')->delete($repair->file_bap); }
             $repair->file_bap = $request->file('file_bap')->store('bap', 'public');
         }
 
-        // 2. Tambah Foto Baru ke dalam Array Foto Lama (Multiple)
         if ($request->hasFile('foto_kondisi')) {
-            $currentPhotos = $repair->foto_kondisi ?? []; 
+            $currentPhotos = is_array($repair->foto_kondisi) ? $repair->foto_kondisi : []; 
             foreach ($request->file('foto_kondisi') as $file) {
                 $currentPhotos[] = $file->store('repairs', 'public');
             }
@@ -107,14 +108,20 @@ class RepairController extends Controller
 
         $repair->save();
 
-        // 3. Catat History Perubahan
+        // 3. Catat History
+        // Keterangan history kita buat lebih lengkap agar informatif
+        $pesanHistory = $request->keterangan_log;
+        if ($komponenLama != $request->komponen) {
+            $pesanHistory .= " (Update Komponen: " . $request->komponen . ")";
+        }
+
         $repair->histories()->create([
             'status_perbaikan' => $request->status_perbaikan,
-            'keterangan_perubahan' => $request->keterangan_log,
+            'keterangan_perubahan' => $pesanHistory,
             'user_nama' => $request->petugas,
         ]);
 
-        return redirect()->back()->with('success', 'Progress berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Progress perbaikan berhasil diperbarui!');
     }
 
     public function destroy($id)
