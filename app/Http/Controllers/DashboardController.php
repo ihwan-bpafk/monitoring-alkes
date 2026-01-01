@@ -9,40 +9,47 @@ use Illuminate\Support\Facades\DB;
 class DashboardController extends Controller
 {
     /**
-     * Menampilkan Dashboard Utama
+     * Menampilkan Dashboard Utama dengan Filter RS dan Kategori
      */
     public function index(Request $request)
     {
-        // 1. Ambil list semua RS untuk dropdown filter di view
-        $list_rs = Repair::select('nama_rs')
-            ->whereNotNull('nama_rs')
+        // 1. Ambil list unik untuk dropdown filter
+        $list_rs = Repair::whereNotNull('nama_rs')
             ->distinct()
             ->orderBy('nama_rs', 'asc')
             ->pluck('nama_rs');
 
-        // 2. Tangkap filter RS dari URL (jika ada)
-        $selected_rs = $request->query('nama_rs');
+        $list_kategori = Repair::whereNotNull('kategori')
+            ->distinct()
+            ->orderBy('kategori', 'asc')
+            ->pluck('kategori');
 
-        // 3. Query Dasar
+        // 2. Tangkap filter dari URL
+        $selected_rs = $request->query('nama_rs');
+        $selected_kategori = $request->query('kategori');
+
+        // 3. Query Dasar (Base Query)
         $query = Repair::query();
 
-        // 4. Terapkan filter jika user memilih RS tertentu
+        // 4. Terapkan filter jika ada
         if ($selected_rs) {
             $query->where('nama_rs', $selected_rs);
         }
 
-        // 5. Total data keseluruhan (setelah filter RS)
+        if ($selected_kategori) {
+            $query->where('kategori', $selected_kategori);
+        }
+
+        // 5. Eksekusi Data untuk Dashboard (berdasarkan filter yang aktif)
         $totalData = $query->count();
 
-        // --- A. DATA KONDISI AKHIR ALKES (Sebelumnya Status Perbaikan) ---
-        // Mengelompokkan berdasarkan: Selesai diperbaiki, Dalam proses, Harus diganti (BAP), -
+        // --- A. DATA KONDISI AKHIR ALKES ---
         $statusData = (clone $query)
             ->select('status_perbaikan', DB::raw('count(*) as total'))
             ->groupBy('status_perbaikan')
             ->get();
 
-        // --- B. DATA RESPON PENYEDIA (Hanya untuk data yang memiliki Vendor) ---
-        // Menghitung "Datang" vs "Belum Datang" hanya pada alat yang ada nama penyedianya
+        // --- B. DATA RESPON PENYEDIA ---
         $responData = (clone $query)
             ->whereNotNull('nama_penyedia')
             ->whereNotIn('nama_penyedia', ['-', '', 'Tidak Ada'])
@@ -50,20 +57,20 @@ class DashboardController extends Controller
             ->groupBy('respon_penyedia')
             ->get();
 
-        // Menghitung total khusus alat yang ada vendornya untuk persentase chart respon
         $totalWithVendor = $responData->sum('total');
 
-        // --- C. DATA KONDISI AWAL ALKES (Sebelumnya Grade Kerusakan) ---
-        // Mengelompokkan berdasarkan: Bisa dipakai, Rusak ringan, Rusak berat
+        // --- C. DATA KONDISI AWAL ALKES ---
         $gradeData = (clone $query)
             ->select('grade_kerusakan', DB::raw('count(*) as total'))
             ->groupBy('grade_kerusakan')
             ->get();
 
-        // 6. Kirim semua data ke view dashboard.index
+        // 6. Kirim data ke view
         return view('dashboard.index', compact(
             'list_rs', 
             'selected_rs', 
+            'list_kategori',
+            'selected_kategori',
             'totalData', 
             'totalWithVendor',
             'statusData', 

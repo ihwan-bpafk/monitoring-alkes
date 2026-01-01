@@ -16,10 +16,17 @@
             </a>
 
             <form action="{{ route('dashboard') }}" method="GET" class="d-flex gap-2">
-                <select name="nama_rs" class="form-select shadow-sm border-primary" onchange="this.form.submit()" style="min-width: 220px;">
+                <select name="nama_rs" class="form-select shadow-sm border-primary" onchange="this.form.submit()" style="min-width: 200px;">
                     <option value="">-- Semua Rumah Sakit --</option>
                     @foreach($list_rs as $rs)
                         <option value="{{ $rs }}" {{ $selected_rs == $rs ? 'selected' : '' }}>{{ $rs }}</option>
+                    @endforeach
+                </select>
+
+                <select name="kategori" class="form-select shadow-sm border-primary" onchange="this.form.submit()" style="min-width: 180px;">
+                    <option value="">-- Semua Kategori --</option>
+                    @foreach($list_kategori as $kat)
+                        <option value="{{ $kat }}" {{ $selected_kategori == $kat ? 'selected' : '' }}>{{ $kat }}</option>
                     @endforeach
                 </select>
             </form>
@@ -40,6 +47,11 @@
                                     — <span class="fw-bold">{{ $selected_rs }}</span>
                                 @else
                                     — <span class="opacity-75">(Semua Rumah Sakit)</span>
+                                @endif
+                                @if($selected_kategori)
+                                    — <span class="fw-bold">{{ $selected_kategori }}</span>
+                                @else
+                                    — <span class="opacity-75">(Semua Kategori)</span>
                                 @endif
                             </small>
                         </h2>
