@@ -13,13 +13,21 @@ class RepairController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user(); // Ambil data user yang login
         $search = $request->query('search');
 
         $query = Repair::with(['histories' => function($q) {
             $q->latest();
         }]);
 
-        // Logika Pencarian berdasarkan beberapa kolom
+        // --- LOGIKA FILTER AKSES BERDASARKAN NAMA USER ---
+        // Jika nama user BUKAN 'Administrator' DAN BUKAN 'Farmalkes'
+        if (!in_array($user->name, ['Administrator', 'Farmalkes'])) {
+            // Kunci data agar hanya menampilkan RS yang namanya sama dengan nama akun user
+            $query->where('nama_rs', $user->name);
+        }
+
+        // Logika Pencarian (Existing)
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('nama_rs', 'like', "%{$search}%")
@@ -30,7 +38,7 @@ class RepairController extends Controller
             });
         }
 
-        // Pagination 20 data per halaman + keep query search saat pindah halaman
+        // Pagination 20 data per halaman + keep query search
         $repairs = $query->latest()->paginate(20)->withQueryString();
 
         return view('repairs.index', compact('repairs'));
