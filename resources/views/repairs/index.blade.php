@@ -95,6 +95,7 @@
                         </td>
                         <td>
                             <div class="fw-bold text-primary">{{ $r->nama_alkes ?? '-' }}</div>
+                            <div class="badge bg-light text-dark border">{{ $r->kategori ?? '-' }}</div>
                             <small class="text-muted d-block">SN: <strong>{{ $r->serial_number ?? '-' }}</strong></small>
                             <small class="fw-bold text-dark d-block">Kondisi Awal Alkes: {{ $r->grade_kerusakan }}</small>
                             <small class="text-muted d-block">Merk/Model: {{ $r->merek }} / {{ $r->tipe_model }}</small>
@@ -173,6 +174,18 @@
                                                         <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Petugas Update</label>
                                                             <input type="text" name="petugas" class="form-control form-control-sm" value="{{ Auth::user()->name }}" required>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small fw-bold">Kategori Alkes</label>
+                                                            <select name="kategori" class="form-select form-select-sm" required>
+                                                                <option value="">-- Pilih Kategori --</option>
+                                                                <option value="Elektromedik" {{ $r->kategori == 'Elektromedik' ? 'selected' : '' }}>Elektromedik</option>
+                                                                <option value="Radiologi" {{ $r->kategori == 'Radiologi' ? 'selected' : '' }}>Radiologi</option>
+                                                                <option value="Laboratorium" {{ $r->kategori == 'Laboratorium' ? 'selected' : '' }}>Laboratorium</option>
+                                                                <option value="Penunjang" {{ $r->kategori == 'Penunjang' ? 'selected' : '' }}>Penunjang</option>
+                                                                <option value="IGD" {{ $r->kategori == 'IGD' ? 'selected' : '' }}>IGD</option>
+                                                                <option value="OK" {{ $r->kategori == 'OK' ? 'selected' : '' }}>OK</option>
+                                                            </select>
                                                         </div>
                                                         <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Update Status Alat</label>

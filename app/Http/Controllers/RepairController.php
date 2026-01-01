@@ -97,6 +97,7 @@ class RepairController extends Controller
         $repair->rtl = $request->rtl;
         $repair->komponen = $request->komponen; // Mengambil dari input value tadi
         $repair->kondisi_kontrak = $request->kondisi_kontrak;
+        $repair->kategori = $request->kategori;
         $repair->respon_penyedia = $request->respon_penyedia;
         $repair->tindakan_penyedia = $request->tindakan_penyedia;
 
