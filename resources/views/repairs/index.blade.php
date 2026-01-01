@@ -177,7 +177,7 @@
                                                         <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Update Status Alat</label>
                                                             <select name="status_perbaikan" class="form-select form-select-sm" required>
-                                                                <option value="Berfungsi" {{ $r->status_perbaikan == 'Berfungsi' ? 'selected' : '' }}>Berfungsi</option>
+                                                                {{-- <option value="Berfungsi" {{ $r->status_perbaikan == 'Berfungsi' ? 'selected' : '' }}>Berfungsi</option> --}}
                                                                 <option value="Selesai Diperbaiki" {{ $r->status_perbaikan == 'Selesai Diperbaiki' ? 'selected' : '' }}>Selesai Diperbaiki</option>
                                                                 <option value="Dalam Proses" {{ $r->status_perbaikan == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses Perbaikan</option>
                                                                 <option value="Harus Diganti" {{ $r->status_perbaikan == 'Harus Diganti' ? 'selected' : '' }}>Harus Diganti (BAP Teknisi)</option>
@@ -543,7 +543,7 @@
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Update Status Alat</label>
                             <select name="status_perbaikan" class="form-select" required>
-                                <option value="Berfungsi">Berfungsi</option>
+                                {{-- <option value="Berfungsi">Berfungsi</option> --}}
                                 <option value="Selesai Diperbaiki">Selesai Diperbaiki</option>
                                 <option value="Dalam Proses">Dalam Proses Perbaikan</option>
                                 <option value="Harus Diganti">Harus di Ganti (BAP)</option>
