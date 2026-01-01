@@ -38,9 +38,9 @@
                     <input type="text" name="nama_alkes" class="form-control form-control-sm filter-input" placeholder="Cari Alat...">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small fw-bold text-primary">Grade</label>
+                    <label class="form-label small fw-bold text-primary">Kondisi Awal Alkes</label>
                     <select name="grade_kerusakan" class="form-select form-select-sm filter-input">
-                        <option value="">-- Semua Grade --</option>
+                        <option value="">-- Semua --</option>
                         <option value="Bisa Dipakai">Bisa Dipakai</option>
                         <option value="Rusak Ringan">Rusak Ringan</option>
                         <option value="Rusak Berat">Rusak Berat</option>
@@ -94,7 +94,7 @@
                         <th>Model/Tipe</th>
                         <th>Penyedia</th>
                         <th>Kontrak</th>
-                        <th>Grade Kerusakan</th>
+                        <th>Kondisi Awal Alkes</th>
                         <th>Respon Penyedia</th>
                         <th>Tindakan Penyedia</th>
                         <th>Status Akhir</th>

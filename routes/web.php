@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RepairController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,10 +29,11 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 // Route::post('repairs/{id}/update-status', [RepairController::class, 'updateStatus'])->name('repairs.updateStatus');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', function () { return redirect()->route('repairs.index'); });
+    Route::get('/', function () { return redirect()->route('dashboard'); });
     Route::post('repairs/{id}/update-status', [RepairController::class, 'updateStatus'])->name('repairs.updateStatus');
     Route::get('/repairs/export', [RepairController::class, 'exportExcel'])->name('repairs.export');
     Route::get('/repairs/report', [RepairController::class, 'reportPage'])->name('repairs.report');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/repairs/report-preview', [RepairController::class, 'previewExport'])->name('repairs.reportPreview');
     Route::resource('repairs', RepairController::class);
 });

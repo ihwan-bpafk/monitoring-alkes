@@ -29,13 +29,18 @@
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="text-primary fw-bold"><i class="bi bi-display me-2"></i>Monitoring Perbaikan Alkes</h4>
-    <div>
-        <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold me-2">
-            <i class="bi bi-file-earmark-excel"></i> Reporting
+    <h4 class="fw-bold text-primary"><i class="bi bi-tools me-2"></i>Monitoring Perbaikan Alkes</h4>
+    
+    <div class="d-flex gap-2">
+        <a href="{{ route('dashboard') }}" class="btn btn-light border shadow-sm fw-bold">
+            <i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard
+        </a>
+
+        <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold">
+            <i class="bi bi-file-earmark-excel me-1"></i>Reporting
         </a>
         <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
-            <i class="bi bi-plus-lg"></i> Tambah Laporan
+            <i class="bi bi-plus-lg me-1"></i>Tambah Data
         </button>
     </div>
 </div>
@@ -91,7 +96,7 @@
                         <td>
                             <div class="fw-bold text-primary">{{ $r->nama_alkes ?? '-' }}</div>
                             <small class="text-muted d-block">SN: <strong>{{ $r->serial_number ?? '-' }}</strong></small>
-                            <small class="fw-bold text-dark d-block">Grade Kerusakan: {{ $r->grade_kerusakan }}</small>
+                            <small class="fw-bold text-dark d-block">Kondisi Awal Alkes: {{ $r->grade_kerusakan }}</small>
                             <small class="text-muted d-block">Merk/Model: {{ $r->merek }} / {{ $r->tipe_model }}</small>
                             <small class="text-dark d-block mt-1"><i class="bi bi-truck"></i> Penyedia: <strong>{{ $r->nama_penyedia ?? '-' }}</strong></small>
                             <small class="text-dark d-block mt-1">Respon Penyedia : {{ $r->respon_penyedia }}</small>
@@ -318,7 +323,7 @@
                                                             <span class="badge bg-light text-dark border">{{ $r->kategori ?? '-' }}</span>
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <label class="text-muted small d-block">Grade Kerusakan</label>
+                                                            <label class="text-muted small d-block">Kondisi Awal Alkes</label>
                                                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">{{ $r->grade_kerusakan ?? '-' }}</span>
                                                         </div>
                                                         <div class="col-sm-6">
@@ -517,7 +522,7 @@
                             <input type="text" name="tipe_model" class="form-control">
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Grade Kerusakan</label>
+                            <label class="form-label small fw-bold">Kondisi Awal Alkes</label>
                             <select name="grade_kerusakan" class="form-select">
                                 <option value="Bisa Dipakai">Bisa Dipakai</option>
                                 <option value="Rusak Ringan">Rusak Ringan</option>

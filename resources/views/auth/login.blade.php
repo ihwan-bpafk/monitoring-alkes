@@ -22,7 +22,7 @@
                 <div class="card login-card">
                     <div class="login-header">
                         <div class="logo-box shadow-sm mb-3">
-                            <img src="{{ asset('img/logo BPAFK Medan.png') }}" width="150" alt="Logo BPAFK">
+                            <img src="{{ asset('img/Ditjen_Farmalkes_Logo.png') }}" width="150" alt="Logo BPAFK">
                         </div>
                         <h5 class="mb-0 fw-bold">SISTEM MONITORING PERBAIKAN</h5>
                         <small class="opacity-75">BPAFK Medan - Kemenkes RI</small>
@@ -51,7 +51,7 @@
                             <button type="submit" class="btn btn-primary w-100 mb-3 shadow-sm">MASUK KE SISTEM</button>
                             
                             <div class="text-center">
-                                <img src="{{ asset('img/Ditjen_Farmalkes_Logo.png') }}" width="120" alt="Logo Ditjen">
+                                <img src="{{ asset('img/logo BPAFK Medan.png') }}" width="120" alt="Logo Ditjen">
                             </div>
                         </form>
                     </div>
