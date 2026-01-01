@@ -17,6 +17,16 @@ class UserSeeder extends Seeder
             'username' => 'admin',
             'password' => bcrypt('adminbpafk007'),
         ]);
+        \App\Models\User::create([
+            'name' => 'Farmalkes',
+            'username' => 'farmalkes',
+            'password' => bcrypt('adminfarmalkes'),
+        ]);
+        \App\Models\User::create([
+            'name' => 'RSUD Langsa',
+            'username' => 'RSUD Langsa',
+            'password' => bcrypt('RSUDLangsa'),
+        ]);
         // \App\Models\User::create([
         //     'name' => 'RSUD Muda Sedia Aceh Tamiang',
         //     'username' => 'RSUD Muda Sedia Aceh Tamiang',
@@ -26,11 +36,6 @@ class UserSeeder extends Seeder
         //     'name' => 'RSUD Sultan Abdul Azis Syah',
         //     'username' => 'RSUD Sultan Abdul Azis Syah',
         //     'password' => bcrypt('RSUDSultan'),
-        // ]);
-        // \App\Models\User::create([
-        //     'name' => 'RSUD Langsa',
-        //     'username' => 'RSUD Langsa',
-        //     'password' => bcrypt('RSUDLangsa'),
         // ]);
         // \App\Models\User::create([
         //     'name' => 'RSUD dr. Zubir Mahmud Idi',
