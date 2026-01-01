@@ -511,6 +511,8 @@
                                 <option value="Radiologi">Radiologi</option>
                                 <option value="Laboratorium">Laboratorium</option>
                                 <option value="Penunjang">Penunjang</option>
+                                <option value="IGD">IGD</option>
+                                <option value="OK">OK</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">

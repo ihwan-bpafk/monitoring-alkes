@@ -26,13 +26,23 @@
         </div>
     </div>
 
-    <div class="row mb-4">
+   <div class="row mb-4">
         <div class="col-md-12">
             <div class="card border-0 shadow-sm bg-primary text-white">
                 <div class="card-body p-4 d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="mb-1 opacity-75">Total Laporan Monitoring</h6>
-                        <h2 class="fw-bold mb-0">{{ $totalData }} <small class="fs-6 fw-normal">Unit Alat</small></h2>
+                        <h2 class="fw-bold mb-0">
+                            {{ $totalData }} 
+                            <small class="fs-6 fw-normal">
+                                Unit Alat 
+                                @if($selected_rs)
+                                    — <span class="fw-bold">{{ $selected_rs }}</span>
+                                @else
+                                    — <span class="opacity-75">(Semua Rumah Sakit)</span>
+                                @endif
+                            </small>
+                        </h2>
                     </div>
                     <i class="bi bi-clipboard-data fs-1 opacity-25"></i>
                 </div>

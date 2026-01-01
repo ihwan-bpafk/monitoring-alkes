@@ -38,6 +38,18 @@
                     <input type="text" name="nama_alkes" class="form-control form-control-sm filter-input" placeholder="Cari Alat...">
                 </div>
                 <div class="col-md-2">
+                    <label class="form-label small fw-bold text-primary">Kategori</label>
+                    <select name="kategori" class="form-select form-select-sm filter-input">
+                        <option value="">-- Semua --</option>
+                        <option value="Elektromedik">Elektromedik</option>
+                        <option value="Radiologi">Radiologi</option>
+                        <option value="Laboratorium">Laboratorium</option>
+                        <option value="Penunjang">Penunjang</option>
+                        <option value="IGD">IGD</option>
+                        <option value="OK">OK</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Kondisi Awal Alkes</label>
                     <select name="grade_kerusakan" class="form-select form-select-sm filter-input">
                         <option value="">-- Semua --</option>

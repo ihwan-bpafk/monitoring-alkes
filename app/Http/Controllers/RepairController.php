@@ -186,6 +186,9 @@ class RepairController extends Controller
         if ($request->nama_alkes) {
             $query->where('nama_alkes', 'like', '%' . $request->nama_alkes . '%');
         }
+        if ($request->kategori) {
+            $query->where('kategori', $request->kategori);
+        }
         if ($request->status_perbaikan) {
             $query->where('status_perbaikan', $request->status_perbaikan);
         }
