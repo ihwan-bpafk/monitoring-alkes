@@ -68,8 +68,17 @@ class DashboardController extends Controller
         // 6. Kirim data ke view
 
         
+        // Query Ringkasan Alat dengan Status Baru
         $alkesSummary = (clone $query)
-            ->select('nama_alkes', DB::raw('count(*) as jumlah'))
+            ->select('nama_alkes', 
+                DB::raw('count(*) as jumlah'),
+                // Menghitung jumlah 'Bisa Dipakai'
+                DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
+                // Menghitung jumlah 'Dalam Proses Perbaikan'
+                DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
+                // Menghitung jumlah 'Harus di Ganti (BAP)'
+                DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
+            )
             ->groupBy('nama_alkes')
             ->orderBy('jumlah', 'desc')
             ->get();

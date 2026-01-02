@@ -109,44 +109,53 @@
                 <i class="bi bi-stack me-2 text-primary"></i>Ringkasan Inventaris Alat 
                 <small class="text-muted fw-normal">(Berdasarkan Filter)</small>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th class="ps-4" style="width: 50px;">No</th>
-                                <th>Nama Alat Kesehatan</th>
-                                <th class="text-center">Jumlah Unit</th>
-                                <th class="text-center">Persentase</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($alkesSummary as $index => $item)
-                            <tr>
-                                <td class="ps-4 text-muted">{{ $index + 1 }}</td>
-                                <td>
-                                    <span class="fw-bold text-dark">{{ $item->nama_alkes }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-primary rounded-pill px-3">{{ $item->jumlah }} Alat</span>
-                                </td>
-                                <td class="text-center">
-                                    @php
-                                        $persen = ($totalData > 0) ? ($item->jumlah / $totalData) * 100 : 0;
-                                    @endphp
-                                    <div class="progress" style="height: 8px; width: 100px; margin: 0 auto;">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ $persen }}%"></div>
-                                    </div>
-                                    <small class="text-muted">{{ number_format($persen, 1) }}%</small>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" class="text-center py-4 text-muted">Tidak ada data alat.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white fw-bold py-3 border-0">
+                    <i class="bi bi-grid-3x3-gap me-2 text-primary"></i>Rincian Kondisi Akhir per Jenis Alat
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-center">
+                                <tr>
+                                    <th class="ps-4 text-start">Nama Alat Kesehatan</th>
+                                    <th style="width: 120px;">Total Unit</th>
+                                    <th class="text-success" style="width: 150px;">Bisa Dipakai</th>
+                                    <th class="text-warning" style="width: 150px;">Dalam Proses</th>
+                                    <th class="text-danger" style="width: 180px;">Harus di Ganti (BAP)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                @forelse($alkesSummary as $item)
+                                <tr>
+                                    <td class="ps-4 text-start fw-bold text-dark">{{ $item->nama_alkes }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary rounded-pill px-3">{{ $item->jumlah }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="{{ $item->bisa_dipakai > 0 ? 'fw-bold text-success' : 'text-muted opacity-50' }}">
+                                            {{ $item->bisa_dipakai }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="{{ $item->proses > 0 ? 'fw-bold text-warning' : 'text-muted opacity-50' }}">
+                                            {{ $item->proses }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="{{ $item->ganti > 0 ? 'fw-bold text-danger' : 'text-muted opacity-50' }}">
+                                            {{ $item->ganti }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">Data tidak ditemukan.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
