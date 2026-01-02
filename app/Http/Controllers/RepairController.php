@@ -13,35 +13,49 @@ class RepairController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user(); // Ambil data user yang login
-        $search = $request->query('search');
+        // 1. Ambil data unik untuk semua dropdown filter (Dinamis dari DB)
+        $list_rs = Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs', 'asc')->pluck('nama_rs');
+        $list_alkes = Repair::whereNotNull('nama_alkes')->distinct()->orderBy('nama_alkes', 'asc')->pluck('nama_alkes');
+        $list_kategori = Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori');
+        
+        // Tambahan filter baru
+        $list_grade = Repair::whereNotNull('grade_kerusakan')->distinct()->orderBy('grade_kerusakan', 'asc')->pluck('grade_kerusakan');
+        $list_status = Repair::whereNotNull('status_perbaikan')->distinct()->orderBy('status_perbaikan', 'asc')->pluck('status_perbaikan');
+        $list_respon = Repair::whereNotNull('respon_penyedia')->distinct()->orderBy('respon_penyedia', 'asc')->pluck('respon_penyedia');
 
-        $query = Repair::with(['histories' => function($q) {
-            $q->latest();
-        }]);
+        // 2. Query Utama
+        $query = Repair::query();
 
-        // --- LOGIKA FILTER AKSES BERDASARKAN NAMA USER ---
-        // Jika nama user BUKAN 'Administrator' DAN BUKAN 'Farmalkes'
-        if (!in_array($user->name, ['Administrator', 'Farmalkes'])) {
-            // Kunci data agar hanya menampilkan RS yang namanya sama dengan nama akun user
-            $query->where('nama_rs', $user->name);
-        }
-
-        // Logika Pencarian (Existing)
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('nama_rs', 'like', "%{$search}%")
-                ->orWhere('nama_alkes', 'like', "%{$search}%")
-                ->orWhere('serial_number', 'like', "%{$search}%")
-                ->orWhere('lokasi', 'like', "%{$search}%")
-                ->orWhere('nama_penyedia', 'like', "%{$search}%");
+        // 3. Gabungkan Pencarian General (Input Text)
+        $query->when($request->search, function ($q) use ($request) {
+            return $q->where(function($sub) use ($request) {
+                $sub->where('nama_rs', 'like', '%' . $request->search . '%')
+                    ->orWhere('nama_alkes', 'like', '%' . $request->search . '%')
+                    ->orWhere('sn', 'like', '%' . $request->search . '%')
+                    ->orWhere('lokasi', 'like', '%' . $request->search . '%');
             });
-        }
+        })
+        // 4. Filter Spesifik dari Dropdown
+        ->when($request->nama_rs, fn($q, $rs) => $q->where('nama_rs', $rs))
+        ->when($request->nama_alkes, fn($q, $alkes) => $q->where('nama_alkes', $alkes))
+        ->when($request->kategori, fn($q, $kat) => $q->where('kategori', $kat))
+        ->when($request->grade_kerusakan, fn($q, $grade) => $q->where('grade_kerusakan', $grade))
+        ->when($request->status_perbaikan, fn($q, $status) => $q->where('status_perbaikan', $status))
+        ->when($request->respon_penyedia, fn($q, $respon) => $q->where('respon_penyedia', $respon));
 
-        // Pagination 20 data per halaman + keep query search
-        $repairs = $query->latest()->paginate(20)->withQueryString();
+        // 5. Eksekusi Query dengan Pagination dan simpan query string filter
+        $repairs = $query->latest()->paginate(15)->withQueryString();
 
-        return view('repairs.index', compact('repairs'));
+        // 6. Kirim semua variabel list ke View
+        return view('repairs.index', compact(
+            'repairs', 
+            'list_rs', 
+            'list_alkes', 
+            'list_kategori', 
+            'list_grade', 
+            'list_status', 
+            'list_respon'
+        ));
     }
 
     public function show($id)
@@ -169,11 +183,21 @@ class RepairController extends Controller
     }
 
     // Method untuk memuat halaman pertama kali
+
     public function reportPage()
     {
-        // Ambil SEMUA data tanpa limit
-        $repairs = Repair::latest()->get(); 
-        return view('repairs.report', compact('repairs'));
+        // Ambil semua data unik untuk dropdown filter
+        $list_rs = Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs', 'asc')->pluck('nama_rs');
+        $list_alkes = Repair::whereNotNull('nama_alkes')->distinct()->orderBy('nama_alkes', 'asc')->pluck('nama_alkes');
+        $list_kategori = Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori');
+        $list_grade = Repair::whereNotNull('grade_kerusakan')->distinct()->orderBy('grade_kerusakan', 'asc')->pluck('grade_kerusakan');
+        $list_status = Repair::whereNotNull('status_perbaikan')->distinct()->orderBy('status_perbaikan', 'asc')->pluck('status_perbaikan');
+        $list_respon = Repair::whereNotNull('respon_penyedia')->distinct()->orderBy('respon_penyedia', 'asc')->pluck('respon_penyedia');
+        $repairs = Repair::latest()->get();
+
+        return view('repairs.report', compact(
+            'list_rs', 'list_kategori', 'list_alkes', 'list_grade', 'list_status', 'list_respon', 'repairs'
+        ));
     }
 
     // Method untuk filter AJAX
@@ -181,29 +205,28 @@ class RepairController extends Controller
     {
         $query = Repair::query();
 
-        if ($request->nama_rs) {
-            $query->where('nama_rs', 'like', '%' . $request->nama_rs . '%');
-        }
-        if ($request->nama_alkes) {
-            $query->where('nama_alkes', 'like', '%' . $request->nama_alkes . '%');
-        }
-        if ($request->kategori) {
-            $query->where('kategori', $request->kategori);
-        }
-        if ($request->status_perbaikan) {
-            $query->where('status_perbaikan', $request->status_perbaikan);
-        }
-        if ($request->grade_kerusakan) {
-            $query->where('grade_kerusakan', $request->grade_kerusakan);
-        }
-        if ($request->respon_penyedia) {
-            $query->where('respon_penyedia', $request->respon_penyedia);
-        }
+        // Gunakan when() agar kode lebih bersih
+        $query->when($request->nama_rs, function ($q) use ($request) {
+            return $q->where('nama_rs', 'like', '%' . $request->nama_rs . '%');
+        })
+        ->when($request->nama_alkes, function ($q) use ($request) {
+            return $q->where('nama_alkes', 'like', '%' . $request->nama_alkes . '%');
+        })
+        ->when($request->kategori, function ($q) use ($request) {
+            return $q->where('kategori', $request->kategori);
+        })
+        ->when($request->status_perbaikan, function ($q) use ($request) {
+            return $q->where('status_perbaikan', $request->status_perbaikan);
+        })
+        ->when($request->grade_kerusakan, function ($q) use ($request) {
+            return $q->where('grade_kerusakan', $request->grade_kerusakan);
+        })
+        ->when($request->respon_penyedia, function ($q) use ($request) {
+            return $q->where('respon_penyedia', $request->respon_penyedia);
+        });
 
-        // Ambil SEMUA data hasil filter (hapus take(5))
         $repairs = $query->latest()->get();
 
-        // Render view baris tabel dan kirim sebagai response teks/html
         return view('repairs._report_rows', compact('repairs'))->render();
     }
 }

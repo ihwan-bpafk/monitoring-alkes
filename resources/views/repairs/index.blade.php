@@ -45,7 +45,7 @@
     </div>
 </div>
 
-<div class="row mb-3">
+{{-- <div class="row mb-3">
     <div class="col-md-5">
         <form action="{{ route('repairs.index') }}" method="GET" class="d-flex shadow-sm rounded">
             <input type="text" name="search" class="form-control border-0" placeholder="Cari RS, Alat, SN, atau Lokasi..." value="{{ request('search') }}">
@@ -57,6 +57,85 @@
                     <i class="bi bi-x-circle"></i>
                 </a>
             @endif
+        </form>
+    </div>
+</div> --}}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form action="{{ route('repairs.index') }}" method="GET">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Rumah Sakit</label>
+                    <select name="nama_rs" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua RS --</option>
+                        @foreach($list_rs as $rs)
+                            <option value="{{ $rs }}" {{ request('nama_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Nama Alat</label>
+                    <select name="nama_alkes" class="form-select form-select-sm select-search" onchange="this.form.submit()">
+                        <option value="">-- Semua Alat --</option>
+                        @foreach($list_alkes as $alkes)
+                            <option value="{{ $alkes }}" {{ request('nama_alkes') == $alkes ? 'selected' : '' }}>{{ $alkes }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Kategori</label>
+                    <select name="kategori" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua --</option>
+                        @foreach($list_kategori as $kat)
+                            <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>{{ $kat }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Kondisi Awal</label>
+                    <select name="grade_kerusakan" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua --</option>
+                        @foreach($list_grade as $grade)
+                            <option value="{{ $grade }}" {{ request('grade_kerusakan') == $grade ? 'selected' : '' }}>{{ $grade }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Status Akhir</label>
+                    <select name="status_perbaikan" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua --</option>
+                        @foreach($list_status as $status)
+                            <option value="{{ $status }}" {{ request('status_perbaikan') == $status ? 'selected' : '' }}>{{ $status }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Respon Penyedia</label>
+                    <select name="respon_penyedia" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua --</option>
+                        @foreach($list_respon as $respon)
+                            <option value="{{ $respon }}" {{ request('respon_penyedia') == $respon ? 'selected' : '' }}>{{ $respon }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                    @if(request()->anyFilled(['search', 'nama_rs', 'nama_alkes', 'kategori', 'grade_kerusakan', 'status_perbaikan', 'respon_penyedia']))
+                        <a href="{{ route('repairs.index') }}" class="btn btn-outline-danger btn-sm px-3 shadow-sm">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Reset Filter
+                        </a>
+                    @endif
+                    <button type="submit" class="btn btn-primary btn-sm px-4 shadow-sm fw-bold">
+                        <i class="bi bi-filter me-1"></i> Terapkan Filter
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -151,6 +230,9 @@
                                                 <div class="card border-0 shadow-sm p-3 mb-3 card-info-alkes">
                                                     <h6 class="fw-bold border-bottom pb-2 text-primary">Informasi Unit</h6>
                                                     <div class="mb-2 small"><span class="text-muted">RS:</span><br><strong>{{ $r->nama_rs }}</strong></div>
+                                                    <div class="mb-2 small"><span class="text-muted">nama:</span><br><strong>{{ $r->nama_alkes }}</strong></div>
+                                                    <div class="mb-2 small"><span class="text-muted">merk:</span><br><strong>{{ $r->merek }}</strong></div>
+                                                    <div class="mb-2 small"><span class="text-muted">tipe/model:</span><br><strong>{{ $r->tipe_model }}</strong></div>
                                                     <div class="mb-2 small"><span class="text-muted">Penyedia:</span><br><strong>{{ $r->nama_penyedia ?? '-' }}</strong></div>
                                                     <label class="small fw-bold d-block mt-3 mb-2">Foto Kondisi Terkini:</label>
                                                     <div class="row g-2">
@@ -188,11 +270,19 @@
                                                             </select>
                                                         </div>
                                                         <div class="col-md-6 mb-2">
+                                                            <label class="small fw-bold">Kondisi Awal Alat</label>
+                                                            <select name="grade_kerusakan" class="form-select form-select-sm" required>
+                                                                <option value="Bisa Dipakai" {{ $r->grade_kerusakan == 'Bisa Dipakai' ? 'selected' : '' }}>Bisa Dipakai</option>
+                                                                <option value="Rusak Ringan" {{ $r->grade_kerusakan == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
+                                                                <option value="Rusak Berat" {{ $r->grade_kerusakan == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Update Status Alat</label>
                                                             <select name="status_perbaikan" class="form-select form-select-sm" required>
                                                                 {{-- <option value="Berfungsi" {{ $r->status_perbaikan == 'Berfungsi' ? 'selected' : '' }}>Berfungsi</option> --}}
                                                                 <option value="Selesai Diperbaiki" {{ $r->status_perbaikan == 'Selesai Diperbaiki' ? 'selected' : '' }}>Selesai Diperbaiki</option>
-                                                                <option value="Dalam Proses" {{ $r->status_perbaikan == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses Perbaikan</option>
+                                                                <option value="Dalam Proses Perbaikan" {{ $r->status_perbaikan == 'Dalam Proses Perbaikan' ? 'selected' : '' }}>Dalam Proses Perbaikan</option>
                                                                 <option value="Harus Diganti" {{ $r->status_perbaikan == 'Harus Diganti' ? 'selected' : '' }}>Harus Diganti (BAP Teknisi)</option>
                                                             </select>
                                                         </div>
@@ -643,6 +733,15 @@
                 container.classList.add('d-none');
             }
         }
+    });
+
+    $(document).ready(function() {
+        $('.select-search').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: '-- Pilih Alat --',
+            allowClear: true
+        });
     });
 </script>
 @endsection

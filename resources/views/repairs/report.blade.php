@@ -29,52 +29,69 @@
     <div class="card-body p-4">
         <form id="filterForm" action="{{ route('repairs.export') }}" method="GET" target="_blank">
             <div class="row g-3 align-items-end">
+                
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Rumah Sakit</label>
-                    <input type="text" name="nama_rs" class="form-control form-control-sm filter-input" placeholder="Cari RS...">
+                    <select name="nama_rs" class="form-select form-select-sm filter-input">
+                        <option value="">-- Semua --</option>
+                        @foreach($list_rs as $rs)
+                            <option value="{{ $rs }}" {{ request('nama_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
+                        @endforeach
+                    </select>
                 </div>
+
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Nama Alat</label>
-                    <input type="text" name="nama_alkes" class="form-control form-control-sm filter-input" placeholder="Cari Alat...">
+                    <select name="nama_alkes" class="form-select form-select-sm filter-input">
+                        <option value="">-- Semua Alat --</option>
+                        @foreach($list_alkes as $alkes)
+                            <option value="{{ $alkes }}" {{ request('nama_alkes') == $alkes ? 'selected' : '' }}>
+                                {{ $alkes }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Kategori</label>
                     <select name="kategori" class="form-select form-select-sm filter-input">
                         <option value="">-- Semua --</option>
-                        <option value="Elektromedik">Elektromedik</option>
-                        <option value="Radiologi">Radiologi</option>
-                        <option value="Laboratorium">Laboratorium</option>
-                        <option value="Penunjang">Penunjang</option>
-                        <option value="IGD">IGD</option>
-                        <option value="OK">OK</option>
+                        @foreach($list_kategori as $kat)
+                            <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>{{ $kat }}</option>
+                        @endforeach
                     </select>
                 </div>
+
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Kondisi Awal Alkes</label>
                     <select name="grade_kerusakan" class="form-select form-select-sm filter-input">
                         <option value="">-- Semua --</option>
-                        <option value="Bisa Dipakai">Bisa Dipakai</option>
-                        <option value="Rusak Ringan">Rusak Ringan</option>
-                        <option value="Rusak Berat">Rusak Berat</option>
+                        @foreach($list_grade as $grade)
+                            <option value="{{ $grade }}" {{ request('grade_kerusakan') == $grade ? 'selected' : '' }}>{{ $grade }}</option>
+                        @endforeach
                     </select>
                 </div>
+
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Status Akhir</label>
                     <select name="status_perbaikan" class="form-select form-select-sm filter-input">
                         <option value="">-- Semua Status --</option>
-                        <option value="Selesai Diperbaiki">Selesai Diperbaiki</option>
-                        <option value="Dalam Proses">Dalam Proses Perbaikan</option>
-                        <option value="Harus Diganti">Harus Diganti (BAP)</option>
+                        @foreach($list_status as $status)
+                            <option value="{{ $status }}" {{ request('status_perbaikan') == $status ? 'selected' : '' }}>{{ $status }}</option>
+                        @endforeach
                     </select>
                 </div>
+
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Respon Penyedia</label>
                     <select name="respon_penyedia" class="form-select form-select-sm filter-input">
                         <option value="">-- Semua Respon --</option>
-                        <option value="Datang">Datang</option>
-                        <option value="Belum Datang">Belum Datang</option>
+                        @foreach($list_respon as $respon)
+                            <option value="{{ $respon }}" {{ request('respon_penyedia') == $respon ? 'selected' : '' }}>{{ $respon }}</option>
+                        @endforeach
                     </select>
                 </div>
+
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm py-1">
                         <i class="bi bi-file-earmark-excel me-1"></i> Download Excel
