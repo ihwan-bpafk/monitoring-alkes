@@ -281,9 +281,9 @@
                                                             <label class="small fw-bold">Update Status Alat</label>
                                                             <select name="status_perbaikan" class="form-select form-select-sm" required>
                                                                 {{-- <option value="Berfungsi" {{ $r->status_perbaikan == 'Berfungsi' ? 'selected' : '' }}>Berfungsi</option> --}}
-                                                                <option value="Selesai Diperbaiki" {{ $r->status_perbaikan == 'Selesai Diperbaiki' ? 'selected' : '' }}>Selesai Diperbaiki</option>
+                                                                <option value="Bisa Dipakai" {{ $r->status_perbaikan == 'Bisa Dipakai' ? 'selected' : '' }}>Bisa Dipakai</option>
                                                                 <option value="Dalam Proses Perbaikan" {{ $r->status_perbaikan == 'Dalam Proses Perbaikan' ? 'selected' : '' }}>Dalam Proses Perbaikan</option>
-                                                                <option value="Harus Diganti" {{ $r->status_perbaikan == 'Harus Diganti' ? 'selected' : '' }}>Harus Diganti (BAP Teknisi)</option>
+                                                                <option value="Harus di Ganti (BAP)" {{ $r->status_perbaikan == 'Harus di Ganti (BAP)' ? 'selected' : '' }}>Harus di Ganti (BAP Teknisi)</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-6 mb-2">
@@ -649,9 +649,9 @@
                             <label class="form-label small fw-bold">Update Status Alat</label>
                             <select name="status_perbaikan" class="form-select" required>
                                 {{-- <option value="Berfungsi">Berfungsi</option> --}}
-                                <option value="Selesai Diperbaiki">Selesai Diperbaiki</option>
+                                <option value="Bisa Dipakai">Bisa Dipakai</option>
                                 <option value="Dalam Proses">Dalam Proses Perbaikan</option>
-                                <option value="Harus Diganti">Harus di Ganti (BAP)</option>
+                                <option value="Harus di Ganti">Harus di Ganti (BAP)</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">

@@ -102,6 +102,57 @@
     </div>
 </div>
 
+<div class="row mt-4 mb-5">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold py-3 border-0">
+                <i class="bi bi-stack me-2 text-primary"></i>Ringkasan Inventaris Alat 
+                <small class="text-muted fw-normal">(Berdasarkan Filter)</small>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4" style="width: 50px;">No</th>
+                                <th>Nama Alat Kesehatan</th>
+                                <th class="text-center">Jumlah Unit</th>
+                                <th class="text-center">Persentase</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($alkesSummary as $index => $item)
+                            <tr>
+                                <td class="ps-4 text-muted">{{ $index + 1 }}</td>
+                                <td>
+                                    <span class="fw-bold text-dark">{{ $item->nama_alkes }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary rounded-pill px-3">{{ $item->jumlah }} Alat</span>
+                                </td>
+                                <td class="text-center">
+                                    @php
+                                        $persen = ($totalData > 0) ? ($item->jumlah / $totalData) * 100 : 0;
+                                    @endphp
+                                    <div class="progress" style="height: 8px; width: 100px; margin: 0 auto;">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ $persen }}%"></div>
+                                    </div>
+                                    <small class="text-muted">{{ number_format($persen, 1) }}%</small>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Tidak ada data alat.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>

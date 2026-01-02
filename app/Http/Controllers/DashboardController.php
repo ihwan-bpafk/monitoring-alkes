@@ -66,16 +66,18 @@ class DashboardController extends Controller
             ->get();
 
         // 6. Kirim data ke view
+
+        
+        $alkesSummary = (clone $query)
+            ->select('nama_alkes', DB::raw('count(*) as jumlah'))
+            ->groupBy('nama_alkes')
+            ->orderBy('jumlah', 'desc')
+            ->get();
+
         return view('dashboard.index', compact(
-            'list_rs', 
-            'selected_rs', 
-            'list_kategori',
-            'selected_kategori',
-            'totalData', 
-            'totalWithVendor',
-            'statusData', 
-            'responData', 
-            'gradeData'
+            'list_rs', 'selected_rs', 'list_kategori', 'selected_kategori',
+            'totalData', 'totalWithVendor', 'statusData', 'responData', 'gradeData',
+            'alkesSummary' // Kirim variabel ini ke view
         ));
     }
 }
