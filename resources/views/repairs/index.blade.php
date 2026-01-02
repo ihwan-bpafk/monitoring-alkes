@@ -656,7 +656,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-bold">Komponen Rusak</label>
-                            <select name="respon_penyedia" class="form-select form-select-sm">
+                            <select name="komponen" class="form-select form-select-sm">
                                 <option value="">-- Pilih --</option>
                                 <option value="Power Supply">Power Supply</option>
                                 <option value="Mainboard">Mainboard</option>
