@@ -296,8 +296,8 @@
                                                         <div class="col-md-4 mb-2">
                                                             <label class="small fw-bold">Kondisi Kontrak</label>
                                                             <select name="kondisi_kontrak" class="form-select">
-                                                                <option value="Garansi" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi') ? 'selected' : '' }}>Garansi</option>
-                                                                <option value="Garansi Habis" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi Habis') ? 'selected' : '' }}>Garansi Habis</option>
+                                                                <option value="Garansi" {{ $r->kondisi_kontrak == 'Garansi' ? 'selected' : '' }}>Garansi</option>
+                                                                <option value="Garansi Habis" {{ $r->kondisi_kontrak == 'Garansi Habis' ? 'selected' : '' }}>Garansi Habis</option>
                                                             </select>
                                                         </div>
 
@@ -326,10 +326,10 @@
                                                             <label class="small fw-bold">Komponen / Sparepart</label>
                                                             <select name="komponen" class="form-select form-select-sm">
                                                                 <option value="">-- Pilih --</option>
-                                                                <option value="Power Supply">Power Supply</option>
-                                                                <option value="Mainboard">Mainboard</option>
-                                                                <option value="Aksesoris">Aksesoris</option>
-                                                                <option value="Lainnya">Lainnya</option>
+                                                                <option value="Power Supply" {{ $r->komponen == 'Power Supply' ? 'selected' : '' }}>Power Supply</option>
+                                                                <option value="Mainboard" {{ $r->komponen == 'Mainboard' ? 'selected' : '' }}>Mainboard</option>
+                                                                <option value="Aksesoris" {{ $r->komponen == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
+                                                                <option value="Lainnya" {{ $r->komponen == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                                                             </select>
                                                         </div>
 
