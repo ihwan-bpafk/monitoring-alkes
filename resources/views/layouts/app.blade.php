@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         :root {
             --bs-primary: #047d79;
@@ -50,6 +51,57 @@
         .modal-body .card {
             height: auto !important; 
             margin-bottom: 15px;
+        }
+        /* Kecilkan font pada pilihan yang dipilih */
+        .select2-container--bootstrap-5 .select2-selection__rendered {
+            font-size: 0.8rem !important; /* Lebih kecil dari 0.875rem */
+        }
+
+        /* Kecilkan font pada dropdown list */
+        .select2-container--bootstrap-5 .select2-results__option {
+            font-size: 0.8rem !important;
+        }
+
+        /* Kecilkan font pada search box */
+        .select2-container--bootstrap-5 .select2-search__field {
+            font-size: 0.8rem !important;
+        }
+
+        /* Kecilkan placeholder */
+        .select2-container--bootstrap-5 .select2-selection__placeholder {
+            font-size: 0.8rem !important;
+        }
+        .select2-container--bootstrap-5 .select2-selection--single:focus,
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+            border-color: #047d79 !important;
+            box-shadow: 0 0 0 0.25rem rgba(4, 125, 121, 0.25) !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-results__option--highlighted,
+        .select2-container--bootstrap-5 .select2-results__option--selected {
+            background-color: #047d79 !important;
+            color: white !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-dropdown {
+            border-color: #047d79 !important;
+            max-height: 800px !important;
+        }
+
+        /* Warna saat hover pada option */
+        .select2-container--bootstrap-5 .select2-results__option:hover {
+            background-color: #047d79 !important;
+            color: white !important;
+        }
+
+        /* Clear button (X) */
+        .select2-container--bootstrap-5 .select2-selection__clear {
+            color: #047d79 !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-results__options {
+            max-height: 440px !important; /* Area daftar pilihan */
+            overflow-y: auto;
         }
     </style>
 </head>

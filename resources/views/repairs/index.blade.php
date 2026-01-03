@@ -61,10 +61,12 @@
 
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Nama Alat</label>
-                    <select name="nama_alkes" class="form-select form-select-sm select-search" onchange="this.form.submit()">
+                    <select name="nama_alkes" id="nama_alkes" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- Semua Alat --</option>
                         @foreach($list_alkes as $alkes)
-                            <option value="{{ $alkes }}" {{ request('nama_alkes') == $alkes ? 'selected' : '' }}>{{ $alkes }}</option>
+                            <option value="{{ $alkes }}" {{ request('nama_alkes') == $alkes ? 'selected' : '' }}>
+                                {{ $alkes }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -107,17 +109,6 @@
                             <option value="{{ $respon }}" {{ request('respon_penyedia') == $respon ? 'selected' : '' }}>{{ $respon }}</option>
                         @endforeach
                     </select>
-                </div>
-
-                <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-                    @if(request()->anyFilled(['search', 'nama_rs', 'nama_alkes', 'kategori', 'grade_kerusakan', 'status_perbaikan', 'respon_penyedia']))
-                        <a href="{{ route('repairs.index') }}" class="btn btn-outline-danger btn-sm px-3 shadow-sm">
-                            <i class="bi bi-arrow-clockwise me-1"></i> Reset Filter
-                        </a>
-                    @endif
-                    <button type="submit" class="btn btn-primary btn-sm px-4 shadow-sm fw-bold">
-                        <i class="bi bi-filter me-1"></i> Terapkan Filter
-                    </button>
                 </div>
             </div>
         </form>
@@ -805,12 +796,25 @@
     });
 
     $(document).ready(function() {
-        $('.select-search').select2({
+        // Terapkan Select2 ke semua dropdown filter
+        $('select[name="nama_rs"], select[name="nama_alkes"], select[name="kategori"], select[name="grade_kerusakan"], select[name="status_perbaikan"], select[name="respon_penyedia"]').select2({
             theme: 'bootstrap-5',
+            placeholder: function() {
+                return $(this).find('option:first').text();
+            },
+            allowClear: true,
             width: '100%',
-            placeholder: '-- Pilih Alat --',
-            allowClear: true
+            minimumResultsForSearch: 5, // Hanya tampilkan search jika opsi > 5
+            language: {
+                noResults: function() {
+                    return "Tidak ada hasil";
+                },
+                searching: function() {
+                    return "Mencari...";
+                }
+            }
         });
     });
+
 </script>
 @endsection
