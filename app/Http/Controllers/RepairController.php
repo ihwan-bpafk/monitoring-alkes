@@ -74,12 +74,35 @@ class RepairController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all();
+        // 1. Ambil HANYA kolom yang memang ada di database (White-listing)
+        // Cara ini otomatis membuang sampah seperti '/repairs'
+        $data = $request->only([
+            'input_by', 
+            'tanggal_input', 
+            'nama_rs', 
+            'lokasi', 
+            'nama_alkes', 
+            'serial_number', 
+            'nama_penyedia', 
+            'kategori', 
+            'merek', 
+            'tipe_model', 
+            'grade_kerusakan', 
+            'kondisi_kontrak', 
+            'status_perbaikan', 
+            'komponen', 
+            'respon_penyedia', 
+            'tindakan_penyedia', 
+            'keterangan_lain',
+            'rtl' // Tambahkan ini jika ada di form Anda
+        ]);
 
+        // 2. Logika File BAP
         if ($request->hasFile('file_bap')) {
             $data['file_bap'] = $request->file('file_bap')->store('bap', 'public');
         }
 
+        // 3. Logika Foto Kondisi (Multiple)
         if ($request->hasFile('foto_kondisi')) {
             $paths = [];
             foreach ($request->file('foto_kondisi') as $file) {
@@ -88,8 +111,10 @@ class RepairController extends Controller
             $data['foto_kondisi'] = $paths; 
         }
 
+        // 4. Simpan Data Utama
         $repair = Repair::create($data);
 
+        // 5. Catat ke History
         $repair->histories()->create([
             'status_perbaikan' => $request->status_perbaikan ?? 'Laporan Diterima',
             'keterangan_perubahan' => 'Laporan awal berhasil dibuat.',
