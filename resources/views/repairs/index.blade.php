@@ -295,7 +295,10 @@
                                                         </div>
                                                         <div class="col-md-4 mb-2">
                                                             <label class="small fw-bold">Kondisi Kontrak</label>
-                                                            <input type="text" name="kondisi_kontrak" class="form-control form-control-sm" value="{{ $r->kondisi_kontrak }}">
+                                                            <select name="kondisi_kontrak" class="form-select">
+                                                                <option value="Garansi" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi') ? 'selected' : '' }}>Garansi</option>
+                                                                <option value="Garansi Habis" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi Habis') ? 'selected' : '' }}>Garansi Habis</option>
+                                                            </select>
                                                         </div>
 
                                                         <div class="col-md-6 mb-2">
@@ -321,7 +324,13 @@
                                                         </div>
                                                         <div class="col-md-6 mb-2">
                                                             <label class="small fw-bold">Komponen / Sparepart</label>
-                                                            <input type="text" name="komponen" class="form-control form-control-sm" value="{{ $r->komponen }}">
+                                                            <select name="komponen" class="form-select form-select-sm">
+                                                                <option value="">-- Pilih --</option>
+                                                                <option value="Power Supply">Power Supply</option>
+                                                                <option value="Mainboard">Mainboard</option>
+                                                                <option value="Aksesoris">Aksesoris</option>
+                                                                <option value="Lainnya">Lainnya</option>
+                                                            </select>
                                                         </div>
 
                                                         <div class="col-md-6 mb-2">
