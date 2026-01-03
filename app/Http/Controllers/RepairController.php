@@ -103,24 +103,40 @@ class RepairController extends Controller
     {
         $repair = Repair::findOrFail($id);
         
-        // Simpan data lama untuk perbandingan di history (opsional)
+        // Simpan data lama untuk perbandingan di history
         $komponenLama = $repair->komponen;
+        $statusLama = $repair->status_perbaikan;
 
-        // 1. Update Data Dasar
-        $repair->status_perbaikan = $request->status_perbaikan;
-        $repair->rtl = $request->rtl;
-        $repair->komponen = $request->komponen; // Mengambil dari input value tadi
-        $repair->kondisi_kontrak = $request->kondisi_kontrak;
+        // 1. Update Semua Data (Identitas Unit + Status + Progres)
+        $repair->nama_rs = $request->nama_rs;
+        $repair->lokasi = $request->lokasi;
+        $repair->nama_alkes = $request->nama_alkes;
+        $repair->merek = $request->merek;
+        $repair->tipe_model = $request->tipe_model;
+        $repair->serial_number = $request->serial_number;
+        
+        $repair->input_by = $request->input_by;
         $repair->kategori = $request->kategori;
+        $repair->kondisi_kontrak = $request->kondisi_kontrak;
+        $repair->grade_kerusakan = $request->grade_kerusakan;
+        $repair->status_perbaikan = $request->status_perbaikan;
+        
+        $repair->nama_penyedia = $request->nama_penyedia;
+        $repair->komponen = $request->komponen;
         $repair->respon_penyedia = $request->respon_penyedia;
         $repair->tindakan_penyedia = $request->tindakan_penyedia;
+        $repair->rtl = $request->rtl;
+        $repair->keterangan_lain = $request->keterangan_lain;
 
-        // 2. Logika File BAP & Foto (Tetap sama seperti sebelumnya)
+        // 2. Logika File BAP (Replace/Ganti file lama jika ada upload baru)
         if ($request->hasFile('file_bap')) {
-            if ($repair->file_bap) { Storage::disk('public')->delete($repair->file_bap); }
+            if ($repair->file_bap) { 
+                \Storage::disk('public')->delete($repair->file_bap); 
+            }
             $repair->file_bap = $request->file('file_bap')->store('bap', 'public');
         }
 
+        // 3. Logika Foto Kondisi (Append/Tambah foto baru ke daftar lama)
         if ($request->hasFile('foto_kondisi')) {
             $currentPhotos = is_array($repair->foto_kondisi) ? $repair->foto_kondisi : []; 
             foreach ($request->file('foto_kondisi') as $file) {
@@ -131,11 +147,16 @@ class RepairController extends Controller
 
         $repair->save();
 
-        // 3. Catat History
-        // Keterangan history kita buat lebih lengkap agar informatif
-        $pesanHistory = $request->keterangan_log;
+        // 4. Buat Pesan History yang Informatif
+        // Menggunakan 'keterangan_log' dari textarea modal sebagai pesan utama
+        $pesanHistory = $request->keterangan_log ?? 'Pembaruan data unit dan progres.';
+
         if ($komponenLama != $request->komponen) {
-            $pesanHistory .= " (Update Komponen: " . $request->komponen . ")";
+            $pesanHistory .= " (Komponen: " . ($request->komponen ?? '-') . ")";
+        }
+        
+        if ($statusLama != $request->status_perbaikan) {
+            $pesanHistory .= " [Status berubah menjadi: " . $request->status_perbaikan . "]";
         }
 
         $repair->histories()->create([
@@ -144,7 +165,7 @@ class RepairController extends Controller
             'user_nama' => $request->petugas,
         ]);
 
-        return redirect()->back()->with('success', 'Progress perbaikan berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Seluruh data unit dan progres perbaikan berhasil diperbarui!');
     }
 
     public function destroy($id)
