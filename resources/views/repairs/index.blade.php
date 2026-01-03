@@ -45,22 +45,6 @@
     </div>
 </div>
 
-{{-- <div class="row mb-3">
-    <div class="col-md-5">
-        <form action="{{ route('repairs.index') }}" method="GET" class="d-flex shadow-sm rounded">
-            <input type="text" name="search" class="form-control border-0" placeholder="Cari RS, Alat, SN, atau Lokasi..." value="{{ request('search') }}">
-            <button class="btn btn-white bg-white border-0 text-primary" type="submit">
-                <i class="bi bi-search"></i>
-            </button>
-            @if(request('search'))
-                <a href="{{ route('repairs.index') }}" class="btn btn-white bg-white border-0 text-danger">
-                    <i class="bi bi-x-circle"></i>
-                </a>
-            @endif
-        </form>
-    </div>
-</div> --}}
-
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
         <form action="{{ route('repairs.index') }}" method="GET">
@@ -576,6 +560,164 @@
                             </div>
                         </div>
                     </div>
+                    <div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-primary text-white py-3 border-0">
+                                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus me-2"></i> Input Laporan Perbaikan Baru</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form action="{{ route('repairs.store') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="modal-body p-4">
+                                        <div class="row mb-4">
+                                            <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasi Lokasi</h6></div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Petugas Input</label>
+                                                <input type="text" name="input_by" class="form-control" value="{{ Auth::user()->name }}" required>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold text-muted">Tanggal Input (Otomatis)</label>
+                                                <input type="date" class="form-control bg-light" value="{{ date('Y-m-d') }}" disabled>
+                                                <input type="hidden" name="tanggal_input" value="{{ date('Y-m-d') }}">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold text-primary">Nama Rumah Sakit</label>
+                                                <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
+                                                    <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
+                                                    <option value="RSUD Muda Sedia Aceh Tamiang" data-lokasi="Kab. Aceh Tamiang">RSUD Muda Sedia Aceh Tamiang</option>
+                                                    <option value="RSUD Sultan Abdul Aziz Syah" data-lokasi="Kota Peureulak">RSUD Sultan Abdul Aziz Syah</option>
+                                                    <option value="RSUD Langsa" data-lokasi="Kota Langsa">RSUD Langsa</option>
+                                                    <option value="RSUD Muyang Kute" data-lokasi="Bener Meriah">RSUD Muyang Kute</option>
+                                                    <option value="RSUD Zubir Mahmud" data-lokasi="Kab Aceh Timur/Idi Timur">RSUD Zubir Mahmud</option>
+                                                    <option value="RSUD Fauziah Bireuen" data-lokasi="Bireuen">RSUD Fauziah Bireuen</option>
+                                                    <option value="RSUD Datu Beru" data-lokasi="Takengon">RSUD Datu Beru</option>
+                                                    <option value="RSUD Tanjung Pura" data-lokasi="Kab. Langkat/Tanjung Pura">RSUD Tanjung Pura</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold text-muted">Lokasi (Kab/Kota)</label>
+                                                <input type="text" name="lokasi" class="form-control bg-light js-lokasi" readonly required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-4">
+                                            <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">2. Identitas Alat & Penyedia</h6></div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Nama Alat Kesehatan</label>
+                                                <input type="text" name="nama_alkes" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Serial Number (SN)</label>
+                                                <input type="text" name="serial_number" class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Nama Penyedia (Vendor)</label>
+                                                <input type="text" name="nama_penyedia" class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Kategori</label>
+                                                <select name="kategori" class="form-select">
+                                                    <option value="">-- Pilih --</option>
+                                                    <option value="Elektromedik">Elektromedik</option>
+                                                    <option value="Radiologi">Radiologi</option>
+                                                    <option value="Laboratorium">Laboratorium</option>
+                                                    <option value="Penunjang">Penunjang</option>
+                                                    <option value="IGD">IGD</option>
+                                                    <option value="OK">OK</option>
+                                                    <option value="ICU">ICU</option>
+                                                    <option value="Rawat Inap">Rawat Inap</option>
+                                                    <option value="Rawat Jalan">Rawat Jalan</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Merek</label>
+                                                <input type="text" name="merek" class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Tipe/Model</label>
+                                                <input type="text" name="tipe_model" class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Kondisi Awal Alkes</label>
+                                                <select name="grade_kerusakan" class="form-select">
+                                                    <option value="Bisa Dipakai">Bisa Dipakai</option>
+                                                    <option value="Rusak Ringan">Rusak Ringan</option>
+                                                    <option value="Rusak Berat">Rusak Berat</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Kondisi Kontrak</label>
+                                                <select name="kondisi_kontrak" class="form-select">
+                                                    <option value="Garansi" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi') ? 'selected' : '' }}>Garansi</option>
+                                                    <option value="Garansi Habis" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi Habis') ? 'selected' : '' }}>Garansi Habis</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">3. Status, Respon & Berkas</h6></div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Update Status Alat</label>
+                                                <select name="status_perbaikan" class="form-select" required>
+                                                    {{-- <option value="Berfungsi">Berfungsi</option> --}}
+                                                    <option value="Bisa Dipakai">Bisa Dipakai</option>
+                                                    <option value="Dalam Proses Perbaikan">Dalam Proses Perbaikan</option>
+                                                    <option value="Harus di Ganti">Harus di Ganti (BAP)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Komponen Rusak</label>
+                                                <select name="komponen" class="form-select form-select-sm">
+                                                    <option value="">-- Pilih --</option>
+                                                    <option value="Power Supply">Power Supply</option>
+                                                    <option value="Mainboard">Mainboard</option>
+                                                    <option value="Aksesoris">Aksesoris</option>
+                                                    <option value="Lainnya">Lainnya</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Respon Penyedia</label>
+                                                <select name="respon_penyedia" class="form-select">
+                                                    <option value="">-- Pilih --</option>
+                                                    <option value="Datang">Datang</option>
+                                                    <option value="Belum Datang">Belum Datang</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label class="form-label small fw-bold">Tindakan Penyedia</label>
+                                                <textarea name="tindakan_penyedia" class="form-control" rows="1" placeholder="Analisa awal..."></textarea>
+                                            </div>
+                                            <div class="col-md-6 mb-3 file-upload-wrapper">
+                                                <label class="form-label small fw-bold text-danger"><i class="bi bi-file-pdf"></i> Upload BAP (PDF)</label>
+                                                <input type="file" name="file_bap" class="form-control foto-input" accept=".pdf,.doc,.docx">
+                                                <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
+                                                    <small class="d-block fw-bold file-name-text text-primary"></small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label small fw-bold">Keterangan Lain-lain</label>
+                                                <textarea name="keterangan_lain" class="form-control" rows="2"></textarea>
+                                            </div>
+                                            <div class="col-md-6 mb-3 file-upload-wrapper">
+                                                <label class="form-label small fw-bold text-success"><i class="bi bi-camera"></i> Foto Kondisi (Banyak)</label>
+                                                <input type="file" name="foto_kondisi[]" class="form-control foto-input" multiple accept="image/*">
+                                                <div class="mt-2 p-2 bg-white border rounded d-none file-preview-container">
+                                                    <span class="badge bg-success count-badge mb-2">0 Foto</span>
+                                                    <ul class="list-unstyled mb-0 small file-name-list mt-2"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-white border-top py-3">
+                                        <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">SIMPAN DATA</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     
                     @empty
                     <tr>
@@ -597,159 +739,34 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white py-3 border-0">
-                <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus me-2"></i> Input Laporan Perbaikan Baru</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="{{ route('repairs.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body p-4">
-                    <div class="row mb-4">
-                        <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasi Lokasi</h6></div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Petugas Input</label>
-                            <input type="text" name="input_by" class="form-control" value="{{ Auth::user()->name }}" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold text-muted">Tanggal Input (Otomatis)</label>
-                            <input type="date" class="form-control bg-light" value="{{ date('Y-m-d') }}" disabled>
-                            <input type="hidden" name="tanggal_input" value="{{ date('Y-m-d') }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold text-primary">Nama Rumah Sakit</label>
-                            <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
-                                <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
-                                <option value="RSUD Muda Sedia Aceh Tamiang" data-lokasi="Kab. Aceh Tamiang">RSUD Muda Sedia Aceh Tamiang</option>
-                                <option value="RSUD Sultan Abdul Aziz Syah" data-lokasi="Kota Peureulak">RSUD Sultan Abdul Aziz Syah</option>
-                                <option value="RSUD Langsa" data-lokasi="Kota Langsa">RSUD Langsa</option>
-                                <option value="RSUD Muyang Kute" data-lokasi="Bener Meriah">RSUD Muyang Kute</option>
-                                <option value="RSUD Zubir Mahmud" data-lokasi="Kab Aceh Timur/Idi Timur">RSUD Zubir Mahmud</option>
-                                <option value="RSUD Fauziah Bireuen" data-lokasi="Bireuen">RSUD Fauziah Bireuen</option>
-                                <option value="RSUD Datu Beru" data-lokasi="Takengon">RSUD Datu Beru</option>
-                                <option value="RSUD Tanjung Pura" data-lokasi="Kab. Langkat/Tanjung Pura">RSUD Tanjung Pura</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold text-muted">Lokasi (Kab/Kota)</label>
-                            <input type="text" name="lokasi" class="form-control bg-light js-lokasi" readonly required>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">2. Identitas Alat & Penyedia</h6></div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Nama Alat Kesehatan</label>
-                            <input type="text" name="nama_alkes" class="form-control" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Serial Number (SN)</label>
-                            <input type="text" name="serial_number" class="form-control">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Nama Penyedia (Vendor)</label>
-                            <input type="text" name="nama_penyedia" class="form-control">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Kategori</label>
-                            <select name="kategori" class="form-select">
-                                <option value="">-- Pilih --</option>
-                                <option value="Elektromedik">Elektromedik</option>
-                                <option value="Radiologi">Radiologi</option>
-                                <option value="Laboratorium">Laboratorium</option>
-                                <option value="Penunjang">Penunjang</option>
-                                <option value="IGD">IGD</option>
-                                <option value="OK">OK</option>
-                                <option value="ICU">ICU</option>
-                                <option value="Rawat Inap">Rawat Inap</option>
-                                <option value="Rawat Jalan">Rawat Jalan</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Merek</label>
-                            <input type="text" name="merek" class="form-control">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Tipe/Model</label>
-                            <input type="text" name="tipe_model" class="form-control">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Kondisi Awal Alkes</label>
-                            <select name="grade_kerusakan" class="form-select">
-                                <option value="Bisa Dipakai">Bisa Dipakai</option>
-                                <option value="Rusak Ringan">Rusak Ringan</option>
-                                <option value="Rusak Berat">Rusak Berat</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Kondisi Kontrak</label>
-                            <select name="kondisi_kontrak" class="form-select">
-                                <option value="Garansi" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi') ? 'selected' : '' }}>Garansi</option>
-                                <option value="Garansi Habis" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi Habis') ? 'selected' : '' }}>Garansi Habis</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">3. Status, Respon & Berkas</h6></div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Update Status Alat</label>
-                            <select name="status_perbaikan" class="form-select" required>
-                                {{-- <option value="Berfungsi">Berfungsi</option> --}}
-                                <option value="Bisa Dipakai">Bisa Dipakai</option>
-                                <option value="Dalam Proses Perbaikan">Dalam Proses Perbaikan</option>
-                                <option value="Harus di Ganti">Harus di Ganti (BAP)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Komponen Rusak</label>
-                            <select name="komponen" class="form-select form-select-sm">
-                                <option value="">-- Pilih --</option>
-                                <option value="Power Supply">Power Supply</option>
-                                <option value="Mainboard">Mainboard</option>
-                                <option value="Aksesoris">Aksesoris</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Respon Penyedia</label>
-                            <select name="respon_penyedia" class="form-select">
-                                <option value="">-- Pilih --</option>
-                                <option value="Datang">Datang</option>
-                                <option value="Belum Datang">Belum Datang</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label small fw-bold">Tindakan Penyedia</label>
-                            <textarea name="tindakan_penyedia" class="form-control" rows="1" placeholder="Analisa awal..."></textarea>
-                        </div>
-                        <div class="col-md-6 mb-3 file-upload-wrapper">
-                            <label class="form-label small fw-bold text-danger"><i class="bi bi-file-pdf"></i> Upload BAP (PDF)</label>
-                            <input type="file" name="file_bap" class="form-control foto-input" accept=".pdf,.doc,.docx">
-                        </div>
-                        <div class="col-md-6 mb-3 file-upload-wrapper">
-                            <label class="form-label small fw-bold text-success"><i class="bi bi-camera"></i> Foto Kondisi (Banyak)</label>
-                            <input type="file" name="foto_kondisi[]" class="form-control foto-input" multiple accept="image/*">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">Keterangan Lain-lain</label>
-                            <textarea name="keterangan_lain" class="form-control" rows="2"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer bg-white border-top py-3">
-                    <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">SIMPAN DATA</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <script>
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.classList.contains('foto-input')) {
+            const input = e.target;
+            const wrapper = input.closest('.file-upload-wrapper');
+            const container = wrapper.querySelector('.file-preview-container');
+            const list = wrapper.querySelector('.file-name-list');
+            const badge = wrapper.querySelector('.count-badge');
+            const nameText = wrapper.querySelector('.file-name-text');
+            
+            if (input.files.length > 0) {
+                container.classList.remove('d-none');
+                if (list) {
+                    list.innerHTML = '';
+                    badge.innerText = input.files.length + ' Foto Dipilih';
+                    Array.from(input.files).forEach((file, index) => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="bi bi-image me-2 text-success"></i><span class="text-truncate">${index+1}. ${file.name}</span>`;
+                        list.appendChild(li);
+                    });
+                } else if (nameText) {
+                    nameText.innerHTML = `<i class="bi bi-file-check me-2 text-danger"></i>${input.files[0].name}`;
+                }
+            } else {
+                container.classList.add('d-none');
+            }
+        }
+    });
 
     document.addEventListener('change', function (e) {
         // Cek apakah yang berubah adalah dropdown Nama RS
