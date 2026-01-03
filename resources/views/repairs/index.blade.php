@@ -291,6 +291,8 @@
                                                                 <option value="IGD" {{ $r->kategori == 'IGD' ? 'selected' : '' }}>IGD</option>
                                                                 <option value="OK" {{ $r->kategori == 'OK' ? 'selected' : '' }}>OK</option>
                                                                 <option value="ICU" {{ $r->kategori == 'ICU' ? 'selected' : '' }}>ICU</option>
+                                                                <option value="Rawat Inap" {{ $r->kategori == 'Rawat Inap' ? 'selected' : '' }}>Rawat Inap</option>
+                                                                <option value="Rawat Jalan" {{ $r->kategori == 'Rawat Jalan' ? 'selected' : '' }}>Rawat Jalan</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-4 mb-2">
@@ -657,6 +659,8 @@
                                 <option value="IGD">IGD</option>
                                 <option value="OK">OK</option>
                                 <option value="ICU">ICU</option>
+                                <option value="Rawat Inap">Rawat Inap</option>
+                                <option value="Rawat Jalan">Rawat Jalan</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
