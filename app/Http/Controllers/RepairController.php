@@ -97,18 +97,27 @@ class RepairController extends Controller
             'rtl' // Tambahkan ini jika ada di form Anda
         ]);
 
-        // 2. Logika File BAP
+        // 2. Handle File BAP
         if ($request->hasFile('file_bap')) {
-            $data['file_bap'] = $request->file('file_bap')->store('bap', 'public');
+            $fileBap = $request->file('file_bap');
+            if ($fileBap->isValid()) { // Tambahkan pengecekan validitas
+                $data['file_bap'] = $fileBap->store('bap', 'public');
+            }
         }
 
-        // 3. Logika Foto Kondisi (Multiple)
+        // 3. Handle Foto Kondisi (Multiple)
         if ($request->hasFile('foto_kondisi')) {
             $paths = [];
             foreach ($request->file('foto_kondisi') as $file) {
-                $paths[] = $file->store('repairs', 'public');
+                if ($file->isValid()) { // Pastikan file tidak corrupt/kosong
+                    $paths[] = $file->store('repairs', 'public');
+                }
             }
-            $data['foto_kondisi'] = $paths; 
+            
+            // Hanya masukkan ke data jika array tidak kosong
+            if (!empty($paths)) {
+                $data['foto_kondisi'] = $paths;
+            }
         }
 
         // 4. Simpan Data Utama
