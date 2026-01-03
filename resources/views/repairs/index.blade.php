@@ -176,7 +176,12 @@
                             <div class="fw-bold text-primary">{{ $r->nama_alkes ?? '-' }}</div>
                             <div class="badge bg-light text-dark border">{{ $r->kategori ?? '-' }}</div>
                             <small class="text-muted d-block">SN: <strong>{{ $r->serial_number ?? '-' }}</strong></small>
-                            <small class="fw-bold text-dark d-block">Kondisi Awal Alkes: {{ $r->grade_kerusakan }}</small>
+                            <small class="badge
+                                {{ $r->status_perbaikan == 'Bisa Dipakai' ? 'bg-success' : 
+                                ($r->status_perbaikan == 'Dalam Proses Perbaikan' ? 'bg-warning' : 
+                                ($r->status_perbaikan == 'Harus di Ganti (BAP)' ? 'bg-danger' : 'text-dark')) }}">
+                                Kondisi Akhir: {{ $r->status_perbaikan }}
+                            </small>
                             <small class="text-muted d-block">Merk/Model: {{ $r->merek }} / {{ $r->tipe_model }}</small>
                             <small class="text-dark d-block mt-1"><i class="bi bi-truck"></i> Penyedia: <strong>{{ $r->nama_penyedia ?? '-' }}</strong></small>
                             <small class="text-dark d-block mt-1">Respon Penyedia : {{ $r->respon_penyedia }}</small>
