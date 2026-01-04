@@ -45,9 +45,10 @@ class DashboardController extends Controller
 
         // --- A. DATA KONDISI AKHIR ALKES ---
         $statusData = (clone $query)
-            ->select('status_perbaikan', DB::raw('count(*) as total'))
-            ->groupBy('status_perbaikan')
-            ->get();
+        ->select('status_perbaikan', DB::raw('count(*) as total'))
+        ->where('status_perbaikan', '!=', '-') // Menghapus/mengecualikan yang bernilai '-'
+        ->groupBy('status_perbaikan')
+        ->get();
 
         // --- B. DATA RESPON PENYEDIA ---
         $responData = (clone $query)
