@@ -25,6 +25,10 @@
             content: ""; position: absolute; left: -9px; top: 5px; width: 15px; height: 15px; 
             background: var(--bs-primary); border-radius: 50%; 
         }
+        .table thead tr th {
+            background-color: var(--bs-primary) !important; /* Warna primary Bootstrap */
+            color: white !important;
+        }
         .modal-dialog-scrollable .modal-content {
             max-height: 95vh; /* Batasi tinggi maksimal 95% dari tinggi layar */
         }

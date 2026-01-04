@@ -126,7 +126,7 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="bg-primary text-white">
+                <thead class="">
                     <tr>
                         <th class="ps-3" width="50">No</th>
                         <th>RS / Lokasi / Petugas</th>
@@ -573,7 +573,7 @@
                                                 <input type="hidden" name="tanggal_input" value="{{ date('Y-m-d') }}">
                                             </div>
                                             <div class="col-md-3 mb-3">
-                                                <label class="form-label small fw-bold text-primary">Nama Rumah Sakit</label>
+                                                <label class="form-label small fw-bold text-muted">Nama Rumah Sakit</label>
                                                 <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
                                                     <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
                                                     <option value="RSUD Muda Sedia Aceh Tamiang" data-lokasi="Kab. Aceh Tamiang">RSUD Muda Sedia Aceh Tamiang</option>
