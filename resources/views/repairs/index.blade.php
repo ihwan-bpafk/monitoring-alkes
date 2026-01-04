@@ -271,6 +271,7 @@
                                                                 <option value="IGD" {{ $r->kategori == 'IGD' ? 'selected' : '' }}>IGD</option>
                                                                 <option value="OK" {{ $r->kategori == 'OK' ? 'selected' : '' }}>OK</option>
                                                                 <option value="ICU" {{ $r->kategori == 'ICU' ? 'selected' : '' }}>ICU</option>
+                                                                <option value="HD" {{ $r->kategori == 'HD' ? 'selected' : '' }}>HD</option>
                                                                 <option value="Rawat Inap" {{ $r->kategori == 'Rawat Inap' ? 'selected' : '' }}>Rawat Inap</option>
                                                                 <option value="Rawat Jalan" {{ $r->kategori == 'Rawat Jalan' ? 'selected' : '' }}>Rawat Jalan</option>
                                                             </select>
@@ -280,6 +281,7 @@
                                                             <select name="kondisi_kontrak" class="form-select">
                                                                 <option value="Garansi" {{ $r->kondisi_kontrak == 'Garansi' ? 'selected' : '' }}>Garansi</option>
                                                                 <option value="Garansi Habis" {{ $r->kondisi_kontrak == 'Garansi Habis' ? 'selected' : '' }}>Garansi Habis</option>
+                                                                <option value="KSO" {{ $r->kondisi_kontrak == 'KSO' ? 'selected' : '' }}>KSO</option>
                                                             </select>
                                                         </div>
 
@@ -618,6 +620,7 @@
                                                     <option value="IGD">IGD</option>
                                                     <option value="OK">OK</option>
                                                     <option value="ICU">ICU</option>
+                                                    <option value="HD">HD</option>
                                                     <option value="Rawat Inap">Rawat Inap</option>
                                                     <option value="Rawat Jalan">Rawat Jalan</option>
                                                 </select>
@@ -643,6 +646,7 @@
                                                 <select name="kondisi_kontrak" class="form-select">
                                                     <option value="Garansi" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi') ? 'selected' : '' }}>Garansi</option>
                                                     <option value="Garansi Habis" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi Habis') ? 'selected' : '' }}>Garansi Habis</option>
+                                                    <option value="KSO" {{ (isset($r) && $r->kondisi_kontrak == 'KSO') ? 'selected' : '' }}>KSO</option>
                                                 </select>
                                             </div>
                                         </div>
