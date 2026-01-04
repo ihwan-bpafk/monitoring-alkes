@@ -659,7 +659,7 @@
                                                     {{-- <option value="Berfungsi">Berfungsi</option> --}}
                                                     <option value="Bisa Dipakai">Bisa Dipakai</option>
                                                     <option value="Dalam Proses Perbaikan">Dalam Proses Perbaikan</option>
-                                                    <option value="Harus di Ganti">Harus di Ganti (BAP)</option>
+                                                    <option value="Harus di Ganti (BAP)">Harus di Ganti (BAP)</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mb-3">
