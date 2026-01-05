@@ -42,7 +42,7 @@
             <i class="bi bi-file-earmark-excel me-1"></i>Reporting
         </a> --}}
 
-        <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
+        <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambahDonasi">
             <i class="bi bi-plus-lg me-1"></i>Tambah Data
         </button>
     </div>
