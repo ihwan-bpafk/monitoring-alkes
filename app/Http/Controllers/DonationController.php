@@ -16,50 +16,47 @@ class DonationController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'input_by' => 'required',
-            'nama_alkes' => 'required',
-            'nama_rs' => 'required',
-            'merek' => 'nullable',
-            'tipe_model' => 'nullable',
-            'jumlah' => 'required|integer',
-            'donatur' => 'required',
-            'keterangan_lain' => 'nullable',
-            'file_donasi' => 'nullable|file|mimes:pdf,jpg,png|max:5120'
-        ]);
+        $data = $request->all();
 
         if ($request->hasFile('file_donasi')) {
+            // Simpan file ke folder 'donations' di disk 'public'
             $data['file_donasi'] = $request->file('file_donasi')->store('donations', 'public');
         }
 
-        Donation::create($data);
+        \App\Models\Donation::create($data);
 
         return redirect()->back()->with('success', 'Data Donasi berhasil disimpan!');
     }
 
-    public function update(Request $request, Donation $donation)
+    public function update(Request $request, $id)
     {
+        $donation = \App\Models\Donation::findOrFail($id);
         $data = $request->all();
 
         if ($request->hasFile('file_donasi')) {
             // Hapus file lama jika ada
             if ($donation->file_donasi) {
-                Storage::disk('public')->delete($donation->file_donasi);
+                \Storage::disk('public')->delete($donation->file_donasi);
             }
             $data['file_donasi'] = $request->file('file_donasi')->store('donations', 'public');
         }
 
         $donation->update($data);
 
-        return redirect()->back()->with('success', 'Data Donasi berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Data Donasi diperbarui!');
     }
 
-    public function destroy(Donation $donation)
+    public function destroy($id)
     {
+        $donation = \App\Models\Donation::findOrFail($id);
+        
+        // Hapus file fisik
         if ($donation->file_donasi) {
-            Storage::disk('public')->delete($donation->file_donasi);
+            \Storage::disk('public')->delete($donation->file_donasi);
         }
+        
         $donation->delete();
+
         return redirect()->back()->with('success', 'Data Donasi berhasil dihapus!');
     }
 }

@@ -148,6 +148,8 @@
                                             <span class="badge bg-danger animate__animated animate__pulse animate__infinite">
                                                 Butuh {{ $item->kebutuhan }} Unit
                                             </span>
+                                        @elseif ($item->total_donasi > 0)
+                                            <span class="text-success small">Terpenuhi</span>
                                         @else
                                             <span class="text-black small">-</span>
                                         @endif
