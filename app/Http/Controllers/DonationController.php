@@ -10,37 +10,52 @@ class DonationController extends Controller
 {
     public function index()
     {
+        // Menampilkan data terbaru dengan paginasi
         $donations = Donation::latest()->paginate(10);
         return view('donations.index', compact('donations'));
     }
 
     public function store(Request $request)
     {
-        $data = $request->all();
+        // 1. Ambil data kecuali token dan file agar tidak masuk ke query SQL
+        $data = $request->except(['_token', 'file_donasi']);
 
+        // 2. Proses Upload File
         if ($request->hasFile('file_donasi')) {
-            // Simpan file ke folder 'donations' di disk 'public'
-            $data['file_donasi'] = $request->file('file_donasi')->store('donations', 'public');
+            $file = $request->file('file_donasi');
+            if ($file->isValid()) {
+                // Simpan dan masukkan path ke key 'file_donasi'
+                $data['file_donasi'] = $file->store('donations', 'public');
+            }
         }
 
-        \App\Models\Donation::create($data);
+        // 3. Simpan ke Database
+        Donation::create($data);
 
         return redirect()->back()->with('success', 'Data Donasi berhasil disimpan!');
     }
 
     public function update(Request $request, $id)
     {
-        $donation = \App\Models\Donation::findOrFail($id);
-        $data = $request->all();
+        $donation = Donation::findOrFail($id);
+        
+        // 1. Ambil data kecuali yang tidak perlu
+        $data = $request->except(['_token', '_method', 'file_donasi']);
 
+        // 2. Proses Update File
         if ($request->hasFile('file_donasi')) {
-            // Hapus file lama jika ada
-            if ($donation->file_donasi) {
-                \Storage::disk('public')->delete($donation->file_donasi);
+            $file = $request->file('file_donasi');
+            if ($file->isValid()) {
+                // Hapus file lama jika ada di storage
+                if ($donation->file_donasi && Storage::disk('public')->exists($donation->file_donasi)) {
+                    Storage::disk('public')->delete($donation->file_donasi);
+                }
+                // Simpan file baru
+                $data['file_donasi'] = $file->store('donations', 'public');
             }
-            $data['file_donasi'] = $request->file('file_donasi')->store('donations', 'public');
         }
 
+        // 3. Update Database
         $donation->update($data);
 
         return redirect()->back()->with('success', 'Data Donasi diperbarui!');
@@ -48,13 +63,14 @@ class DonationController extends Controller
 
     public function destroy($id)
     {
-        $donation = \App\Models\Donation::findOrFail($id);
+        $donation = Donation::findOrFail($id);
         
-        // Hapus file fisik
-        if ($donation->file_donasi) {
-            \Storage::disk('public')->delete($donation->file_donasi);
+        // 1. Hapus file fisik dari storage agar tidak memenuhi server
+        if ($donation->file_donasi && Storage::disk('public')->exists($donation->file_donasi)) {
+            Storage::disk('public')->delete($donation->file_donasi);
         }
         
+        // 2. Hapus data dari database
         $donation->delete();
 
         return redirect()->back()->with('success', 'Data Donasi berhasil dihapus!');
