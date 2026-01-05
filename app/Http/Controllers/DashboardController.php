@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Repair;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Donation;
 
 class DashboardController extends Controller
 {
@@ -27,6 +28,16 @@ class DashboardController extends Controller
         // 2. Tangkap filter dari URL
         $selected_rs = $request->query('nama_rs');
         $selected_kategori = $request->query('kategori');
+        $donationQuery = Donation::query();
+
+        if ($selected_rs) {
+            $donationQuery->where('nama_rs', $selected_rs);
+        }
+
+        $donations = $donationQuery->select('nama_alkes', DB::raw('SUM(jumlah) as total_donasi'))
+        ->groupBy('nama_alkes')
+        ->get()
+        ->pluck('total_donasi', 'nama_alkes');
 
         // 3. Query Dasar (Base Query)
         $query = Repair::query();
@@ -70,19 +81,40 @@ class DashboardController extends Controller
 
         
         // Query Ringkasan Alat dengan Status Baru
+        // $alkesSummary = (clone $query)
+        //     ->select('nama_alkes', 
+        //         DB::raw('count(*) as jumlah'),
+        //         // Menghitung jumlah 'Bisa Dipakai'
+        //         DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
+        //         // Menghitung jumlah 'Dalam Proses Perbaikan'
+        //         DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
+        //         // Menghitung jumlah 'Harus di Ganti (BAP)'
+        //         DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
+        //     )
+        //     ->groupBy('nama_alkes')
+        //     ->orderBy('jumlah', 'desc')
+        //     ->get();
+
         $alkesSummary = (clone $query)
-            ->select('nama_alkes', 
-                DB::raw('count(*) as jumlah'),
-                // Menghitung jumlah 'Bisa Dipakai'
-                DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
-                // Menghitung jumlah 'Dalam Proses Perbaikan'
-                DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
-                // Menghitung jumlah 'Harus di Ganti (BAP)'
-                DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
-            )
-            ->groupBy('nama_alkes')
-            ->orderBy('jumlah', 'desc')
-            ->get();
+        ->select('nama_alkes', 
+            DB::raw('count(*) as jumlah'),
+            DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
+            DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
+            DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
+        )
+        ->groupBy('nama_alkes')
+        ->orderBy('jumlah', 'desc')
+        ->get()
+        ->map(function($item) use ($donations) {
+            // Gabungkan data donasi ke dalam collection alkesSummary
+            $item->total_donasi = $donations[$item->nama_alkes] ?? 0;
+            
+            // Rumus: Kebutuhan = BAP - Donasi (Jika hasil negatif, jadikan 0)
+            $kebutuhan = $item->ganti - $item->total_donasi;
+            $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
+            
+            return $item;
+        });
 
         return view('dashboard.index', compact(
             'list_rs', 'selected_rs', 'list_kategori', 'selected_kategori',

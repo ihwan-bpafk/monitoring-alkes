@@ -36,6 +36,10 @@
             <i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard
         </a>
 
+        <a href="{{ route('donations.index') }}" class="btn btn-secondary shadow-sm fw-bold">
+            <i class="bi bi-gift me-1"></i> Menu Alat Donasi
+        </a>
+
         <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold">
             <i class="bi bi-file-earmark-excel me-1"></i>Reporting
         </a>

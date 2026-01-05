@@ -11,8 +11,11 @@
         </div>
         
         <div class="d-flex gap-2 align-items-center">
-            <a href="{{ route('repairs.index') }}" class="btn btn-primary shadow-sm fw-bold px-3">
+            <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold px-3">
                 <i class="bi bi-tools me-2"></i>Data Perbaikan
+            </a>
+            <a href="{{ route('donations.index') }}" class="btn btn-secondary shadow-sm fw-bold">
+                <i class="bi bi-gift me-1"></i> Menu Alat Donasi
             </a>
 
             <form action="{{ route('dashboard') }}" method="GET" class="d-flex gap-2">
@@ -119,38 +122,40 @@
                             <thead class="bg-light text-center">
                                 <tr>
                                     <th class="ps-4 text-start">Nama Alat Kesehatan</th>
-                                    <th style="width: 120px;">Total Unit</th>
-                                    <th class="text-success" style="width: 150px;">Bisa Dipakai</th>
-                                    <th class="text-warning" style="width: 150px;">Dalam Proses</th>
-                                    <th class="text-danger" style="width: 180px;">Harus di Ganti (BAP)</th>
-                                </tr>
+                                    <th style="width: 100px;">Total Unit</th>
+                                    <th class="text-success" style="width: 120px;">Bisa Dipakai</th>
+                                    <th class="text-warning" style="width: 120px;">Dalam Proses</th>
+                                    <th class="text-danger" style="width: 150px;">Harus Ganti (BAP)</th>
+                                    <th class="text-info" style="width: 120px;">Total Donasi</th> <th class="bg-dark text-white" style="width: 120px;">Kebutuhan</th> </tr>
                             </thead>
                             <tbody class="text-center">
                                 @forelse($alkesSummary as $item)
                                 <tr>
                                     <td class="ps-4 text-start fw-bold text-dark">{{ $item->nama_alkes }}</td>
+                                    <td><span class="badge bg-secondary rounded-pill px-3">{{ $item->jumlah }}</span></td>
+                                    <td><span class="{{ $item->bisa_dipakai > 0 ? 'fw-bold text-success' : 'text-muted opacity-50' }}">{{ $item->bisa_dipakai }}</span></td>
+                                    <td><span class="{{ $item->proses > 0 ? 'fw-bold text-warning' : 'text-muted opacity-50' }}">{{ $item->proses }}</span></td>
+                                    <td><span class="{{ $item->ganti > 0 ? 'fw-bold text-danger' : 'text-muted opacity-50' }}">{{ $item->ganti }}</span></td>
+                                    
                                     <td>
-                                        <span class="badge bg-secondary rounded-pill px-3">{{ $item->jumlah }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="{{ $item->bisa_dipakai > 0 ? 'fw-bold text-success' : 'text-muted opacity-50' }}">
-                                            {{ $item->bisa_dipakai }}
+                                        <span class="{{ $item->total_donasi > 0 ? 'fw-bold text-info' : 'text-muted opacity-50' }}">
+                                            {{ $item->total_donasi }}
                                         </span>
                                     </td>
-                                    <td>
-                                        <span class="{{ $item->proses > 0 ? 'fw-bold text-warning' : 'text-muted opacity-50' }}">
-                                            {{ $item->proses }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="{{ $item->ganti > 0 ? 'fw-bold text-danger' : 'text-muted opacity-50' }}">
-                                            {{ $item->ganti }}
-                                        </span>
+
+                                    <td class="bg-light">
+                                        @if($item->kebutuhan > 0)
+                                            <span class="badge bg-danger animate__animated animate__pulse animate__infinite">
+                                                Butuh {{ $item->kebutuhan }} Unit
+                                            </span>
+                                        @else
+                                            <span class="text-black small">-</span>
+                                        @endif
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">Data tidak ditemukan.</td>
+                                    <td colspan="7" class="text-center py-4 text-muted">Data tidak ditemukan.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RepairController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DonationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,5 +36,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/repairs/report', [RepairController::class, 'reportPage'])->name('repairs.report');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/repairs/report-preview', [RepairController::class, 'previewExport'])->name('repairs.reportPreview');
+    Route::resource('donations', DonationController::class);
     Route::resource('repairs', RepairController::class);
 });
