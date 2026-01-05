@@ -128,7 +128,17 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Nama Rumah Sakit</label>
-                            <input type="text" name="nama_rs" class="form-control" placeholder="Tujuan Donasi" required>
+                            <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
+                                <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
+                                <option value="RSUD Muda Sedia Aceh Tamiang" data-lokasi="Kab. Aceh Tamiang">RSUD Muda Sedia Aceh Tamiang</option>
+                                <option value="RSUD Sultan Abdul Aziz Syah" data-lokasi="Kota Peureulak">RSUD Sultan Abdul Aziz Syah</option>
+                                <option value="RSUD Langsa" data-lokasi="Kota Langsa">RSUD Langsa</option>
+                                <option value="RSUD Muyang Kute" data-lokasi="Bener Meriah">RSUD Muyang Kute</option>
+                                <option value="RSUD Zubir Mahmud" data-lokasi="Kab Aceh Timur/Idi Timur">RSUD Zubir Mahmud</option>
+                                <option value="RSUD Fauziah Bireuen" data-lokasi="Bireuen">RSUD Fauziah Bireuen</option>
+                                <option value="RSUD Datu Beru" data-lokasi="Takengon">RSUD Datu Beru</option>
+                                <option value="RSUD Tanjung Pura" data-lokasi="Kab. Langkat/Tanjung Pura">RSUD Tanjung Pura</option>
+                            </select>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label small fw-bold">Nama Alat Kesehatan</label>
