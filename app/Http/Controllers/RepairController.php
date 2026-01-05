@@ -43,8 +43,10 @@ class RepairController extends Controller
         ->when($request->status_perbaikan, fn($q, $status) => $q->where('status_perbaikan', $status))
         ->when($request->respon_penyedia, fn($q, $respon) => $q->where('respon_penyedia', $respon));
 
-        // 5. Eksekusi Query dengan Pagination dan simpan query string filter
-        $repairs = $query->latest()->paginate(15)->withQueryString();
+        // 5. Eksekusi Query: Ganti latest() menjadi orderBy nama_alkes A-Z
+        $repairs = $query->orderBy('nama_alkes', 'asc') // <--- Perubahan di sini
+                        ->paginate(15)
+                        ->withQueryString();
 
         // 6. Kirim semua variabel list ke View
         return view('repairs.index', compact(
