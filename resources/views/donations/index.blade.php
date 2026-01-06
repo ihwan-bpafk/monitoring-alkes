@@ -180,8 +180,14 @@
                             </select>
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label small fw-bold">Nama Alat Kesehatan</label>
-                            <input type="text" name="nama_alkes" class="form-control border-primary" required>
+                            <label class="form-label small fw-bold text-primary">Nama Alat Kesehatan</label>
+                            <select name="nama_alkes" class="form-select select2-insidelop border-primary" required>
+                                <option value="">-- Pilih Alat Kesehatan --</option>
+                                @foreach($list_alkes as $alkes)
+                                    <option value="{{ $alkes }}">{{ $alkes }}</option>
+                                @endforeach
+                            </select>
+                            <div class="form-text small">Pilih alat yang sudah terdaftar di sistem.</div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-bold">Merek</label>
@@ -217,4 +223,14 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+    $('.select2-insidelop').select2({
+        theme: 'bootstrap-5',
+        dropdownParent: $('#modalTambahDonasi'), // Penting agar select2 muncul di dalam modal
+        tags: true, // Izinkan user mengetik nama alat baru yang belum ada di list
+        placeholder: "-- Pilih atau Ketik Alat Baru --"
+    });
+});
+</script>
 @endsection

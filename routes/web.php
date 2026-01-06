@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('repairs/{id}/update-status', [RepairController::class, 'updateStatus'])->name('repairs.updateStatus');
     Route::get('/repairs/export', [RepairController::class, 'exportExcel'])->name('repairs.export');
     Route::get('/repairs/report', [RepairController::class, 'reportPage'])->name('repairs.report');
+    Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('dashboard.exportExcel');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/repairs/report-preview', [RepairController::class, 'previewExport'])->name('repairs.reportPreview');
     Route::resource('donations', DonationController::class);

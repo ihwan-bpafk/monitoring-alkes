@@ -113,6 +113,9 @@
                 <small class="text-muted fw-normal">(Berdasarkan Filter)</small>
             </div>
             <div class="card border-0 shadow-sm mt-4">
+                <a href="{{ route('dashboard.exportExcel', request()->all()) }}" class="btn btn-success shadow-sm fw-bold px-3">
+                    <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
+                </a>
                 <div class="card-header bg-white fw-bold py-3 border-0">
                     <i class="bi bi-grid-3x3-gap me-2 text-primary"></i>Rincian Kondisi Akhir per Jenis Alat
                 </div>

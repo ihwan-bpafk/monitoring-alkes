@@ -11,7 +11,11 @@ class DonationController extends Controller
     public function index()
     {
         $donations = Donation::latest()->paginate(10);
-        return view('donations.index', compact('donations'));
+        $list_alkes = \App\Models\Repair::whereNotNull('nama_alkes')
+        ->distinct()
+        ->orderBy('nama_alkes', 'asc')
+        ->pluck('nama_alkes');
+        return view('donations.index', compact('donations', 'list_alkes'));
     }
 
     public function store(Request $request)
