@@ -28,7 +28,7 @@ class DashboardController extends Controller
         // --- LOGIKA BARU: Ambil Donasi yang sudah berstatus 'Diterima' di RS ---
         $distQuery = Distribution::query()
             ->join('donations', 'distributions.donation_id', '=', 'donations.id')
-            ->where('distributions.status', 'Diterima'); // Hanya yang sudah diterima RS
+            ->where('distributions.status', 'Diterima RS'); // Hanya yang sudah diterima RS
 
         if ($selected_rs) {
             $distQuery->where('distributions.nama_rs', $selected_rs);
