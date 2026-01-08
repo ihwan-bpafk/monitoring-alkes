@@ -65,8 +65,10 @@ class DashboardController extends Controller
 
         // --- B. DATA RESPON PENYEDIA ---
         $responData = (clone $query)
-            ->whereNotNull('nama_penyedia')
-            ->whereNotIn('nama_penyedia', ['-', '', 'Tidak Ada'])
+            ->whereNot(function($q) {
+                $q->where('grade_kerusakan', 'Bisa Dipakai')
+                ->orWhere('status_perbaikan', 'Bisa Dipakai');
+            })
             ->select('respon_penyedia', DB::raw('count(*) as total'))
             ->groupBy('respon_penyedia')
             ->get();

@@ -82,7 +82,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white fw-bold py-3 border-0 d-flex justify-content-between">
                     <span><i class="bi bi-person-check me-2 text-primary"></i>Respon Penyedia</span>
-                    <span class="badge bg-light text-dark border small fw-normal">Total alat yg ada Vendor: {{ $totalWithVendor }}</span>
+                    <span class="badge bg-light text-dark border small fw-normal">Total alat yg rusak: {{ $totalWithVendor }}</span>
                 </div>
                 <div class="card-body">
                     <canvas id="chartRespon" style="max-height: 250px;"></canvas>
