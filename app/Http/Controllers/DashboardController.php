@@ -65,10 +65,14 @@ class DashboardController extends Controller
 
         // --- B. DATA RESPON PENYEDIA ---
         $responData = (clone $query)
-            ->whereNot(function($q) {
-                $q->where('grade_kerusakan', 'Bisa Dipakai')
-                ->orWhere('status_perbaikan', 'Bisa Dipakai');
-            })
+            // 1. Tetap gunakan filter vendor yang sudah terbukti jalan
+            ->whereNotNull('nama_penyedia')
+            // 2. Logika Eksklusi: Buang jika salah satu bernilai 'Bisa Dipakai'
+            // Secara matematis: NOT (A OR B) itu sama dengan (NOT A AND NOT B)
+            ->where('grade_kerusakan', '!=', 'Bisa Dipakai')
+            ->where('status_perbaikan', '!=', 'Bisa Dipakai')
+
+            // 3. Ambil data untuk Chart
             ->select('respon_penyedia', DB::raw('count(*) as total'))
             ->groupBy('respon_penyedia')
             ->get();
