@@ -33,6 +33,42 @@
             </button>
         </div>
     </div>
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+        <div class="card-body">
+            <form action="{{ route('donations.index') }}" method="GET" class="row g-2">
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Pemberi Donasi</label>
+                    <select name="filter_donatur" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua Donatur --</option>
+                        @foreach($list_donatur as $don)
+                            <option value="{{ $don }}" {{ request('filter_donatur') == $don ? 'selected' : '' }}>{{ $don }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Nama Alat</label>
+                    <select name="filter_alkes" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua Alat --</option>
+                        @foreach($list_alkes_donasi as $alk)
+                            <option value="{{ $alk }}" {{ request('filter_alkes') == $alk ? 'selected' : '' }}>{{ $alk }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Penerima</label>
+                    <select name="filter_petugas" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua Petugas --</option>
+                        @foreach($list_petugas as $p)
+                            <option value="{{ $p }}" {{ request('filter_petugas') == $p ? 'selected' : '' }}>{{ $p }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <a href="{{ route('donations.index') }}" class="btn btn-outline-secondary btn-sm w-100">Reset Filter</a>
+                </div>
+            </form>
+        </div>
+    </div>
 
     @if(session('success'))
         <div class="alert alert-success border-0 shadow-sm alert-dismissible fade show" role="alert">

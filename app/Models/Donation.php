@@ -16,4 +16,9 @@ class Donation extends Model
             $model->sisa_stok = $model->jumlah_donasi;
         });
     }
+    public function distributions()
+    {
+        // Pastikan model Distribution sudah di-import atau gunakan namespace lengkap
+        return $this->hasMany(Distribution::class);
+    }
 }

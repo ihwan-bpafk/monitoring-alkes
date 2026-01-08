@@ -36,8 +36,11 @@
             <i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard
         </a>
 
-        <a href="{{ route('donations.index') }}" class="btn btn-secondary shadow-sm fw-bold">
-            <i class="bi bi-gift me-1"></i> Menu Alat Donasi
+        <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
+            <i class="bi bi-box-seam me-2"></i>Stok Donasi
+        </a>
+        <a href="{{ route('distributions.index') }}" class="btn btn-info shadow-sm fw-bold text-white">
+            <i class="bi bi-truck me-2"></i>Menu Distribusi
         </a>
 
         <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold">

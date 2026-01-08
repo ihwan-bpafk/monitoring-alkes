@@ -12,19 +12,51 @@ class DistributionController extends Controller
     /**
      * Menampilkan daftar distribusi dan alat yang tersedia untuk dialokasikan.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // 1. Ambil semua riwayat distribusi, urutkan dari yang terbaru (Eager Loading relasi donation)
-        $distributions = Distribution::with('donation')
-            ->latest()
-            ->paginate(10);
+        // 1. Ambil daftar unik dari database
+        $list_rs = Distribution::distinct()->orderBy('nama_rs')->pluck('nama_rs');
+        
+        // MENGAMBIL STATUS LANGSUNG DARI DB
+        $list_status = Distribution::distinct()
+            ->whereNotNull('status')
+            ->orderBy('status')
+            ->pluck('status');
+        
+        // Ambil nama alkes unik dari relasi
+        $list_alkes = Donation::whereHas('distributions')
+            ->distinct()
+            ->orderBy('nama_alkes')
+            ->pluck('nama_alkes');
 
-        // 2. Ambil daftar donasi yang masih memiliki stok (untuk dropdown di Modal)
-        $donations_available = Donation::where('sisa_stok', '>', 0)
-            ->orderBy('nama_alkes', 'asc')
-            ->get();
+        // 2. Query Utama dengan Filter (Tetap Sama)
+        $query = Distribution::with('donation');
 
-        return view('distributions.index', compact('distributions', 'donations_available'));
+        $query->when($request->filter_rs, function ($q, $rs) {
+            return $q->where('nama_rs', $rs);
+        });
+
+        $query->when($request->filter_status, function ($q, $st) {
+            return $q->where('status', $st);
+        });
+
+        $query->when($request->filter_alkes, function ($q, $alkes) {
+            return $q->whereHas('donation', function ($sub) use ($alkes) {
+                $sub->where('nama_alkes', $alkes);
+            });
+        });
+
+        // 3. Eksekusi
+        $distributions = $query->latest()->paginate(10)->withQueryString();
+        $donations_available = Donation::where('sisa_stok', '>', 0)->get();
+
+        return view('distributions.index', compact(
+            'distributions', 
+            'donations_available', 
+            'list_rs', 
+            'list_status', 
+            'list_alkes'
+        ));
     }
 
     /**

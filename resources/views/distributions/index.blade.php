@@ -17,12 +17,51 @@
             <a href="{{ route('dashboard') }}" class="btn btn-light border shadow-sm fw-bold">
                 <i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard
             </a>
+            <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold px-3">
+                <i class="bi bi-tools me-2"></i>Data Perbaikan
+            </a>
             <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-box-seam me-2"></i>Stok Donasi
             </a>
             <button class="btn btn-primary shadow-sm fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalDistribusi">
                 <i class="bi bi-plus-lg me-1"></i>Input Distribusi
             </button>
+        </div>
+    </div>
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+        <div class="card-body">
+            <form action="{{ route('distributions.index') }}" method="GET" class="row g-2">
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Rumah Sakit Tujuan</label>
+                    <select name="filter_rs" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua RS --</option>
+                        @foreach($list_rs as $rs)
+                            <option value="{{ $rs }}" {{ request('filter_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Nama Alat</label>
+                    <select name="filter_alkes" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua Alat --</option>
+                        @foreach($list_alkes as $alk)
+                            <option value="{{ $alk }}" {{ request('filter_alkes') == $alk ? 'selected' : '' }}>{{ $alk }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Status</label>
+                    <select name="filter_status" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Semua Status --</option>
+                        @foreach($list_status as $st)
+                            <option value="{{ $st }}" {{ request('filter_status') == $st ? 'selected' : '' }}>{{ $st }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <a href="{{ route('distributions.index') }}" class="btn btn-outline-secondary btn-sm w-100">Reset Filter</a>
+                </div>
+            </form>
         </div>
     </div>
 
