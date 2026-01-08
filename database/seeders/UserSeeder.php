@@ -17,15 +17,20 @@ class UserSeeder extends Seeder
         //     'username' => 'admin',
         //     'password' => bcrypt('adminbpafk007'),
         // ]);
+        // \App\Models\User::create([
+        //     'name' => 'Farmalkes',
+        //     'username' => 'farmalkes',
+        //     'password' => bcrypt('adminfarmalkes'),
+        // ]);
+        // \App\Models\User::create([
+        //     'name' => 'RSUD Langsa',
+        //     'username' => 'RSUD Langsa',
+        //     'password' => bcrypt('RSUDLangsa'),
+        // ]);
         \App\Models\User::create([
-            'name' => 'Farmalkes',
-            'username' => 'farmalkes',
-            'password' => bcrypt('adminfarmalkes'),
-        ]);
-        \App\Models\User::create([
-            'name' => 'RSUD Langsa',
-            'username' => 'RSUD Langsa',
-            'password' => bcrypt('RSUDLangsa'),
+            'name' => 'RSUP Adam Malik',
+            'username' => 'RSUP Adam Malik',
+            'password' => bcrypt('RSUPAdamMalik'),
         ]);
         // \App\Models\User::create([
         //     'name' => 'RSUD Muda Sedia Aceh Tamiang',
