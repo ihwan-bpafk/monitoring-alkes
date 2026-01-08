@@ -3,65 +3,107 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donation;
+use App\Models\Repair;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use App\Imports\DonationImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DonationController extends Controller
 {
+    /**
+     * Menampilkan daftar donasi dengan fitur Filter & Sorting A-Z
+     */
     public function index(Request $request)
     {
-        // 1. Ambil data unik untuk filter
-        $list_rs = Donation::distinct()->orderBy('nama_rs')->pluck('nama_rs');
-        $list_donatur = Donation::distinct()->orderBy('donatur')->pluck('donatur');
-        $list_alkes_donasi = Donation::distinct()->orderBy('nama_alkes')->pluck('nama_alkes');
+        // 1. Data untuk Dropdown Filter (Dinamis dari tabel donations)
+        $list_rs = Donation::distinct()->whereNotNull('nama_rs')->orderBy('nama_rs', 'asc')->pluck('nama_rs');
+        $list_donatur = Donation::distinct()->whereNotNull('donatur')->orderBy('donatur', 'asc')->pluck('donatur');
+        $list_alkes_donasi = Donation::distinct()->whereNotNull('nama_alkes')->orderBy('nama_alkes', 'asc')->pluck('nama_alkes');
 
-        // Ambil data alkes dari tabel repairs untuk modal input (seperti sebelumnya)
-        $list_alkes = \App\Models\Repair::distinct()->orderBy('nama_alkes')->pluck('nama_alkes');
+        // 2. Data untuk Modal Input (Diambil dari database perbaikan alat)
+        $list_alkes = Repair::distinct()->whereNotNull('nama_alkes')->orderBy('nama_alkes', 'asc')->pluck('nama_alkes');
 
-        // 2. Query dengan Filter
+        // 3. Query Utama
         $query = Donation::query();
 
-        if ($request->filter_rs) {
-            $query->where('nama_rs', $request->filter_rs);
-        }
-        if ($request->filter_donatur) {
-            $query->where('donatur', $request->filter_donatur);
-        }
-        if ($request->filter_alkes) {
-            $query->where('nama_alkes', $request->filter_alkes);
-        }
+        // 4. Logika Filter (Rekap)
+        $query->when($request->filter_rs, function ($q, $rs) {
+            return $q->where('nama_rs', $rs);
+        })
+        ->when($request->filter_donatur, function ($q, $donatur) {
+            return $q->where('donatur', $donatur);
+        })
+        ->when($request->filter_alkes, function ($q, $alkes) {
+            return $q->where('nama_alkes', $alkes);
+        });
 
-        $donations = $query->latest()->paginate(15)->withQueryString();
+        // 5. Eksekusi Data: Urutkan Nama Alat A-Z dan Paginasi
+        $donations = $query->orderBy('nama_alkes', 'asc')
+                           ->paginate(15)
+                           ->withQueryString();
 
         return view('donations.index', compact(
-            'donations', 'list_rs', 'list_donatur', 'list_alkes_donasi', 'list_alkes'
+            'donations', 
+            'list_rs', 
+            'list_donatur', 
+            'list_alkes_donasi', 
+            'list_alkes'
         ));
     }
 
-    // Jangan lupa update store & update untuk menerima 'tanggal_diterima'
-    public function store(Request $request) {
-        $data = $request->only(['input_by', 'nama_rs', 'nama_alkes', 'merek', 'tipe_model', 'jumlah', 'donatur', 'keterangan_lain', 'tanggal_diterima']);
+    /**
+     * Menyimpan data donasi baru
+     */
+    public function store(Request $request)
+    {
+        // Gunakan 'only' untuk mencegah error "Unknown column /donations"
+        $data = $request->only([
+            'input_by', 
+            'nama_alkes', 
+            'nama_rs', 
+            'merek', 
+            'tipe_model', 
+            'jumlah_total_donasi', 
+            'donatur', 
+            'tanggal_terima_donatur', 
+            'jumlah', 
+            'status', 
+            'keterangan_lain',
+            'sisa_stok' // Nilai ini didapat dari kalkulasi JS di view
+        ]);
+
+        // Proses Upload File
         if ($request->hasFile('file_donasi')) {
-            $data['file_donasi'] = $request->file('file_donasi')->store('donations', 'public');
+            $file = $request->file('file_donasi');
+            if ($file->isValid()) {
+                $data['file_donasi'] = $file->store('donations', 'public');
+            }
         }
+
         Donation::create($data);
-        return redirect()->back()->with('success', 'Data berhasil disimpan');
+
+        return redirect()->back()->with('success', 'Data Donasi & Stok berhasil ditambahkan!');
     }
 
+    /**
+     * Memperbarui data donasi
+     */
     public function update(Request $request, $id)
     {
         $donation = Donation::findOrFail($id);
-        
-        // Ambil hanya kolom database
+
         $data = $request->only([
-            'input_by', 'nama_rs', 'nama_alkes', 'merek', 
-            'tipe_model', 'jumlah', 'donatur', 'keterangan_lain'
+            'input_by', 'nama_alkes', 'nama_rs', 'merek', 'tipe_model', 
+            'jumlah_total_donasi', 'donatur', 'tanggal_terima_donatur', 
+            'jumlah', 'status', 'keterangan_lain', 'sisa_stok'
         ]);
 
         if ($request->hasFile('file_donasi')) {
             $file = $request->file('file_donasi');
             if ($file->isValid()) {
-                // Hapus file lama jika ada
+                // Hapus file fisik lama jika ada
                 if ($donation->file_donasi && Storage::disk('public')->exists($donation->file_donasi)) {
                     Storage::disk('public')->delete($donation->file_donasi);
                 }
@@ -71,19 +113,34 @@ class DonationController extends Controller
 
         $donation->update($data);
 
-        return redirect()->back()->with('success', 'Data Donasi diperbarui!');
+        return redirect()->back()->with('success', 'Perubahan data donasi berhasil disimpan!');
     }
 
+    /**
+     * Menghapus data donasi beserta filenya
+     */
     public function destroy($id)
     {
         $donation = Donation::findOrFail($id);
         
+        // Hapus file dari folder storage
         if ($donation->file_donasi && Storage::disk('public')->exists($donation->file_donasi)) {
             Storage::disk('public')->delete($donation->file_donasi);
         }
         
         $donation->delete();
 
-        return redirect()->back()->with('success', 'Data Donasi berhasil dihapus!');
+        return redirect()->back()->with('success', 'Data donasi telah dihapus.');
+    }
+
+    public function import(Request $request) 
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new DonationImport, $request->file('file_excel'));
+
+        return redirect()->back()->with('success', 'Data Donasi Berhasil Diimport!');
     }
 }
