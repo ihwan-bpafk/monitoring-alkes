@@ -6,29 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
+        // Menghapus jika tabel sudah ada agar fresh
+        Schema::dropIfExists('donations');
+
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
-            $table->string('input_by'); // Nama petugas penginput
-            $table->string('nama_alkes'); // Nama alat kesehatan
-            $table->string('nama_rs'); // Asal/Tujuan Rumah Sakit
+            // Data sesuai permintaan menu Donasi
+            $table->string('pemberi_donasi'); // Donor
+            $table->string('nama_alkes');     // Nama Alat
             $table->string('merek')->nullable();
-            $table->string('tipe_model')->nullable();
-            $table->integer('jumlah')->default(1); // Jumlah alat
-            $table->string('donatur');
-            $table->string('file_donasi')->nullable();
-            $table->text('keterangan_lain')->nullable();
+            $table->integer('jumlah_donasi'); // Total stok masuk awal
+            $table->string('diterima_oleh');  // Petugas penerima di kantor
+
+            // Kolom Tambahan untuk Sinkronisasi Distribusi
+            $table->integer('sisa_stok');     // Akan berkurang otomatis saat ada distribusi
+            $table->date('tanggal_masuk');    // Tanggal barang sampai di kantor
+            $table->text('keterangan')->nullable();
+            
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('donations');

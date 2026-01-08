@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Donation;
 use App\Exports\AlkesSummaryExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Distribution;
 
 class DashboardController extends Controller
 {
@@ -16,118 +17,72 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Ambil list unik untuk dropdown filter
-        $list_rs = Repair::whereNotNull('nama_rs')
-            ->distinct()
-            ->orderBy('nama_rs', 'asc')
-            ->pluck('nama_rs');
+        // 1. Dropdown Filter
+        $list_rs = Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs', 'asc')->pluck('nama_rs');
+        $list_kategori = Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori');
 
-        $list_kategori = Repair::whereNotNull('kategori')
-            ->distinct()
-            ->orderBy('kategori', 'asc')
-            ->pluck('kategori');
-
-        // 2. Tangkap filter dari URL
+        // 2. Tangkap filter
         $selected_rs = $request->query('nama_rs');
         $selected_kategori = $request->query('kategori');
-        $donationQuery = Donation::query();
+
+        // --- LOGIKA BARU: Ambil Donasi yang sudah berstatus 'Diterima' di RS ---
+        $distQuery = Distribution::query()
+            ->join('donations', 'distributions.donation_id', '=', 'donations.id')
+            ->where('distributions.status', 'Diterima'); // Hanya yang sudah diterima RS
 
         if ($selected_rs) {
-            $donationQuery->where('nama_rs', $selected_rs);
+            $distQuery->where('distributions.nama_rs', $selected_rs);
         }
 
-        $donations = $donationQuery->select('nama_alkes', DB::raw('SUM(jumlah) as total_donasi'))
-        ->groupBy('nama_alkes')
-        ->get()
-        ->pluck('total_donasi', 'nama_alkes');
+        $donationsDist = $distQuery->select('donations.nama_alkes', DB::raw('SUM(distributions.jumlah_distribusi) as total_masuk'))
+            ->groupBy('donations.nama_alkes')
+            ->get()
+            ->pluck('total_masuk', 'nama_alkes');
 
-        // 3. Query Dasar (Base Query)
+        // 3. Base Query untuk Repairs
         $query = Repair::query();
+        if ($selected_rs) { $query->where('nama_rs', $selected_rs); }
+        if ($selected_kategori) { $query->where('kategori', $selected_kategori); }
 
-        // 4. Terapkan filter jika ada
-        if ($selected_rs) {
-            $query->where('nama_rs', $selected_rs);
-        }
-
-        if ($selected_kategori) {
-            $query->where('kategori', $selected_kategori);
-        }
-
-        // 5. Eksekusi Data untuk Dashboard (berdasarkan filter yang aktif)
         $totalData = $query->count();
 
-        // --- A. DATA KONDISI AKHIR ALKES ---
-        $statusData = (clone $query)
-        ->select('status_perbaikan', DB::raw('count(*) as total'))
-        ->where('status_perbaikan', '!=', '-') // Menghapus/mengecualikan yang bernilai '-'
-        ->groupBy('status_perbaikan')
-        ->get();
+        // --- A. DATA CHART ---
+        $statusData = (clone $query)->select('status_perbaikan', DB::raw('count(*) as total'))
+            ->where('status_perbaikan', '!=', '-')->groupBy('status_perbaikan')->get();
 
-        // --- B. DATA RESPON PENYEDIA ---
-        $responData = (clone $query)
-            // 1. Tetap gunakan filter vendor yang sudah terbukti jalan
-            ->whereNotNull('nama_penyedia')
-            // 2. Logika Eksklusi: Buang jika salah satu bernilai 'Bisa Dipakai'
-            // Secara matematis: NOT (A OR B) itu sama dengan (NOT A AND NOT B)
-            ->where('grade_kerusakan', '!=', 'Bisa Dipakai')
-            ->where('status_perbaikan', '!=', 'Bisa Dipakai')
-
-            // 3. Ambil data untuk Chart
-            ->select('respon_penyedia', DB::raw('count(*) as total'))
-            ->groupBy('respon_penyedia')
-            ->get();
+        $responData = (clone $query)->whereNotNull('nama_penyedia')
+            ->where('grade_kerusakan', '!=', 'Bisa Dipakai')->where('status_perbaikan', '!=', 'Bisa Dipakai')
+            ->select('respon_penyedia', DB::raw('count(*) as total'))->groupBy('respon_penyedia')->get();
 
         $totalWithVendor = $responData->sum('total');
 
-        // --- C. DATA KONDISI AWAL ALKES ---
-        $gradeData = (clone $query)
-            ->select('grade_kerusakan', DB::raw('count(*) as total'))
-            ->groupBy('grade_kerusakan')
-            ->get();
+        $gradeData = (clone $query)->select('grade_kerusakan', DB::raw('count(*) as total'))
+            ->groupBy('grade_kerusakan')->get();
 
-        // 6. Kirim data ke view
-
-        
-        // Query Ringkasan Alat dengan Status Baru
-        // $alkesSummary = (clone $query)
-        //     ->select('nama_alkes', 
-        //         DB::raw('count(*) as jumlah'),
-        //         // Menghitung jumlah 'Bisa Dipakai'
-        //         DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
-        //         // Menghitung jumlah 'Dalam Proses Perbaikan'
-        //         DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
-        //         // Menghitung jumlah 'Harus di Ganti (BAP)'
-        //         DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
-        //     )
-        //     ->groupBy('nama_alkes')
-        //     ->orderBy('jumlah', 'desc')
-        //     ->get();
-
+        // --- B. RINGKASAN INVENTARIS (SINKRON KE DISTRIBUSI) ---
         $alkesSummary = (clone $query)
-        ->select('nama_alkes', 
-            DB::raw('count(*) as jumlah'),
-            DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
-            DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
-            DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
-        )
-        ->groupBy('nama_alkes')
-        ->orderBy('jumlah', 'desc')
-        ->get()
-        ->map(function($item) use ($donations) {
-            // Gabungkan data donasi ke dalam collection alkesSummary
-            $item->total_donasi = $donations[$item->nama_alkes] ?? 0;
-            
-            // Rumus: Kebutuhan = BAP - Donasi (Jika hasil negatif, jadikan 0)
-            $kebutuhan = $item->ganti - $item->total_donasi;
-            $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
-            
-            return $item;
-        });
+            ->select('nama_alkes', 
+                DB::raw('count(*) as jumlah'),
+                DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
+                DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
+                DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
+            )
+            ->groupBy('nama_alkes')->orderBy('jumlah', 'desc')->get()
+            ->map(function($item) use ($donationsDist) {
+                // Ambil jumlah donasi yang SUDAH DITERIMA oleh RS ini
+                $item->total_donasi = $donationsDist[$item->nama_alkes] ?? 0;
+                
+                // Kebutuhan = Jumlah yang harus diganti (BAP) - Donasi yang sudah sampai
+                $kebutuhan = $item->ganti - $item->total_donasi;
+                $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
+                
+                return $item;
+            });
 
         return view('dashboard.index', compact(
             'list_rs', 'selected_rs', 'list_kategori', 'selected_kategori',
             'totalData', 'totalWithVendor', 'statusData', 'responData', 'gradeData',
-            'alkesSummary' // Kirim variabel ini ke view
+            'alkesSummary'
         ));
     }
 

@@ -129,7 +129,9 @@
                                     <th class="text-success" style="width: 120px;">Bisa Dipakai</th>
                                     <th class="text-warning" style="width: 120px;">Dalam Proses</th>
                                     <th class="text-danger" style="width: 150px;">Harus Ganti (BAP)</th>
-                                    <th class="text-info" style="width: 120px;">Total Donasi</th> <th class="bg-dark text-white" style="width: 120px;">Kebutuhan</th> </tr>
+                                    <th class="text-info" style="width: 150px;">Donasi (Diterima RS)</th> 
+                                    <th class="bg-dark text-white" style="width: 120px;">Kebutuhan</th> 
+                                </tr>
                             </thead>
                             <tbody class="text-center">
                                 @forelse($alkesSummary as $item)
@@ -142,8 +144,11 @@
                                     
                                     <td>
                                         <span class="{{ $item->total_donasi > 0 ? 'fw-bold text-info' : 'text-muted opacity-50' }}">
-                                            {{ $item->total_donasi }}
+                                            {{ $item->total_donasi }} Unit
                                         </span>
+                                        @if($item->total_donasi > 0)
+                                            <div style="font-size: 0.65rem;" class="text-muted italic">Status: Diterima</div>
+                                        @endif
                                     </td>
 
                                     <td class="bg-light">
@@ -152,14 +157,12 @@
                                                 Butuh {{ $item->kebutuhan }} Unit
                                             </span>
                                         @else
-                                            <span class="text-success small"><i class="bi bi-check-all"></i> Terpenuhi</span>
+                                            <span class="text-success small fw-bold"><i class="bi bi-check-all"></i> Terpenuhi</span>
                                         @endif
                                     </td>
                                 </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="7" class="text-center py-4 text-muted">Data tidak ditemukan.</td>
-                                </tr>
+                                <tr><td colspan="7" class="text-center py-4 text-muted">Data tidak ditemukan.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
