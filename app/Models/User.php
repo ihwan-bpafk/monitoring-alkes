@@ -45,4 +45,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // app/Models/User.php
+
+    public function canManageRepairs()
+    {
+        return $this->role === 1;
+    }
+
+    public function canManageLogistics()
+    {
+        return in_array($this->role, [1, 2]);
+    }
+
+    public function isReadOnly()
+    {
+        return $this->role === 3;
+    }
 }

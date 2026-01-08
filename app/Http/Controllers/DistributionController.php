@@ -65,6 +65,9 @@ class DistributionController extends Controller
     public function store(Request $request)
     {
         // Validasi Input
+        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $request->validate([
             'donation_id'        => 'required|exists:donations,id',
             'nama_rs'            => 'required|string|max:255',
@@ -107,6 +110,9 @@ class DistributionController extends Controller
      */
     public function destroy($id)
     {
+        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $distribution = Distribution::findOrFail($id);
         $donation     = Donation::findOrFail($distribution->donation_id);
 
@@ -126,6 +132,9 @@ class DistributionController extends Controller
      */
     public function updateStatus(Request $request, $id)
     {
+        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $distribution = Distribution::findOrFail($id);
         $distribution->update(['status' => $request->status]);
 

@@ -46,9 +46,11 @@
         <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold">
             <i class="bi bi-file-earmark-excel me-1"></i>Reporting
         </a>
+        @if(auth()->user()->role === 1)
         <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
             <i class="bi bi-plus-lg me-1"></i>Tambah Data
         </button>
+        @endif
     </div>
 </div>
 
@@ -192,6 +194,7 @@
                             @endif
                         </td>
                         <td class="text-center">
+                            @if(auth()->user()->role === 1)
                             <div class="btn-group shadow-sm">
                                 <button class="btn btn-info btn-sm text-white fw-bold px-2" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $r->id }}">
                                     <i class="bi bi-eye"></i> Detail
@@ -199,6 +202,7 @@
                                 <button class="btn btn-primary btn-sm fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $r->id }}">Update</button>
                                 <button class="btn btn-danger btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalHapus{{ $r->id }}"><i class="bi bi-trash"></i></button>
                             </div>
+                            @endif
                         </td>
                     </tr>
 

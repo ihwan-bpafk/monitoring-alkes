@@ -76,6 +76,9 @@ class RepairController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->user()->role !== 1) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         // 1. Ambil HANYA kolom yang memang ada di database (White-listing)
         // Cara ini otomatis membuang sampah seperti '/repairs'
         $data = $request->only([
@@ -137,6 +140,9 @@ class RepairController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
+        if (auth()->user()->role !== 1) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $repair = Repair::findOrFail($id);
         
         // Simpan data lama untuk perbandingan di history
@@ -206,6 +212,9 @@ class RepairController extends Controller
 
     public function destroy($id)
     {
+        if (auth()->user()->role !== 1) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $repair = Repair::findOrFail($id);
 
         // 1. Hapus semua foto dari storage (karena array, harus di-loop)

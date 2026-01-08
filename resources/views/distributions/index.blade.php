@@ -23,9 +23,11 @@
             <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-box-seam me-2"></i>Stok Donasi
             </a>
+            @if(auth()->user()->role === 1 || auth()->user()->role === 2)
             <button class="btn btn-primary shadow-sm fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalDistribusi">
                 <i class="bi bi-plus-lg me-1"></i>Input Distribusi
             </button>
+            @endif
         </div>
     </div>
     <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
@@ -120,10 +122,12 @@
                                 </span>
                             </td>
                             <td>
+                                @if(auth()->user()->role === 1 || auth()->user()->role === 2)
                                 <form action="{{ route('distributions.destroy', $dist->id) }}" method="POST" onsubmit="return confirm('Hapus data distribusi? Stok akan dikembalikan otomatis.')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-link text-danger p-0"><i class="bi bi-trash"></i></button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @empty

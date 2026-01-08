@@ -44,6 +44,9 @@ class DonationController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $data = $request->validate([
             'pemberi_donasi' => 'required|string',
             'nama_alkes'     => 'required|string',
@@ -63,6 +66,9 @@ class DonationController extends Controller
 
     public function destroy($id)
     {
+        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         Donation::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Data Donasi telah dihapus.');
     }

@@ -27,10 +27,11 @@
             <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold">
                 <i class="bi bi-tools me-2"></i>Data Perbaikan
             </a>
-
+            @if(auth()->user()->role === 1 || auth()->user()->role === 2)
             <button class="btn btn-primary shadow-sm fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalTambahDonasi">
                 <i class="bi bi-plus-lg me-1"></i>Tambah Donasi
             </button>
+            @endif
         </div>
     </div>
     <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
@@ -114,6 +115,7 @@
                                 <div class="small fw-bold">{{ $d->diterima_oleh }}</div>
                             </td>
                             <td class="text-center">
+                                @if(auth()->user()->role === 1 || auth()->user()->role === 2)
                                 <div class="btn-group">
                                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $d->id }}">
                                         <i class="bi bi-pencil"></i>
@@ -125,6 +127,7 @@
                                         </button>
                                     </form>
                                 </div>
+                                @endif
                             </td>
                         </tr>
 
