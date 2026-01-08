@@ -107,6 +107,27 @@
             max-height: 440px !important; /* Area daftar pilihan */
             overflow-y: auto;
         }
+        /* Override Warna Pagination Bootstrap */
+        .pagination .page-link {
+            color: #047d79; /* Warna teks link */
+            border-color: #dee2e6;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #047d79 !important; /* Warna latar saat aktif */
+            border-color: #047d79 !important;
+            color: white !important;
+        }
+
+        .pagination .page-link:hover {
+            color: white;
+            background-color: #035f5c; /* Warna sedikit lebih gelap saat hover */
+            border-color: #035f5c;
+        }
+
+        .pagination .page-link:focus {
+            box-shadow: 0 0 0 0.25rem rgba(4, 125, 121, 0.25); /* Shadow tipis saat diklik */
+        }
     </style>
 </head>
 <body class="bg-light">
