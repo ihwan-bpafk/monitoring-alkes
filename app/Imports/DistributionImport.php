@@ -21,8 +21,6 @@ class DistributionImport implements OnEachRow, WithHeadingRow
             'nama_rs' => $data['nama_rs'], 
             'jumlah_distribusi'     => $data['jumlah_distribusi'] ?? '-',
             'status'          => $data['status'] ?? '-',
-            'tanggal_distribusi'  => $data['tanggal_distribusi'] ?? now()->format('Y-m-d'),
-            'petugas_pengirim'  => $data['petugas_pengirim'] ?? "petugas",
         ]);
     }
 }
