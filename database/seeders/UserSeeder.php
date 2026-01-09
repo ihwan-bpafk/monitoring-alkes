@@ -17,18 +17,18 @@ class UserSeeder extends Seeder
         //     'username' => 'admin',
         //     'password' => bcrypt('adminbpafk007'),
         // ]);
-        \App\Models\User::create([
-            'name' => 'keslan',
-            'username' => 'admin keslan',
-            'password' => bcrypt('keslanadmin'),
-            'role' => 2,
-        ]);
-        \App\Models\User::create([
-            'name' => 'puskris',
-            'username' => 'admin puskris',
-            'password' => bcrypt('puskrisadmin'),
-            'role' => 2,
-        ]);
+        // \App\Models\User::create([
+        //     'name' => 'keslan',
+        //     'username' => 'admin keslan',
+        //     'password' => bcrypt('keslanadmin'),
+        //     'role' => 2,
+        // ]);
+        // \App\Models\User::create([
+        //     'name' => 'puskris',
+        //     'username' => 'admin puskris',
+        //     'password' => bcrypt('puskrisadmin'),
+        //     'role' => 2,
+        // ]);
         // \App\Models\User::create([
         //     'name' => 'Farmalkes',
         //     'username' => 'farmalkes',
@@ -44,22 +44,28 @@ class UserSeeder extends Seeder
         //     'username' => 'RSUP Adam Malik',
         //     'password' => bcrypt('RSUPAdamMalik'),
         // ]);
+        // \App\Models\User::create([
+        //     'name' => 'RSUD Muda Sedia Aceh Tamiang',
+        //     'username' => 'RSUD Muda Sedia Aceh Tamiang',
+        //     'password' => bcrypt('RSUDMuda'),
+        //     'role' => 3,
+        // ]);
+        // \App\Models\User::create([
+        //     'name' => 'RSUD Sultan Abdul Azis Syah',
+        //     'username' => 'RSUD Sultan Abdul Azis Syah',
+        //     'password' => bcrypt('RSUDSultan'),
+        //     'role' => 3,
+        // ]);
+        // \App\Models\User::create([
+        //     'name' => 'RSUD dr. Zubir Mahmud Idi',
+        //     'username' => 'RSUD dr. Zubir Mahmud Idi',
+        //     'password' => bcrypt('RSUDZubir'),
+        //     'role' => 3,
+        // ]);
         \App\Models\User::create([
-            'name' => 'RSUD Muda Sedia Aceh Tamiang',
-            'username' => 'RSUD Muda Sedia Aceh Tamiang',
-            'password' => bcrypt('RSUDMuda'),
-            'role' => 3,
-        ]);
-        \App\Models\User::create([
-            'name' => 'RSUD Sultan Abdul Azis Syah',
-            'username' => 'RSUD Sultan Abdul Azis Syah',
-            'password' => bcrypt('RSUDSultan'),
-            'role' => 3,
-        ]);
-        \App\Models\User::create([
-            'name' => 'RSUD dr. Zubir Mahmud Idi',
-            'username' => 'RSUD dr. Zubir Mahmud Idi',
-            'password' => bcrypt('RSUDZubir'),
+            'name' => 'guset',
+            'username' => 'guest',
+            'password' => bcrypt('guest'),
             'role' => 3,
         ]);
     }
