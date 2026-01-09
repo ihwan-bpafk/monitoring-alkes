@@ -88,35 +88,58 @@ class DashboardController extends Controller
 
     public function exportExcel(Request $request)
     {
-        // Gunakan logic query yang sama dengan index (pastikan filter RS/Kategori terbawa)
+        // 1. Ambil Parameter Filter
+        $selected_rs = $request->query('nama_rs');
+        $selected_kategori = $request->query('kategori');
+
+        // 2. Query Dasar untuk Repair (Ringkasan Kondisi Alat)
         $query = \App\Models\Repair::query();
         
-        if ($request->nama_rs) {
-            $query->where('nama_rs', $request->nama_rs);
+        if ($selected_rs) {
+            $query->where('nama_rs', $selected_rs);
         }
-        if ($request->kategori) {
-            $query->where('kategori', $request->kategori);
+        if ($selected_kategori) {
+            $query->where('kategori', $selected_kategori);
         }
 
-        $donations = \App\Models\Donation::when($request->nama_rs, fn($q) => $q->where('nama_rs', $request->nama_rs))
-            ->select('nama_alkes', \DB::raw('SUM(jumlah) as total_donasi'))
-            ->groupBy('nama_alkes')->get()->pluck('total_donasi', 'nama_alkes');
+        // 3. LOGIKA SINKRONISASI: Ambil Donasi yang sudah berstatus 'Diterima RS'
+        // Kita samakan persis dengan logic di function index()
+        $distQuery = \App\Models\Distribution::query()
+            ->join('donations', 'distributions.donation_id', '=', 'donations.id')
+            ->where('distributions.status', 'Diterima RS');
 
+        if ($selected_rs) {
+            $distQuery->where('distributions.nama_rs', $selected_rs);
+        }
+
+        $donationsDist = $distQuery->select('donations.nama_alkes', \DB::raw('SUM(distributions.jumlah_distribusi) as total_masuk'))
+            ->groupBy('donations.nama_alkes')
+            ->get()
+            ->pluck('total_masuk', 'nama_alkes');
+
+        // 4. Eksekusi Ringkasan Inventaris
         $alkesSummary = $query->select('nama_alkes', 
                 \DB::raw('count(*) as jumlah'),
                 \DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
                 \DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
                 \DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
             )
-            ->groupBy('nama_alkes')->get()
-            ->map(function($item) use ($donations) {
-                $item->total_donasi = $donations[$item->nama_alkes] ?? 0;
+            ->groupBy('nama_alkes')
+            ->orderBy('jumlah', 'desc')
+            ->get()
+            ->map(function($item) use ($donationsDist) {
+                // Gunakan data dari distributionsDist (yang berstatus Diterima RS)
+                $item->total_donasi = $donationsDist[$item->nama_alkes] ?? 0;
+                
+                // Rumus Kebutuhan
                 $kebutuhan = $item->ganti - $item->total_donasi;
                 $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
+                
                 return $item;
             });
 
-        $nama_file = 'Rekap_Alkes_' . ($request->nama_rs ?? 'Semua_RS') . '_' . date('Y-m-d') . '.xlsx';
+        // 5. Proses Download
+        $nama_file = 'Rekap_Alkes_' . ($selected_rs ?? 'Semua_RS') . '_' . date('Y-m-d') . '.xlsx';
         
         return Excel::download(new AlkesSummaryExport($alkesSummary), $nama_file);
     }
