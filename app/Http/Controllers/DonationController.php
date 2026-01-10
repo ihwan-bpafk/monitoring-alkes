@@ -44,29 +44,64 @@ class DonationController extends Controller
 
     public function store(Request $request)
     {
-        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
             return redirect()->back()->with('error', 'tidak memiliki akses!');
         }
-        $data = $request->validate([
-            'pemberi_donasi' => 'required|string',
-            'nama_alkes'     => 'required|string',
-            'merek'          => 'nullable|string',
-            'jumlah_donasi'  => 'required|integer|min:1',
-            'diterima_oleh'  => 'required|string',
-            'tanggal_masuk'  => 'required|date',
+        $request->validate([
+            'nama_alkes' => 'required',
+            'jumlah_donasi' => 'required|integer',
         ]);
 
-        // Logika: Sisa stok awal = Jumlah donasi
-        $data['sisa_stok'] = $request->jumlah_donasi;
+        DB::transaction(function () use ($request) {
+            // 1. Simpan Data Donasi Utama
+            $donation = Donation::create([
+                'nama_alkes'    => $request->nama_alkes,
+                'merek'         => $request->merek,
+                'jumlah_donasi' => $request->jumlah_donasi,
+                'diterima_oleh' => $request->diterima_oleh,
+                'sisa_stok'     => $request->jumlah_donasi, // Awalnya sisa stok = jumlah donasi
+                'status_akhir'  => 'Masuk Gudang BPAFK',
+            ]);
 
-        Donation::create($data);
+            // 2. Catat riwayat pertama (Tracking)
+            DonationLog::create([
+                'donation_id'   => $donation->id,
+                'status'        => 'Masuk Gudang BPAFK',
+                'diupdate_oleh' => auth()->user()->name,
+                'catatan'       => 'Penerimaan awal alat kesehatan.',
+            ]);
+        });
 
-        return redirect()->back()->with('success', 'Data Donasi berhasil dicatat!');
+        return redirect()->back()->with('success', 'Data Donasi berhasil diinput dengan tracking.');
+    }
+
+    // Fungsi khusus untuk Update Status Saja (Tracking Lokasi)
+    public function updateStatus(Request $request, $id)
+    {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
+        $donation = Donation::findOrFail($id);
+
+        DB::transaction(function () use ($request, $donation) {
+            // Update status di tabel utama
+            $donation->update(['status_akhir' => $request->status_baru]);
+
+            // Tambah baris baru di tabel history
+            DonationLog::create([
+                'donation_id'   => $donation->id,
+                'status'        => $request->status_baru,
+                'diupdate_oleh' => auth()->user()->name,
+                'catatan'       => $request->catatan_update,
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Status posisi alat berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
             return redirect()->back()->with('error', 'tidak memiliki akses!');
         }
         Donation::findOrFail($id)->delete();

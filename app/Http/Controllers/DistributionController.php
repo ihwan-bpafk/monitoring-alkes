@@ -65,7 +65,7 @@ class DistributionController extends Controller
     public function store(Request $request)
     {
         // Validasi Input
-        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+        if (auth()->user()->role != 1 && auth()->user()->role != 2) {
             return redirect()->back()->with('error', 'tidak memiliki akses!');
         }
         $request->validate([
@@ -110,7 +110,7 @@ class DistributionController extends Controller
      */
     public function destroy($id)
     {
-        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
             return redirect()->back()->with('error', 'tidak memiliki akses!');
         }
         $distribution = Distribution::findOrFail($id);
@@ -132,7 +132,7 @@ class DistributionController extends Controller
      */
     public function updateStatus(Request $request, $id)
     {
-        if (auth()->user()->role !== 1 || auth()->user()->role !== 2) {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
             return redirect()->back()->with('error', 'tidak memiliki akses!');
         }
         $distribution = Distribution::findOrFail($id);
