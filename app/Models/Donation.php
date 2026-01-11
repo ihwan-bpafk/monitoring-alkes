@@ -13,4 +13,9 @@ class Donation extends Model
     {
         return $this->hasMany(DonationLog::class)->latest();
     }
+    // Tambahkan di dalam class Donation
+    public function distributions()
+    {
+        return $this->hasMany(Distribution::class);
+    }
 }

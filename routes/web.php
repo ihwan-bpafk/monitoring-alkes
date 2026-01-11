@@ -43,9 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
     // --- DISTRIBUTIONS (ALOKASI KE RS) ---
     // Rute manual untuk menangani logika pengurangan stok yang spesifik
-    Route::get('/distributions', [DistributionController::class, 'index'])->name('distributions.index');
-    Route::post('/distributions', [DistributionController::class, 'store'])->name('distributions.store');
-    Route::delete('/distributions/{id}', [DistributionController::class, 'destroy'])->name('distributions.destroy');
+    Route::resource('distributions', DistributionController::class);
     
     // Rute untuk memperbarui status pengiriman (Dikirim -> Diterima)
     Route::patch('/distributions/{id}/status', [DistributionController::class, 'updateStatus'])->name('distributions.updateStatus');
