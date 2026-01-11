@@ -8,8 +8,17 @@
             <p class="text-muted small mb-0">Kelola pengiriman alat kesehatan dari BPAFK ke Rumah Sakit tujuan.</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('donations.index') }}" class="btn btn-light border shadow-sm fw-bold">
-                <i class="bi bi-gift me-2 text-teal"></i>Data Donasi
+            <a href="{{ route('dashboard') }}" class="btn btn-light border shadow-sm fw-bold">
+                <i class="bi bi-speedometer2 me-2 text-teal"></i>Dashboard
+            </a>
+            <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold px-3">
+                <i class="bi bi-tools me-2"></i>Data Perbaikan
+            </a>
+            <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
+                <i class="bi bi-box-seam me-2"></i>Stok Donasi
+            </a>
+            <a href="{{ route('distributions.index') }}" class="btn btn-info shadow-sm fw-bold text-white">
+                <i class="bi bi-truck me-2"></i>Menu Distribusi
             </a>
             <button class="btn btn-primary shadow-sm fw-bold px-3 bg-teal border-teal" data-bs-toggle="modal" data-bs-target="#modalTambahDistribusi">
                 <i class="bi bi-plus-lg me-1"></i>Input Distribusi
@@ -138,6 +147,13 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3">
+                                                <label class="small fw-bold">Update Status Pengiriman</label>
+                                                <select name="status" class="form-select border-warning" required>
+                                                    <option value="Dikirim" {{ $dist->status == 'Dikirim' ? 'selected' : '' }}>Dikirim (Proses Perjalanan)</option>
+                                                    <option value="Diterima RS" {{ $dist->status == 'Diterima RS' ? 'selected' : '' }}>Diterima RS (Sudah Sampai)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
                                                 <label class="small fw-bold">Ganti Berita Acara (Opsional)</label>
                                                 <input type="file" name="file_ba" class="form-control">
                                             </div>
@@ -216,7 +232,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="small fw-bold text-primary">Rumah Sakit Tujuan (Master Repair)</label>
+                        <label class="small fw-bold text-primary">Rumah Sakit Tujuan</label>
                         <select name="nama_rs" class="form-select select2-tambah" required>
                             <option value="">-- Cari Nama RS --</option>
                             @foreach($list_rs_master as $rs)
@@ -234,6 +250,13 @@
                             <label class="small fw-bold">Tanggal Distribusi</label>
                             <input type="date" name="tanggal_distribusi" class="form-control" value="{{ date('Y-m-d') }}" required>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Status Pengiriman</label>
+                        <select name="status" class="form-select border-primary" required>
+                            <option value="Dikirim" selected>Dikirim (Proses Perjalanan)</option>
+                            <option value="Diterima RS">Diterima RS (Sudah Sampai)</option>
+                        </select>
                     </div>
 
                     <div class="mb-3">

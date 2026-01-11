@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Donation;
 use App\Models\Distribution;
+use App\Models\Donation;
+use App\Models\DonationLog;
+use App\Models\Repair;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DistributionController extends Controller
 {
@@ -42,17 +45,17 @@ class DistributionController extends Controller
             'donation_id' => 'required',
             'nama_rs' => 'required',
             'jumlah_distribusi' => 'required|integer|min:1',
-            'file_ba' => 'nullable|mimes:pdf,jpg,png,jpeg|max:2048', // Validasi file
+            'status' => 'required', // Tambahkan validasi status
         ]);
 
         $donation = Donation::findOrFail($request->donation_id);
 
         if ($donation->sisa_stok < $request->jumlah_distribusi) {
-            return redirect()->back()->with('error', 'Stok tidak mencukupi!');
+            return redirect()->back()->with('error', 'Gagal! Stok tidak mencukupi.');
         }
 
         DB::transaction(function () use ($request, $donation) {
-            // Handle Upload File
+            // Upload file BA (seperti kode sebelumnya)
             $fileName = null;
             if ($request->hasFile('file_ba')) {
                 $fileName = time() . '_' . $request->file('file_ba')->getClientOriginalName();
@@ -64,76 +67,59 @@ class DistributionController extends Controller
                 'nama_rs' => $request->nama_rs,
                 'jumlah_distribusi' => $request->jumlah_distribusi,
                 'tanggal_distribusi' => $request->tanggal_distribusi,
-                'status' => 'Dikirim',
+                'status' => $request->status, // Mengambil dari input
                 'petugas_pengirim' => auth()->user()->name,
                 'file_ba' => $fileName,
                 'keterangan' => $request->keterangan,
             ]);
 
             $donation->decrement('sisa_stok', $request->jumlah_distribusi);
-            
-            // Log Tracking
-            \App\Models\DonationLog::create([
+
+            // Update Log Tracking
+            DonationLog::create([
                 'donation_id' => $donation->id,
-                'status' => 'Distribusi',
+                'status' => 'Distribusi: ' . $request->status,
                 'diupdate_oleh' => auth()->user()->name,
-                'catatan' => "Kirim {$request->jumlah_distribusi} unit ke {$request->nama_rs}",
+                'catatan' => "Kirim {$request->jumlah_distribusi} unit ke {$request->nama_rs} (Status: {$request->status})",
             ]);
         });
 
-        return redirect()->back()->with('success', 'Distribusi berhasil diproses!');
+        return redirect()->back()->with('success', 'Data distribusi berhasil disimpan.');
     }
 
-    // --- FUNGSI UPDATE ---
     public function update(Request $request, $id)
     {
         $request->validate([
             'jumlah_distribusi' => 'required|integer|min:1',
-            'nama_rs' => 'required',
-            'file_ba' => 'nullable|mimes:pdf,jpg,png,jpeg|max:2048',
+            'status' => 'required',
         ]);
 
         $dist = Distribution::findOrFail($id);
         $donation = Donation::findOrFail($dist->donation_id);
 
-        // Hitung selisih stok
-        // Jika jumlah baru 10, jumlah lama 5, maka stok gudang harus dikurangi lagi 5
-        // Jika jumlah baru 3, jumlah lama 5, maka stok gudang harus ditambah lagi 2
         $selisih = $dist->jumlah_distribusi - $request->jumlah_distribusi;
 
-        // Validasi jika stok gudang tidak cukup saat jumlah distribusi ditambah
         if (($donation->sisa_stok + $selisih) < 0) {
-            return redirect()->back()->with('error', 'Gagal! Stok di gudang tidak mencukupi untuk perubahan ini.');
+            return redirect()->back()->with('error', 'Gagal! Stok di gudang tidak mencukupi.');
         }
 
         DB::transaction(function () use ($request, $dist, $donation, $selisih) {
-            // Handle File BA baru jika ada
-            if ($request->hasFile('file_ba')) {
-                if ($dist->file_ba && file_exists(public_path('uploads/berita_acara/' . $dist->file_ba))) {
-                    unlink(public_path('uploads/berita_acara/' . $dist->file_ba));
-                }
-                $fileName = time() . '_' . $request->file('file_ba')->getClientOriginalName();
-                $request->file('file_ba')->move(public_path('uploads/berita_acara'), $fileName);
-                $dist->file_ba = $fileName;
-            }
-
-            // Update data distribusi
+            // Update data distribusi termasuk STATUS
             $dist->update([
                 'nama_rs' => $request->nama_rs,
                 'jumlah_distribusi' => $request->jumlah_distribusi,
                 'tanggal_distribusi' => $request->tanggal_distribusi,
+                'status' => $request->status, // Update Status Baru
                 'keterangan' => $request->keterangan,
             ]);
 
-            // Sinkronkan Stok Donasi (Gunakan increment dengan nilai selisih)
             $donation->increment('sisa_stok', $selisih);
 
-            // Tambah Log Perubahan
             DonationLog::create([
                 'donation_id' => $donation->id,
-                'status' => 'Update Distribusi',
+                'status' => 'Update Distribusi: ' . $request->status,
                 'diupdate_oleh' => auth()->user()->name,
-                'catatan' => "Revisi distribusi ke {$request->nama_rs}. Jumlah disesuaikan.",
+                'catatan' => "Revisi distribusi ke {$request->nama_rs}. Status menjadi: {$request->status}",
             ]);
         });
 
