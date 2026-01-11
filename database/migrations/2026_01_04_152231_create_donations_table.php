@@ -8,23 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Menghapus jika tabel sudah ada agar fresh
-        Schema::dropIfExists('donations');
-
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
-            // Data sesuai permintaan menu Donasi
-            $table->string('pemberi_donasi'); // Donor
-            $table->string('nama_alkes');     // Nama Alat
+            $table->string('nama_alkes');
+            $table->string('pemberi_donasi');
             $table->string('merek')->nullable();
-            $table->integer('jumlah_donasi'); // Total stok masuk awal
-            $table->string('diterima_oleh');  // Petugas penerima di kantor
-
-            // Kolom Tambahan untuk Sinkronisasi Distribusi
-            $table->integer('sisa_stok');     // Akan berkurang otomatis saat ada distribusi
-            $table->date('tanggal_masuk');    // Tanggal barang sampai di kantor
-            $table->text('keterangan')->nullable();
-            
+            $table->integer('jumlah_donasi');
+            $table->string('diterima_oleh');
+            $table->integer('sisa_stok');
+            $table->string('status_akhir');
             $table->timestamps();
         });
     }

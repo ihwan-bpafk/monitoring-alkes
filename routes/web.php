@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     // --- DONATIONS (STOK MASUK) ---
     // Menggunakan Resource karena mencakup Index, Store, Update, dan Destroy
     Route::resource('donations', DonationController::class);
+    Route::patch('/donations/{id}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
 
     // --- DISTRIBUTIONS (ALOKASI KE RS) ---
     // Rute manual untuk menangani logika pengurangan stok yang spesifik
