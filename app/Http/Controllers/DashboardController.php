@@ -51,7 +51,7 @@ class DashboardController extends Controller
             ->where('status_perbaikan', '!=', '-')->groupBy('status_perbaikan')->get();
 
         $responData = (clone $query)->whereNotNull('nama_penyedia')
-            ->where('grade_kerusakan', '!=', 'Bisa Dipakai')->where('status_perbaikan', '!=', 'Bisa Dipakai')
+            ->where('grade_kerusakan', '!=', 'Bisa Dipakai')
             ->select('respon_penyedia', DB::raw('count(*) as total'))->groupBy('respon_penyedia')->get();
 
         $totalWithVendor = $responData->sum('total');
