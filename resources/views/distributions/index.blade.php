@@ -17,8 +17,8 @@
             <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-box-seam me-2"></i>Stok Donasi
             </a>
-            <a href="{{ route('distributions.index') }}" class="btn btn-info shadow-sm fw-bold text-white">
-                <i class="bi bi-truck me-2"></i>Menu Distribusi
+            <a href="{{ route('distributions.export', request()->all()) }}" class="btn btn-success shadow-sm fw-bold">
+                <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
             </a>
             <button class="btn btn-primary shadow-sm fw-bold px-3 bg-teal border-teal" data-bs-toggle="modal" data-bs-target="#modalTambahDistribusi">
                 <i class="bi bi-plus-lg me-1"></i>Input Distribusi

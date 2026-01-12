@@ -31,6 +31,9 @@
             <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold">
                 <i class="bi bi-tools me-2"></i>Data Perbaikan
             </a>
+            <a href="{{ route('donations.export', request()->all()) }}" class="btn btn-success shadow-sm fw-bold">
+                <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
+            </a>
 
             {{-- Hanya Admin (1) dan Petugas (2) yang bisa menambah data --}}
             @if(auth()->user()->role === 1 || auth()->user()->role === 2)
@@ -131,9 +134,16 @@
                                     <button class="btn btn-sm btn-outline-secondary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalLog{{ $d->id }}" title="Lihat Riwayat">
                                         <i class="bi bi-clock-history"></i>
                                     </button>
+                                    
                                     <button class="btn btn-sm text-white shadow-sm bg-teal" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $d->id }}">
-                                        <i class="bi bi-pencil-square me-1"></i> Update
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
+
+                                    @if(auth()->user()->role === 1 || auth()->user()->role === 2)
+                                    <button class="btn btn-sm btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalHapusDonasi{{ $d->id }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -211,12 +221,18 @@
 
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold text-dark">Status/Posisi Baru</label>
-                                                <input type="text" name="status_akhir" class="form-control" 
-                                                       placeholder="Contoh: Bpafk Medan / IFP ....." 
-                                                       value="{{ $d->status_akhir == '-' ? '' : $d->status_akhir }}">
-                                                <div class="form-text mt-1 small">
-                                                    <i class="bi bi-info-circle me-1"></i>Kosongkan jika ingin meriset menjadi " - ".
-                                                </div>
+                                                <select name="status_akhir" class="form-select select2-filter">
+                                                    @php
+                                                        $options = ['BPAFK Medan', 'BPAFK Jakarta', 'IFP', 'PUSKRIS', 'DINKES aceh', 'Dinkes sumut', 'RS lainnya', 'Vendor'];
+                                                    @endphp
+                                                    
+                                                    <option value="-">-- Reset Status --</option>
+                                                    @foreach($options as $opt)
+                                                        <option value="{{ $opt }}" {{ $d->status_akhir == $opt ? 'selected' : '' }}>
+                                                            {{ $opt }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
 
                                             <div class="mb-3">
@@ -238,6 +254,35 @@
                                             <button type="submit" class="btn text-white px-4 fw-bold shadow-sm bg-teal">SIMPAN PERUBAHAN</button>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="modalHapusDonasi{{ $d->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+                                    <div class="modal-header bg-danger text-white" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                                        <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Hapus Data Master</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body p-4 text-center">
+                                        <i class="bi bi-trash3 text-danger mb-3" style="font-size: 3rem;"></i>
+                                        <h5 class="fw-bold text-dark">Hapus Donasi Ini?</h5>
+                                        <p class="text-muted small">
+                                            Menghapus <strong>{{ $d->nama_alkes }}</strong> ({{ $d->pemberi_donasi }}) akan menghapus <strong>SELURUH</strong> data distribusi dan log riwayat terkait secara permanen.
+                                        </p>
+                                        <div class="alert alert-warning border-0 small">
+                                            <i class="bi bi-info-circle me-1"></i> Data yang sudah dihapus tidak dapat dikembalikan.
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-light border-0" style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
+                                        <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Batal</button>
+                                        <form action="{{ route('donations.destroy', $d->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger px-4 fw-bold shadow-sm">YA, HAPUS SEMUA</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -292,8 +337,18 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-muted">Status</label>
-                        <input type="text" name="status_akhir" class="form-control" placeholder="Default: BPAFK Medan">
+                        <label class="form-label small fw-bold text-muted">Status / Lokasi Alat</label>
+                        <select name="status_akhir" class="form-select select2-tambah" required>
+                            <option value="BPAFK Medan" selected>BPAFK Medan</option>
+                            <option value="BPAFK Jakarta">BPAFK Jakarta</option>
+                            <option value="IFP">IFP</option>
+                            <option value="PUSKRIS">PUSKRIS</option>
+                            <option value="DINKES aceh">DINKES aceh</option>
+                            <option value="Dinkes sumut">Dinkes sumut</option>
+                            <option value="RS lainnya">RS lainnya</option>
+                            <option value="Vendor">Vendor</option>
+                        </select>
+                        <div class="form-text small">Tentukan lokasi awal penyimpanan alat setelah diterima.</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Diterima Oleh (Petugas)</label>

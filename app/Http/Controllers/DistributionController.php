@@ -155,4 +155,14 @@ class DistributionController extends Controller
 
         return redirect()->back()->with('success', 'Distribusi dibatalkan dan stok telah dikembalikan ke gudang.');
     }
+
+    public function exportExcel(Request $request) 
+    {
+        // Tangkap filter yang sedang aktif
+        $filters = $request->only(['filter_rs', 'filter_alkes', 'filter_status']);
+        
+        $fileName = 'Laporan_Distribusi_Alkes_' . now()->format('Ymd_His') . '.xlsx';
+
+        return (new \App\Exports\DistributionsExport($filters))->download($fileName);
+    }
 }

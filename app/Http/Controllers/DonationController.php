@@ -114,10 +114,35 @@ class DonationController extends Controller
 
     public function destroy($id)
     {
-        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
-            return redirect()->back()->with('error', 'tidak memiliki akses!');
-        }
-        Donation::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Data Donasi telah dihapus.');
+        $donation = Donation::findOrFail($id);
+
+        // Gunakan Transaction agar jika satu gagal, semua batal (aman)
+        DB::transaction(function () use ($donation) {
+            // 1. Hapus semua file Berita Acara di distribusi terkait
+            foreach ($donation->distributions as $dist) {
+                if ($dist->file_ba && file_exists(public_path('uploads/berita_acara/' . $dist->file_ba))) {
+                    unlink(public_path('uploads/berita_acara/' . $dist->file_ba));
+                }
+            }
+
+            // 2. Hapus data distribusi terkait
+            $donation->distributions()->delete();
+
+            // 3. Hapus semua log riwayat terkait
+            $donation->logs()->delete();
+
+            // 4. Hapus data donasi utama
+            $donation->delete();
+        });
+
+        return redirect()->route('donations.index')->with('success', 'Master Donasi dan seluruh riwayat distribusinya berhasil dihapus.');
+    }
+
+    public function exportExcel(Request $request) 
+    {
+        $filters = $request->only(['filter_pemberi', 'filter_alkes', 'filter_petugas', 'filter_stok']);
+        $fileName = 'Laporan_Donasi_BPAFK_' . now()->format('Ymd_His') . '.xlsx';
+
+        return (new \App\Exports\DonationsExport($filters))->download($fileName);
     }
 }

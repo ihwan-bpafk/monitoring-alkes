@@ -30,19 +30,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('dashboard.exportExcel');
 
     // --- REPAIRS (PERBAIKAN ALKES) ---
-    Route::resource('repairs', RepairController::class);
     Route::post('repairs/{id}/update-status', [RepairController::class, 'updateStatus'])->name('repairs.updateStatus');
     Route::get('/repairs/export', [RepairController::class, 'exportExcel'])->name('repairs.export');
     Route::get('/repairs/report', [RepairController::class, 'reportPage'])->name('repairs.report');
     Route::get('/repairs/report-preview', [RepairController::class, 'previewExport'])->name('repairs.reportPreview');
+    Route::resource('repairs', RepairController::class);
 
     // --- DONATIONS (STOK MASUK) ---
     // Menggunakan Resource karena mencakup Index, Store, Update, dan Destroy
+    Route::get('donations/export-excel', [App\Http\Controllers\DonationController::class, 'exportExcel'])->name('donations.export');
     Route::resource('donations', DonationController::class);
     Route::patch('/donations/{id}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
 
     // --- DISTRIBUTIONS (ALOKASI KE RS) ---
     // Rute manual untuk menangani logika pengurangan stok yang spesifik
+    Route::get('distributions/export-excel', [App\Http\Controllers\DistributionController::class, 'exportExcel'])->name('distributions.export');
     Route::resource('distributions', DistributionController::class);
     
     // Rute untuk memperbarui status pengiriman (Dikirim -> Diterima)
