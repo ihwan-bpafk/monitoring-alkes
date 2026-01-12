@@ -151,6 +151,7 @@
                                                 <select name="status" class="form-select border-warning" required>
                                                     <option value="Dikirim" {{ $dist->status == 'Dikirim' ? 'selected' : '' }}>Dikirim (Proses Perjalanan)</option>
                                                     <option value="Diterima RS" {{ $dist->status == 'Diterima RS' ? 'selected' : '' }}>Diterima RS (Sudah Sampai)</option>
+                                                    <option value="Alokasi" {{ $dist->status == 'Alokasi' ? 'selected' : '' }}>Alokasi</option>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
@@ -256,6 +257,7 @@
                         <select name="status" class="form-select border-primary" required>
                             <option value="Dikirim" selected>Dikirim (Proses Perjalanan)</option>
                             <option value="Diterima RS">Diterima RS (Sudah Sampai)</option>
+                            <option value="Alokasi">Alokasi</option>
                         </select>
                     </div>
 

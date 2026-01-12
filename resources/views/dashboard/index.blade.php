@@ -128,45 +128,51 @@
                             <thead class="bg-light text-center">
                                 <tr>
                                     <th class="ps-4 text-start">Nama Alat Kesehatan</th>
-                                    <th style="width: 100px;">Total Unit</th>
-                                    <th class="text-success" style="width: 120px;">Bisa Dipakai</th>
-                                    <th class="text-warning" style="width: 120px;">Dalam Proses</th>
-                                    <th class="text-danger" style="width: 150px;">Harus Ganti (BAP)</th>
-                                    <th class="text-info" style="width: 150px;">Donasi (Diterima RS)</th> 
-                                    <th class="bg-dark text-white" style="width: 120px;">Kebutuhan</th> 
+                                    <th>Total Unit</th>
+                                    <th class="text-success">Bisa Dipakai</th>
+                                    <th class="text-warning">Proses</th>
+                                    <th class="text-danger">Harus Ganti (BAP)</th>
+                                    <th class="bg-info text-white">Total Distribusi</th> <th class="text-primary">Donasi (Sampai/Kirim)</th> 
+                                    <th class="bg-dark text-white">Kebutuhan</th> 
                                 </tr>
                             </thead>
                             <tbody class="text-center">
                                 @forelse($alkesSummary as $item)
                                 <tr>
-                                    <td class="ps-4 text-start fw-bold text-dark">{{ $item->nama_alkes }}</td>
-                                    <td><span class="badge bg-secondary rounded-pill px-3">{{ $item->jumlah }}</span></td>
-                                    <td><span class="{{ $item->bisa_dipakai > 0 ? 'fw-bold text-success' : 'text-muted opacity-50' }}">{{ $item->bisa_dipakai }}</span></td>
-                                    <td><span class="{{ $item->proses > 0 ? 'fw-bold text-warning' : 'text-muted opacity-50' }}">{{ $item->proses }}</span></td>
-                                    <td><span class="{{ $item->ganti > 0 ? 'fw-bold text-danger' : 'text-muted opacity-50' }}">{{ $item->ganti }}</span></td>
-                                    
-                                    <td>
-                                        <span class="{{ $item->total_donasi > 0 ? 'fw-bold text-info' : 'text-muted opacity-50' }}">
-                                            {{ $item->total_donasi }} Unit
-                                        </span>
-                                        @if($item->total_donasi > 0)
-                                            <div style="font-size: 0.65rem;" class="text-muted italic">Status: Diterima</div>
+                                    <td class="ps-4 text-start fw-bold text-dark">
+                                        {{ $item->nama_alkes }}
+                                        @if($item->total_alokasi > 0)
+                                            <div class="badge bg-light text-primary border-primary small fw-normal" style="font-size: 0.6rem;">
+                                                Inc. {{ $item->total_alokasi }} Alokasi
+                                            </div>
                                         @endif
+                                    </td>
+                                    <td><span class="badge bg-secondary rounded-pill px-3">{{ $item->jumlah }}</span></td>
+                                    <td>{{ $item->bisa_dipakai }}</td>
+                                    <td>{{ $item->proses }}</td>
+                                    <td>{{ $item->ganti }}</td>
+                                    
+                                    <td class="bg-light fw-bold text-info">
+                                        {{ $item->grand_total_distribusi }} Unit
+                                        <div style="font-size: 0.6rem;" class="text-muted fw-normal italic">Semua Status</div>
+                                    </td>
+
+                                    <td>
+                                        <span class="{{ $item->total_pemenuhan > 0 ? 'fw-bold text-primary' : 'text-muted opacity-50' }}">
+                                            {{ $item->total_pemenuhan }} Unit
+                                        </span>
                                     </td>
 
                                     <td class="bg-light">
                                         @if($item->kebutuhan > 0)
-                                            <span class="badge bg-danger animate__animated animate__pulse animate__infinite">
-                                                Butuh {{ $item->kebutuhan }} Unit
-                                            </span>
+                                            <span class="badge bg-danger">Butuh {{ $item->kebutuhan }} Unit</span>
                                         @else
                                             <span class="text-success small fw-bold"><i class="bi bi-check-all"></i> Terpenuhi</span>
                                         @endif
                                     </td>
                                 </tr>
                                 @empty
-                                <tr><td colspan="7" class="text-center py-4 text-muted">Data tidak ditemukan.</td></tr>
-                                @endforelse
+                                    @endforelse
                             </tbody>
                         </table>
                     </div>
