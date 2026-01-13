@@ -6,7 +6,6 @@ use App\Models\Donation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Repair;
-use App\Models\Donation;
 
 class DonationController extends Controller
 {
