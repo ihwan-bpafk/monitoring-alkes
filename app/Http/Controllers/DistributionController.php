@@ -17,21 +17,34 @@ class DistributionController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Data untuk Filter & Dropdown (Dinamis dari DB)
+        // 1. Dropdown Filter - Ambil NAMA ALAT saja secara UNIK
         $list_rs_master = \App\Models\Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs')->pluck('nama_rs');
-        $list_alkes_dist = Donation::whereHas('distributions')->distinct()->orderBy('nama_alkes')->pluck('nama_alkes', 'id');
+        
+        // Perubahan di sini: Mengambil distinct nama_alkes, bukan ID
+        $list_alkes_dist = Donation::whereHas('distributions')
+            ->distinct()
+            ->orderBy('nama_alkes')
+            ->pluck('nama_alkes'); 
+
         $list_status = Distribution::distinct()->pluck('status');
 
-        // 2. Query Utama dengan Filter
+        // 2. Query Utama
         $query = Distribution::with('donation');
 
+        // Filter RS (Fix typo dari nama_rsa ke nama_rs)
         $query->when($request->filter_rs, fn($q, $v) => $q->where('nama_rs', $v));
-        $query->when($request->filter_alkes, fn($q, $v) => $q->where('donation_id', $v));
+
+        // Perubahan di sini: Filter berdasarkan NAMA di tabel donations
+        $query->when($request->filter_alkes, function($q, $v) {
+            $q->whereHas('donation', function($query) use ($v) {
+                $query->where('nama_alkes', $v);
+            });
+        });
+
         $query->when($request->filter_status, fn($q, $v) => $q->where('status', $v));
 
         $distributions = $query->latest()->paginate(10)->withQueryString();
         
-        // Untuk Modal Tambah
         $availableDonations = Donation::where('sisa_stok', '>', 0)->get();
 
         return view('distributions.index', compact(

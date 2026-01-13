@@ -34,7 +34,6 @@
             <a href="{{ route('donations.export', request()->all()) }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
             </a>
-
             {{-- Hanya Admin (1) dan Petugas (2) yang bisa menambah data --}}
             @if(auth()->user()->role === 1 || auth()->user()->role === 2)
             <button class="btn btn-primary shadow-sm fw-bold px-3 bg-teal border-teal" data-bs-toggle="modal" data-bs-target="#modalTambahDonasi">

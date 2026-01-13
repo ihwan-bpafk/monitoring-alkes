@@ -41,8 +41,11 @@
                     <label class="small fw-bold">Nama Alat</label>
                     <select name="filter_alkes" class="form-select select2-filter" onchange="this.form.submit()">
                         <option value="">-- Semua Alat --</option>
-                        @foreach($list_alkes_dist as $id => $name)
-                            <option value="{{ $id }}" {{ request('filter_alkes') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                        @foreach($list_alkes_dist as $name)
+                            {{-- Value sekarang adalah Nama, bukan ID --}}
+                            <option value="{{ $name }}" {{ request('filter_alkes') == $name ? 'selected' : '' }}>
+                                {{ $name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -288,20 +291,20 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    $('.select2-dist').select2({
-        theme: 'bootstrap-5',
-        dropdownParent: $('#modalTambahDistribusi'),
-        width: '100%',
-        placeholder: "-- Ketik Nama Alat --"
+    $(document).ready(function() {
+        $('.select2-dist').select2({
+            theme: 'bootstrap-5',
+            dropdownParent: $('#modalTambahDistribusi'),
+            width: '100%',
+            placeholder: "-- Ketik Nama Alat --"
+        });
     });
-});
-$(document).ready(function() {
-    $('.select2-filter').select2({ theme: 'bootstrap-5' });
-    $('.select2-tambah').select2({ 
-        theme: 'bootstrap-5', 
-        dropdownParent: $('#modalTambahDistribusi') 
+    $(document).ready(function() {
+        $('.select2-filter').select2({ theme: 'bootstrap-5' });
+        $('.select2-tambah').select2({ 
+            theme: 'bootstrap-5', 
+            dropdownParent: $('#modalTambahDistribusi') 
+        });
     });
-});
-</script>
+    </script>
 @endsection

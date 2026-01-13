@@ -5,36 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\Donation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Repair;
+use App\Models\Donation;
 
 class DonationController extends Controller
 {
     public function index(Request $request)
     {
-        $list_alkes_master = \App\Models\Repair::distinct()
-            ->orderBy('nama_alkes', 'asc')
-            ->pluck('nama_alkes');
-        // 1. Ambil daftar unik untuk isi filter dropdown
+        // 1. Ambil daftar unik untuk isi filter dropdown (Pivot/Distinct)
+        // Diambil dari data yang sudah ada di tabel donations
         $list_pemberi = Donation::distinct()->orderBy('pemberi_donasi')->pluck('pemberi_donasi');
         $list_alkes_donasi = Donation::distinct()->orderBy('nama_alkes')->pluck('nama_alkes');
         $list_penerima = Donation::distinct()->orderBy('diterima_oleh')->pluck('diterima_oleh');
 
-        // 2. Query utama dengan filter
+        // Ambil dari master repair untuk modal tambah donasi
+        $list_alkes_master = Repair::distinct()
+            ->orderBy('nama_alkes', 'asc')
+            ->pluck('nama_alkes');
+
+        // 2. Query utama dengan sistem Filter dinamis
         $query = Donation::query();
 
-        $query->when($request->filter_donatur, function ($q, $donatur) {
-            return $q->where('pemberi_donasi', $donatur);
+        // Filter berdasarkan Pemberi Donasi (Sudah disinkronkan dengan View)
+        $query->when($request->filter_pemberi, function ($q, $pemberi) {
+            return $q->where('pemberi_donasi', $pemberi);
         });
 
+        // Filter berdasarkan Nama Alat
         $query->when($request->filter_alkes, function ($q, $alkes) {
             return $q->where('nama_alkes', $alkes);
         });
 
+        // Filter berdasarkan Petugas Penerima
         $query->when($request->filter_petugas, function ($q, $petugas) {
             return $q->where('diterima_oleh', $petugas);
         });
 
-        // 3. Paginate dengan tetap membawa parameter filter di URL
-                        
+        // Filter berdasarkan Status Stok (Tersedia / Habis)
         $query->when($request->filter_stok, function ($q, $v) {
             if ($v == 'tersedia') {
                 return $q->where('sisa_stok', '>', 0);
@@ -42,10 +49,13 @@ class DonationController extends Controller
                 return $q->where('sisa_stok', '<=', 0);
             }
         });
-        $donations = $query->orderBy('nama_alkes', 'asc')
-                        ->paginate(10)
-                        ->withQueryString();
 
+        // 3. Eksekusi Query dengan Pagination dan menjaga parameter URL
+        $donations = $query->orderBy('nama_alkes', 'asc')
+                            ->paginate(10)
+                            ->withQueryString(); // Menjaga filter tetap aktif saat pindah halaman
+
+        // 4. Return ke View dengan data yang dibutuhkan
         return view('donations.index', compact(
             'donations', 
             'list_pemberi', 
