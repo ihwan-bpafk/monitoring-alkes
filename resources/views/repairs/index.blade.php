@@ -286,6 +286,7 @@
                                                                 <option value="Rawat Inap" {{ $r->kategori == 'Rawat Inap' ? 'selected' : '' }}>Rawat Inap</option>
                                                                 <option value="Rawat Jalan" {{ $r->kategori == 'Rawat Jalan' ? 'selected' : '' }}>Rawat Jalan</option>
                                                                 <option value="IPAL" {{ $r->kategori == 'IPAL' ? 'selected' : '' }}>IPAL</option>
+                                                                <option value="Gas Medis" {{ $r->kategori == 'Gas Medis' ? 'selected' : '' }}>Gas Medis</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-4 mb-2">
@@ -636,6 +637,7 @@
                                                     <option value="Rawat Inap">Rawat Inap</option>
                                                     <option value="Rawat Jalan">Rawat Jalan</option>
                                                     <option value="IPAL">IPAL</option>
+                                                    <option value="Gas Medis">Gas Medis</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mb-3">
