@@ -66,6 +66,9 @@ class DonationController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $request->validate([
             'pemberi_donasi' => 'required|string',
             'nama_alkes'     => 'required|string',
@@ -101,6 +104,9 @@ class DonationController extends Controller
     // Fungsi khusus untuk Update Status Saja (Tracking Lokasi)
     public function updateStatus(Request $request, $id)
     {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $donation = Donation::findOrFail($id);
 
         \DB::transaction(function () use ($request, $donation) {
@@ -124,6 +130,9 @@ class DonationController extends Controller
 
     public function destroy($id)
     {
+        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
+            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        }
         $donation = Donation::findOrFail($id);
 
         // Gunakan Transaction agar jika satu gagal, semua batal (aman)

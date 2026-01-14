@@ -130,6 +130,7 @@
                             </td>
                             <td>
                                 <div class="d-flex gap-1 justify-content-center">
+                                    @if(auth()->user()->role === 1 || auth()->user()->role === 2)
                                     <button class="btn btn-sm btn-outline-secondary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalLog{{ $d->id }}" title="Lihat Riwayat">
                                         <i class="bi bi-clock-history"></i>
                                     </button>

@@ -106,6 +106,7 @@
                             </td>
                             <td><small>{{ $dist->petugas_pengirim }}</small></td>
                             <td>
+                                @if(auth()->user()->role === 1 || auth()->user()->role === 2)
                                 <div class="d-flex gap-1 justify-content-center">
                                     <button class="btn btn-sm btn-warning shadow-sm" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $dist->id }}" title="Edit Data">
                                         <i class="bi bi-pencil"></i>
@@ -115,6 +116,7 @@
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
+                                @endif
                             </td>
                         </tr>
                         <div class="modal fade" id="modalEdit{{ $dist->id }}" tabindex="-1" aria-hidden="true">
