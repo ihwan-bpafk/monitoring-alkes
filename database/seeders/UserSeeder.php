@@ -68,10 +68,16 @@ class UserSeeder extends Seeder
         //     'password' => bcrypt('guest'),
         //     'role' => 3,
         // ]);
+        // \App\Models\User::create([
+        //     'name' => 'Kasskas',
+        //     'username' => 'passkas',
+        //     'password' => bcrypt('passkas2026'),
+        //     'role' => 1,
+        // ]);
         \App\Models\User::create([
-            'name' => 'Kasskas',
-            'username' => 'passkas',
-            'password' => bcrypt('passkas2026'),
+            'name' => 'Gaskelab',
+            'username' => 'gaskelab',
+            'password' => bcrypt('gaskelab2026'),
             'role' => 1,
         ]);
     }
