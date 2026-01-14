@@ -139,7 +139,6 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
-                                    @if(auth()->user()->role === 1 || auth()->user()->role === 2)
                                     <button class="btn btn-sm btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalHapusDonasi{{ $d->id }}">
                                         <i class="bi bi-trash"></i>
                                     </button>
