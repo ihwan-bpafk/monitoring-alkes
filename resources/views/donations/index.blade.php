@@ -124,9 +124,35 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge border text-teal border-teal">
-                                    <i class="bi bi-geo-alt-fill me-1"></i>{{ $d->status_akhir }}
-                                </span>
+                                @if($d->distributions->isNotEmpty())
+                                    {{-- Jika sudah didistribusikan --}}
+                                    <div class="d-flex flex-column align-items-center">
+                                        <span class="badge bg-info text-white mb-2" style="font-size: 0.75rem;">
+                                            <i class="bi bi-truck me-1"></i> Terdistribusi
+                                        </span>
+                                        
+                                        <div class="text-start w-100 px-2">
+                                            @php
+                                                // Kelompokkan distribusi berdasarkan Nama RS dan jumlahkan unitnya
+                                                $summaryDistribusi = $d->distributions->groupBy('nama_rs')->map(function ($row) {
+                                                    return $row->sum('jumlah_distribusi');
+                                                });
+                                            @endphp
+
+                                            @foreach($summaryDistribusi as $rs => $total)
+                                                <div class="d-flex justify-content-between border-bottom mb-1 pb-1" style="font-size: 0.7rem;">
+                                                    <span class="text-muted fw-bold">{{ $rs }}</span>
+                                                    <span class="badge bg-light text-dark border ms-2">{{ $total }} Unit</span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @else
+                                    {{-- Jika masih di posisi awal (Gudang/BPAFK) --}}
+                                    <span class="badge border text-teal border-teal">
+                                        <i class="bi bi-geo-alt-fill me-1"></i>{{ $d->status_akhir }}
+                                    </span>
+                                @endif
                             </td>
                             <td>
                                 <div class="d-flex gap-1 justify-content-center">

@@ -23,7 +23,7 @@ class DonationController extends Controller
             ->pluck('nama_alkes');
 
         // 2. Query utama dengan sistem Filter dinamis
-        $query = Donation::query();
+        $query = Donation::with('distributions');
 
         // Filter berdasarkan Pemberi Donasi (Sudah disinkronkan dengan View)
         $query->when($request->filter_pemberi, function ($q, $pemberi) {
