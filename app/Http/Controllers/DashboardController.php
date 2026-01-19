@@ -66,7 +66,9 @@ class DashboardController extends Controller
                 DB::raw("SUM(CASE WHEN status_perbaikan = 'Dalam Proses Perbaikan' THEN 1 ELSE 0 END) as proses"),
                 DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
             )
-            ->groupBy('nama_alkes')->orderBy('jumlah_repair', 'desc')->get()
+            ->groupBy('nama_alkes')
+            ->orderBy('nama_alkes', 'asc')
+            ->get()
             ->map(function($item) use ($donationsDist) {
                 $distData = $donationsDist[$item->nama_alkes] ?? null;
                 
