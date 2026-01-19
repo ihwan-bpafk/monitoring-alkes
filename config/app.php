@@ -27,6 +27,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'data_locked' => env('APP_DATA_LOCKED', false),
 
     /*
     |--------------------------------------------------------------------------

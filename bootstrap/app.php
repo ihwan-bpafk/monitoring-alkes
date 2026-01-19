@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'lock.report' => \App\Http\Middleware\LockDataForReport::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

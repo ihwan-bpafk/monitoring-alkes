@@ -132,8 +132,7 @@
 </head>
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
-        <div class="container d-flex justify-content-between align-items-center">
-            
+        <div class="container d-flex justify-content-between align-items-center">            
             <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('repairs.index') }}">
                 <img src="{{ asset('img/logo BPAFK Medan.png') }}" alt="Logo" width="130" height="40" class="d-inline-block align-top me-2">
                 <span class="d-none d-md-inline">BPAFK - Monitoring Alkes</span>
@@ -169,6 +168,18 @@
 
         </div>
     </nav>
+    {{-- Notifikasi Mode Read-Only (Laporan Menkes) --}}
+    @if(config('app.data_locked'))
+        <div class="alert alert-danger border-0 shadow-sm rounded-0 mb-4 animate__animated animate__fadeInDown" style="background-color: #dc3545; color: white;">
+            <div class="container-fluid d-flex align-items-center justify-content-center py-1">
+                <i class="bi bi-lock-fill fs-4 me-3"></i>
+                <div>
+                    <strong class="d-block">SISTEM TERKUNCI (MODE LAPORAN MENKES)</strong>
+                    <span class="small">Input, Update, dan Hapus data dinonaktifkan sementara untuk menjaga validitas penarikan data laporan.</span>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <div class="container">
         @yield('content')
