@@ -139,6 +139,7 @@
                                                     @foreach($list_rs_master as $rs)
                                                         <option value="{{ $rs }}" {{ $dist->nama_rs == $rs ? 'selected' : '' }}>{{ $rs }}</option>
                                                     @endforeach
+                                                    <option value="Dinkes Tamiang" {{ $dist->nama_rs == "Dinkes Tamiang" ? 'selected' : '' }}>Dinkes Tamiang</option>
                                                 </select>
                                             </div>
                                             <div class="row">
@@ -244,6 +245,7 @@
                             @foreach($list_rs_master as $rs)
                                 <option value="{{ $rs }}">{{ $rs }}</option>
                             @endforeach
+                            <option value="Dinkes Tamiang">Dinkes Tamiang</option>
                         </select>
                     </div>
 

@@ -227,7 +227,6 @@
                                                         <label class="form-label small fw-bold text-muted">Nama Rumah Sakit</label>
                                                         <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
                                                             <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
-                                                            
                                                             @php
                                                                 $list_rs = [
                                                                     "RSUD Muda Sedia Aceh Tamiang" => "Kab. Aceh Tamiang",
@@ -247,13 +246,12 @@
                                                                 </option>
                                                             @endforeach
                                                         </select>
-                                                        @if(env('APP_READONLY', false))
-                                                            <small class="text-danger italic">Data dikunci untuk laporan Menkes.</small>
-                                                        @endif
                                                     </div>
+
                                                     <div class="mb-2">
                                                         <label class="small fw-bold">Lokasi / Kota</label>
-                                                        <input type="text" name="lokasi" class="form-control form-control-sm" value="{{ $r->lokasi }}" readonly>
+                                                        <input type="text" name="lokasi" class="form-control form-control-sm js-lokasi-input" value="{{ $r->lokasi }}" readonly style="background-color: #f0f0f0;">
+                                                        <small class="text-muted" style="font-size: 0.65rem;">*Lokasi terisi otomatis berdasarkan RS.</small>
                                                     </div>
                                                     <div class="mb-2">
                                                         <label class="small fw-bold">Nama Alkes</label>
@@ -601,7 +599,7 @@
                                     @csrf
                                     <div class="modal-body p-4">
                                         <div class="row mb-4">
-                                            <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasi Lokasi</h6></div>
+                                            <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasiedit Lokasi</h6></div>
                                             <div class="col-md-3 mb-3">
                                                 <label class="form-label small fw-bold">Petugas Input</label>
                                                 <input type="text" name="input_by" class="form-control" value="{{ Auth::user()->name }}" required>
@@ -611,24 +609,19 @@
                                                 <input type="date" class="form-control bg-light" value="{{ date('Y-m-d') }}" disabled>
                                                 <input type="hidden" name="tanggal_input" value="{{ date('Y-m-d') }}">
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="mb-3">
                                                 <label class="form-label small fw-bold text-muted">Nama Rumah Sakit</label>
-                                                <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
+                                                <select name="nama_rs" class="form-select js-nama-rs select2-tambah" required>
                                                     <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
-                                                    <option value="RSUD Muda Sedia Aceh Tamiang" data-lokasi="Kab. Aceh Tamiang">RSUD Muda Sedia Aceh Tamiang</option>
-                                                    <option value="RSUD Sultan Abdul Aziz Syah" data-lokasi="Kota Peureulak">RSUD Sultan Abdul Aziz Syah</option>
-                                                    <option value="RSUD Langsa" data-lokasi="Kota Langsa">RSUD Langsa</option>
-                                                    <option value="RSUD Muyang Kute" data-lokasi="Bener Meriah">RSUD Muyang Kute</option>
-                                                    <option value="RSUD Zubir Mahmud" data-lokasi="Kab Aceh Timur/Idi Timur">RSUD Zubir Mahmud</option>
-                                                    <option value="RSUD Fauziah Bireuen" data-lokasi="Bireuen">RSUD Fauziah Bireuen</option>
-                                                    <option value="RSUD Datu Beru" data-lokasi="Takengon">RSUD Datu Beru</option>
-                                                    <option value="RSUD Tanjung Pura" data-lokasi="Kab. Langkat/Tanjung Pura">RSUD Tanjung Pura</option>
+                                                    @foreach($list_rs as $nama => $lokasi)
+                                                        <option value="{{ $nama }}" data-lokasi="{{ $lokasi }}">{{ $nama }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
 
-                                            <div class="col-md-3 mb-3">
-                                                <label class="form-label small fw-bold text-muted">Lokasi (Kab/Kota)</label>
-                                                <input type="text" name="lokasi" class="form-control bg-light js-lokasi" readonly required>
+                                            <div class="mb-3">
+                                                <label class="small fw-bold">Lokasi / Kota</label>
+                                                <input type="text" name="lokasi" class="form-control js-lokasi-input" readonly style="background-color: #f8f9fa;">
                                             </div>
                                         </div>
 
@@ -827,14 +820,30 @@
     // PENTING: Jika menggunakan Select2, tambahkan ini agar Select2 memicu event 'change' 
     // yang bisa dibaca oleh document.addEventListener di atas.
     $(document).ready(function() {
-        $('.js-nama-rs').select2({
-            theme: 'bootstrap-5',
-            width: '100%',
-            // Pastikan dropdownParent diarahkan ke modal terkait jika di dalam modal
-            dropdownParent: $('.js-nama-rs').closest('.modal').length ? $('.js-nama-rs').closest('.modal') : null
-        }).on('select2:select', function (e) {
-            // Paksa trigger event change asli agar document.addEventListener menangkapnya
-            this.dispatchEvent(new Event('change', { bubbles: true }));
+        // Inisialisasi Select2 untuk dropdown di dalam modal
+        $('.js-nama-rs').each(function() {
+            $(this).select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $(this).closest('.modal')
+            });
+        });
+
+        // Event saat Nama RS dipilih
+        $('.js-nama-rs').on('select2:select', function (e) {
+            // Ambil data-lokasi dari elemen option yang dipilih
+            const selectedOption = $(this).find(':selected');
+            const lokasiValue = selectedOption.data('lokasi');
+            
+            // Temukan input lokasi di dalam modal yang sama
+            const modal = $(this).closest('.modal');
+            const inputLokasi = modal.find('.js-lokasi-input');
+
+            if (lokasiValue) {
+                inputLokasi.val(lokasiValue);
+            } else {
+                inputLokasi.val('');
+            }
         });
     });
 
