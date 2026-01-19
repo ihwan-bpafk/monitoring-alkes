@@ -140,6 +140,7 @@
                                                         <option value="{{ $rs }}" {{ $dist->nama_rs == $rs ? 'selected' : '' }}>{{ $rs }}</option>
                                                     @endforeach
                                                     <option value="Dinkes Tamiang" {{ $dist->nama_rs == "Dinkes Tamiang" ? 'selected' : '' }}>Dinkes Tamiang</option>
+                                                    <option value="RSUD Cut Meutia" {{ $dist->nama_rs == "RSUD Cut Meutia" ? 'selected' : '' }}>RSUD Cut Meutia</option>
                                                 </select>
                                             </div>
                                             <div class="row">
@@ -246,6 +247,7 @@
                                 <option value="{{ $rs }}">{{ $rs }}</option>
                             @endforeach
                             <option value="Dinkes Tamiang">Dinkes Tamiang</option>
+                            <option value="RSUD Cut Meutia">RSUD Cut Meutia</option>
                         </select>
                     </div>
 
