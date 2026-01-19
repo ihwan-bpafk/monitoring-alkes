@@ -223,9 +223,33 @@
                                                 <div class="card border-0 shadow-sm p-3 mb-3 bg-light">
                                                     <h6 class="fw-bold border-bottom pb-2 text-primary">Identitas Unit</h6>
                                                     
-                                                    <div class="mb-2">
-                                                        <label class="small fw-bold">Nama Rumah Sakit</label>
-                                                        <input type="text" name="nama_rs" class="form-control form-control-sm" value="{{ $r->nama_rs }}" readonly>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label small fw-bold text-muted">Nama Rumah Sakit</label>
+                                                        <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
+                                                            <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
+                                                            
+                                                            @php
+                                                                $list_rs = [
+                                                                    "RSUD Muda Sedia Aceh Tamiang" => "Kab. Aceh Tamiang",
+                                                                    "RSUD Sultan Abdul Aziz Syah" => "Kota Peureulak",
+                                                                    "RSUD Langsa" => "Kota Langsa",
+                                                                    "RSUD Muyang Kute" => "Bener Meriah",
+                                                                    "RSUD Zubir Mahmud" => "Kab Aceh Timur/Idi Timur",
+                                                                    "RSUD Fauziah Bireuen" => "Bireuen",
+                                                                    "RSUD Datu Beru" => "Takengon",
+                                                                    "RSUD Tanjung Pura" => "Kab. Langkat/Tanjung Pura"
+                                                                ];
+                                                            @endphp
+
+                                                            @foreach($list_rs as $nama => $lokasi)
+                                                                <option value="{{ $nama }}" data-lokasi="{{ $lokasi }}" {{ $r->nama_rs == $nama ? 'selected' : '' }}>
+                                                                    {{ $nama }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        @if(env('APP_READONLY', false))
+                                                            <small class="text-danger italic">Data dikunci untuk laporan Menkes.</small>
+                                                        @endif
                                                     </div>
                                                     <div class="mb-2">
                                                         <label class="small fw-bold">Lokasi / Kota</label>
