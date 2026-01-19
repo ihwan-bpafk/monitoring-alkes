@@ -169,19 +169,19 @@
         </div>
     </nav>
     @if(config('app.data_locked'))
-        <
-
-    <div class="container">div class="alert {{ auth()->user()->username === 'admin' ? 'alert-info' : 'alert-danger' }} border-0 shadow-sm rounded-0 mb-4 py-1">
+        <div class="alert {{ auth()->user()->username === 'admin' ? 'alert-info' : 'alert-danger' }} border-0 shadow-sm rounded-0 mb-4 py-1">
             <div class="container-fluid d-flex align-items-center justify-content-center">
                 <i class="bi bi-info-circle-fill me-2"></i>
                 @if(auth()->user()->username === 'admin')
                     <small><strong>MODE LAPORAN AKTIF:</strong> Anda tetap bisa input/edit karena login sebagai Admin Utama.</small>
                 @else
-                    <small><strong>SISTEM TERKUNCI:</strong> Input/Update dinonaktifkan sementara untuk Validasi Laporan.</small>
+                    <small><strong>SISTEM TERKUNCI:</strong> Input/Update dinonaktifkan sementara untuk Laporan Menkes.</small>
                 @endif
             </div>
         </div>
     @endif
+
+    <div class="container">
         @yield('content')
     </div>
 
