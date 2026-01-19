@@ -175,7 +175,7 @@
                 @if(auth()->user()->username === 'admin')
                     <small><strong>MODE LAPORAN AKTIF:</strong> Anda tetap bisa input/edit karena login sebagai Admin Utama.</small>
                 @else
-                    <small><strong>SISTEM TERKUNCI:</strong> Input/Update dinonaktifkan sementara untuk Laporan Menkes.</small>
+                    <small><strong>SISTEM TERKUNCI:</strong> Input/Update dinonaktifkan sementara untuk Validasi Laporan.</small>
                 @endif
             </div>
         </div>
