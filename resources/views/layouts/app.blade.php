@@ -168,20 +168,20 @@
 
         </div>
     </nav>
-    {{-- Notifikasi Mode Read-Only (Laporan Menkes) --}}
     @if(config('app.data_locked'))
-        <div class="alert alert-danger border-0 shadow-sm rounded-0 mb-4 animate__animated animate__fadeInDown" style="background-color: #dc3545; color: white;">
-            <div class="container-fluid d-flex align-items-center justify-content-center py-1">
-                <i class="bi bi-lock-fill fs-4 me-3"></i>
-                <div>
-                    <strong class="d-block">SISTEM TERKUNCI</strong>
-                    <span class="small">Input, Update, dan Hapus data dinonaktifkan sementara untuk menjaga validitas penarikan data laporan.</span>
-                </div>
+        <
+
+    <div class="container">div class="alert {{ auth()->user()->username === 'admin' ? 'alert-info' : 'alert-danger' }} border-0 shadow-sm rounded-0 mb-4 py-1">
+            <div class="container-fluid d-flex align-items-center justify-content-center">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                @if(auth()->user()->username === 'admin')
+                    <small><strong>MODE LAPORAN AKTIF:</strong> Anda tetap bisa input/edit karena login sebagai Admin Utama.</small>
+                @else
+                    <small><strong>SISTEM TERKUNCI:</strong> Input/Update dinonaktifkan sementara untuk Validasi Laporan.</small>
+                @endif
             </div>
         </div>
     @endif
-
-    <div class="container">
         @yield('content')
     </div>
 
