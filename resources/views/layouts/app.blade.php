@@ -174,7 +174,7 @@
             <div class="container-fluid d-flex align-items-center justify-content-center py-1">
                 <i class="bi bi-lock-fill fs-4 me-3"></i>
                 <div>
-                    <strong class="d-block">SISTEM TERKUNCI (MODE LAPORAN MENKES)</strong>
+                    <strong class="d-block">SISTEM TERKUNCI</strong>
                     <span class="small">Input, Update, dan Hapus data dinonaktifkan sementara untuk menjaga validitas penarikan data laporan.</span>
                 </div>
             </div>
