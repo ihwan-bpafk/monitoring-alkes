@@ -142,6 +142,7 @@
                                                     <option value="Dinkes Tamiang" {{ $dist->nama_rs == "Dinkes Tamiang" ? 'selected' : '' }}>Dinkes Tamiang</option>
                                                     <option value="RSUD Cut Meutia" {{ $dist->nama_rs == "RSUD Cut Meutia" ? 'selected' : '' }}>RSUD Cut Meutia</option>
                                                     <option value="Dinkes Kab Bireuen" {{ $dist->nama_rs == "Dinkes Kab Bireuen" ? 'selected' : '' }}>Dinkes Kab Bireuen</option>
+                                                    <option value="Dinkes Prov. Aceh" {{ $dist->nama_rs == "Dinkes Prov. Aceh" ? 'selected' : '' }}>Dinkes Prov. Aceh</option>
                                                 </select>
                                             </div>
                                             <div class="row">
@@ -250,6 +251,7 @@
                             <option value="Dinkes Tamiang">Dinkes Tamiang</option>
                             <option value="RSUD Cut Meutia">RSUD Cut Meutia</option>
                             <option value="Dinkes Kab Bireuen">Dinkes Kab Bireuen</option>
+                            <option value="Dinkes Prov. Aceh">Dinkes Prov. Aceh</option>
                         </select>
                     </div>
 
