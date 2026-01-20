@@ -356,6 +356,7 @@
                             @foreach($list_alkes_master as $alkes)
                                 <option value="{{ $alkes }}">{{ $alkes }}</option>
                             @endforeach
+                            <option value="Antropometri Set">Antropometri Set</option>
                         </select>
                     </div>
                     <div class="row">
