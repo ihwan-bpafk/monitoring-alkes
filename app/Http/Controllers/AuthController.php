@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     public function showLogin() {
+        $request->session()->regenerate();
         return view('auth.login');
     }
 
