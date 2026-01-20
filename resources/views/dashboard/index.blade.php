@@ -132,7 +132,7 @@
                                     <th class="text-success">Bisa Dipakai</th>
                                     <th class="text-warning">Proses</th>
                                     <th class="text-danger">Harus Ganti (BAP)</th>
-                                    <th class="bg-info text-white">Total Distribusi</th> <th class="text-primary">Donasi (Sampai/Kirim)</th> 
+                                    <th class="bg-info text-white">Total Distribusi</th> 
                                     <th class="bg-dark text-white">Kebutuhan</th> 
                                 </tr>
                             </thead>
