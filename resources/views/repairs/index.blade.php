@@ -233,7 +233,7 @@
                                                                     "RSUD Sultan Abdul Aziz Syah" => "Kota Peureulak",
                                                                     "RSUD Langsa" => "Kota Langsa",
                                                                     "RSUD Muyang Kute" => "Bener Meriah",
-                                                                    "RSUD Zubir Mahmud" => "Kab Aceh Timur/Idi Timur",
+                                                                    "RSUD Zubir Mahmud Idi" => "Kab Aceh Timur/Idi Timur",
                                                                     "RSUD Fauziah Bireuen" => "Bireuen",
                                                                     "RSUD Datu Beru" => "Takengon",
                                                                     "RSUD Tanjung Pura" => "Kab. Langkat/Tanjung Pura"
