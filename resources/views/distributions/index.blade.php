@@ -28,37 +28,47 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form action="{{ route('distributions.index') }}" method="GET" class="row g-2">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="small fw-bold">RS Tujuan</label>
                     <select name="filter_rs" class="form-select select2-filter" onchange="this.form.submit()">
-                        <option value="">-- Semua RS --</option>
+                        <option value="">-- RS --</option>
                         @foreach($list_rs_master as $rs)
                             <option value="{{ $rs }}" {{ request('filter_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
                         @endforeach
                     </select>
                 </div>
+
                 <div class="col-md-3">
                     <label class="small fw-bold">Nama Alat</label>
                     <select name="filter_alkes" class="form-select select2-filter" onchange="this.form.submit()">
                         <option value="">-- Semua Alat --</option>
                         @foreach($list_alkes_dist as $name)
-                            {{-- Value sekarang adalah Nama, bukan ID --}}
-                            <option value="{{ $name }}" {{ request('filter_alkes') == $name ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
+                            <option value="{{ $name }}" {{ request('filter_alkes') == $name ? 'selected' : '' }}>{{ $name }}</option>
                         @endforeach
                     </select>
                 </div>
+
                 <div class="col-md-3">
+                    <label class="small fw-bold">Pemberi Donasi</label>
+                    <select name="filter_pemberi" class="form-select select2-filter" onchange="this.form.submit()">
+                        <option value="">-- Semua Pemberi --</option>
+                        @foreach($list_pemberi as $pemberi)
+                            <option value="{{ $pemberi }}" {{ request('filter_pemberi') == $pemberi ? 'selected' : '' }}>{{ $pemberi }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
                     <label class="small fw-bold">Status</label>
                     <select name="filter_status" class="form-select select2-filter" onchange="this.form.submit()">
-                        <option value="">-- Semua Status --</option>
+                        <option value="">-- Status --</option>
                         @foreach($list_status as $st)
                             <option value="{{ $st }}" {{ request('filter_status') == $st ? 'selected' : '' }}>{{ $st }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
+
+                <div class="col-md-2 d-flex align-items-end">
                     <a href="{{ route('distributions.index') }}" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
                 </div>
             </form>

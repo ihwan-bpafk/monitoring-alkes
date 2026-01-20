@@ -17,27 +17,34 @@ class DistributionController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Dropdown Filter - Ambil NAMA ALAT saja secara UNIK
+        // 1. Ambil Data untuk Dropdown Filter
         $list_rs_master = \App\Models\Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs')->pluck('nama_rs');
         
-        // Perubahan di sini: Mengambil distinct nama_alkes, bukan ID
-        $list_alkes_dist = Donation::whereHas('distributions')
-            ->distinct()
-            ->orderBy('nama_alkes')
-            ->pluck('nama_alkes'); 
+        // Ambil list nama alkes yang sudah pernah didistribusikan
+        $list_alkes_dist = Donation::whereHas('distributions')->distinct()->orderBy('nama_alkes')->pluck('nama_alkes'); 
+
+        // BARU: Ambil list pemberi donasi yang alatnya sudah pernah didistribusikan
+        $list_pemberi = Donation::whereHas('distributions')->distinct()->orderBy('pemberi_donasi')->pluck('pemberi_donasi');
 
         $list_status = Distribution::distinct()->pluck('status');
 
         // 2. Query Utama
         $query = Distribution::with('donation');
 
-        // Filter RS (Fix typo dari nama_rsa ke nama_rs)
+        // Filter RS
         $query->when($request->filter_rs, fn($q, $v) => $q->where('nama_rs', $v));
 
-        // Perubahan di sini: Filter berdasarkan NAMA di tabel donations
+        // Filter Nama Alat (via tabel donations)
         $query->when($request->filter_alkes, function($q, $v) {
             $q->whereHas('donation', function($query) use ($v) {
                 $query->where('nama_alkes', $v);
+            });
+        });
+
+        // BARU: Filter Pemberi Donasi (via tabel donations)
+        $query->when($request->filter_pemberi, function($q, $v) {
+            $q->whereHas('donation', function($query) use ($v) {
+                $query->where('pemberi_donasi', $v);
             });
         });
 
@@ -48,7 +55,7 @@ class DistributionController extends Controller
         $availableDonations = Donation::where('sisa_stok', '>', 0)->get();
 
         return view('distributions.index', compact(
-            'distributions', 'availableDonations', 'list_rs_master', 'list_alkes_dist', 'list_status'
+            'distributions', 'availableDonations', 'list_rs_master', 'list_alkes_dist', 'list_status', 'list_pemberi'
         ));
     }
 
@@ -180,8 +187,8 @@ class DistributionController extends Controller
 
     public function exportExcel(Request $request) 
     {
-        // Tangkap filter yang sedang aktif
-        $filters = $request->only(['filter_rs', 'filter_alkes', 'filter_status']);
+        // Tambahkan filter_pemberi ke dalam array
+        $filters = $request->only(['filter_rs', 'filter_alkes', 'filter_status', 'filter_pemberi']);
         
         $fileName = 'Laporan_Distribusi_Alkes_' . now()->format('Ymd_His') . '.xlsx';
 
