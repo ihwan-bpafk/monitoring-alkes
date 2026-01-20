@@ -105,27 +105,42 @@ class DonationController extends Controller
     public function updateStatus(Request $request, $id)
     {
         if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
-            return redirect()->back()->with('error', 'tidak memiliki akses!');
+            return redirect()->back()->with('error', 'Tidak memiliki akses!');
         }
+
         $donation = Donation::findOrFail($id);
 
-        \DB::transaction(function () use ($request, $donation) {
-            // Gunakan logika yang sama: input atau '-'
+        // Validasi: Jumlah baru tidak boleh lebih kecil dari yang sudah keluar (distribusi)
+        $sudah_distribusi = $donation->jumlah_donasi - $donation->sisa_stok;
+        
+        $request->validate([
+            'jumlah_donasi' => 'required|integer|min:' . $sudah_distribusi,
+        ], [
+            'jumlah_donasi.min' => 'Gagal! Alat sudah terdistribusi ' . $sudah_distribusi . ' unit, jumlah total tidak boleh kurang dari itu.'
+        ]);
+
+        \DB::transaction(function () use ($request, $donation, $sudah_distribusi) {
             $status_baru = $request->status_akhir ?: '-';
+            $jumlah_baru = $request->jumlah_donasi;
+
+            // Hitung ulang sisa stok berdasarkan input baru
+            $sisa_stok_baru = $jumlah_baru - $sudah_distribusi;
 
             $donation->update([
-                'status_akhir' => $status_baru
+                'jumlah_donasi' => $jumlah_baru,
+                'sisa_stok'     => $sisa_stok_baru,
+                'status_akhir'  => $status_baru
             ]);
 
             \App\Models\DonationLog::create([
                 'donation_id'   => $donation->id,
-                'status'        => $status_baru,
+                'status'        => 'Update Data: ' . $status_baru,
                 'diupdate_oleh' => auth()->user()->name,
-                'catatan'       => $request->catatan ?? 'Perubahan status/posisi alat.',
+                'catatan'       => $request->catatan ?? "Update jumlah menjadi {$jumlah_baru} unit dan status menjadi {$status_baru}.",
             ]);
         });
 
-        return redirect()->back()->with('success', 'Status akhir berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Data donasi dan stok berhasil diperbarui.');
     }
 
     public function destroy($id)

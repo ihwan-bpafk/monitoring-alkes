@@ -243,6 +243,13 @@
                                                 <label class="small text-muted d-block">Status Saat Ini:</label>
                                                 <span class="badge bg-teal">{{ $d->status_akhir }}</span>
                                             </div>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold text-dark">Jumlah Total Donasi (Unit)</label>
+                                                <input type="number" name="jumlah_donasi" class="form-control" value="{{ $d->jumlah_donasi }}" min="1" required>
+                                                <div class="form-text mt-1 small text-muted">
+                                                    <i class="bi bi-info-circle me-1"></i> Saat ini terpakai: <strong>{{ $d->jumlah_donasi - $d->sisa_stok }} Unit</strong>.
+                                                </div>
+                                            </div>
 
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold text-dark">Status/Posisi Baru</label>
