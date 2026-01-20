@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
         //     'password' => bcrypt('adminbpafk007'),
         // ]);
         \App\Models\User::where('username', 'admin')->update([
-            'password' => Hash::make('adminsysmon')
+            'password' => bcrypt('adminsysmon')
         ]);
         // \App\Models\User::create([
         //     'name' => 'keslan',
