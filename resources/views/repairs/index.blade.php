@@ -707,7 +707,6 @@
                                             <div class="col-md-3 mb-3">
                                                 <label class="form-label small fw-bold">Respon Penyedia</label>
                                                 <select name="respon_penyedia" class="form-select">
-                                                    <option value="">-- Pilih --</option>
                                                     <option value="Datang">Datang</option>
                                                     <option value="Belum Datang">Belum Datang</option>
                                                 </select>
