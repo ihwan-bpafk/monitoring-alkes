@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     public function showLogin() {
-        $request->session()->regenerate();
         return view('auth.login');
     }
 
     public function login(Request $request) {
+        $request->session()->regenerate();
         $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required'
