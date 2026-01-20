@@ -112,7 +112,7 @@
                     <tbody class="text-center">
                         @foreach($donations as $d)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ ($donations->currentPage() - 1) * $donations->perPage() + $loop->iteration }}</td>
                             <td class="text-start fw-bold text-dark">{{ $d->pemberi_donasi }}</td>
                             <td class="text-start">
                                 <div class="text-teal fw-bold">{{ $d->nama_alkes }}</div>

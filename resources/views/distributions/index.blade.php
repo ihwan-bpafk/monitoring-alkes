@@ -101,7 +101,7 @@
                     <tbody class="text-center">
                         @foreach($distributions as $dist)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ ($distributions->currentPage() - 1) * $distributions->perPage() + $loop->iteration }}</td>
                             <td class="text-start">
                                 <div class="fw-bold text-teal">{{ $dist->donation->nama_alkes }}</div>
                                 <small class="text-muted">Pemberi: {{ $dist->donation->pemberi_donasi }}</small>
