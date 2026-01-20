@@ -17,12 +17,45 @@ class UserSeeder extends Seeder
         //     'username' => 'admin',
         //     'password' => bcrypt('adminbpafk007'),
         // ]);
+        User::where('username', 'admin')->update([
+            'password' => Hash::make('adminsysmon')
+        ]);
         // \App\Models\User::create([
         //     'name' => 'keslan',
         //     'username' => 'admin keslan',
         //     'password' => bcrypt('keslanadmin'),
         //     'role' => 2,
         // ]);
+        \App\Models\User::create([
+            'name' => 'Bpafk Medan',
+            'username' => 'bpafkmedan',
+            'password' => bcrypt('adminmedan'),
+            'role' => 1,
+        ]);
+        \App\Models\User::create([
+            'name' => 'Bpafk Jakarta',
+            'username' => 'bpafkjakarta',
+            'password' => bcrypt('adminjkt'),
+            'role' => 1,
+        ]);
+        \App\Models\User::create([
+            'name' => 'Bpafk Surakarta',
+            'username' => 'adminsurakarta',
+            'password' => bcrypt('adminjateng'),
+            'role' => 1,
+        ]);
+        \App\Models\User::create([
+            'name' => 'Bpafk Surabaya',
+            'username' => 'adminsurabaya',
+            'password' => bcrypt('adminsby'),
+            'role' => 1,
+        ]);
+        \App\Models\User::create([
+            'name' => 'ITJEN KEMENKES',
+            'username' => 'ITJEN',
+            'password' => bcrypt('adminitjen007'),
+            'role' => 1,
+        ]);
         // \App\Models\User::create([
         //     'name' => 'puskris',
         //     'username' => 'admin puskris',
@@ -74,11 +107,11 @@ class UserSeeder extends Seeder
         //     'password' => bcrypt('passkas2026'),
         //     'role' => 3,
         // ]);
-        \App\Models\User::create([
-            'name' => 'Gakeslab',
-            'username' => 'gakeslab',
-            'password' => bcrypt('gakeslab2026'),
-            'role' => 3,
-        ]);
+        // \App\Models\User::create([
+        //     'name' => 'Gakeslab',
+        //     'username' => 'gakeslab',
+        //     'password' => bcrypt('gakeslab2026'),
+        //     'role' => 3,
+        // ]);
     }
 }
