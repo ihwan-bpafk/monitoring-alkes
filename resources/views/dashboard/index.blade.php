@@ -143,36 +143,31 @@
                                         {{ $item->nama_alkes }}
                                         @if($item->total_alokasi > 0)
                                             <div class="badge bg-light text-primary border-primary small fw-normal" style="font-size: 0.6rem;">
-                                                Inc. {{ $item->total_alokasi }} Alokasi
+                                                Inc. {{ $item->total_alokasi }} Rencana Alokasi
                                             </div>
                                         @endif
                                     </td>
                                     <td><span class="badge bg-secondary rounded-pill px-3">{{ $item->jumlah }}</span></td>
-                                    <td>{{ $item->bisa_dipakai }}</td>
-                                    <td>{{ $item->proses }}</td>
-                                    <td>{{ $item->ganti }}</td>
+                                    <td class="text-success">{{ $item->bisa_dipakai }}</td>
+                                    <td class="text-warning">{{ $item->proses }}</td>
+                                    <td class="text-danger">{{ $item->ganti }}</td>
                                     
-                                    <td class="bg-light fw-bold text-info">
-                                        {{ $item->grand_total_distribusi }} Unit
-                                        <div style="font-size: 0.6rem;" class="text-muted fw-normal italic">Semua Status</div>
-                                    </td>
-
-                                    <td>
-                                        <span class="{{ $item->total_pemenuhan > 0 ? 'fw-bold text-primary' : 'text-muted opacity-50' }}">
-                                            {{ $item->total_pemenuhan }} Unit
-                                        </span>
+                                    <td class="bg-light">
+                                        <div class="fw-bold text-info">{{ $item->total_pemenuhan }} Unit</div>
+                                        <div style="font-size: 0.6rem;" class="text-muted fw-normal italic">(Alokasi + Distribusi)</div>
                                     </td>
 
                                     <td class="bg-light">
                                         @if($item->kebutuhan > 0)
-                                            <span class="badge bg-danger">Butuh {{ $item->kebutuhan }} Unit</span>
+                                            <span class="badge bg-danger">Butuh {{ $item->kebutuhan }} Unit Lagi</span>
                                         @else
                                             <span class="text-success small fw-bold"><i class="bi bi-check-all"></i> Terpenuhi</span>
                                         @endif
                                     </td>
                                 </tr>
                                 @empty
-                                    @endforelse
+                                <tr><td colspan="7">Data tidak ditemukan</td></tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

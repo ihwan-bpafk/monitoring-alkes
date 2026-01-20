@@ -34,12 +34,9 @@ class DashboardController extends Controller
 
         $donationsDist = $distQuery->select(
                 'donations.nama_alkes',
-                // 1. Pemenuhan (Hanya Dikirim & Diterima) -> Untuk Hitung Kebutuhan
-                DB::raw("SUM(CASE WHEN distributions.status IN ('Diterima RS', 'Dikirim') THEN distributions.jumlah_distribusi ELSE 0 END) as total_pemenuhan"),
-                // 2. Alokasi (Hanya Alokasi) -> Untuk Hitung Total Unit
-                DB::raw("SUM(CASE WHEN distributions.status = 'Alokasi' THEN distributions.jumlah_distribusi ELSE 0 END) as total_alokasi"),
-                // 3. SEMUA STATUS (Alokasi + Dikirim + Diterima) -> Request Baru Ahmad
-                DB::raw("SUM(distributions.jumlah_distribusi) as grand_total_distribusi")
+                // Total Gabungan: Alokasi + Dikirim + Diterima
+                DB::raw("SUM(distributions.jumlah_distribusi) as total_pemenuhan_gabungan"),
+                DB::raw("SUM(CASE WHEN distributions.status = 'Alokasi' THEN distributions.jumlah_distribusi ELSE 0 END) as total_alokasi")
             )
             ->groupBy('donations.nama_alkes')
             ->get()
@@ -72,14 +69,13 @@ class DashboardController extends Controller
             ->map(function($item) use ($donationsDist) {
                 $distData = $donationsDist[$item->nama_alkes] ?? null;
                 
-                $item->total_pemenuhan = $distData ? $distData->total_pemenuhan : 0;
+                $item->total_pemenuhan = $distData ? $distData->total_pemenuhan_gabungan : 0;
                 $item->total_alokasi = $distData ? $distData->total_alokasi : 0;
-                $item->grand_total_distribusi = $distData ? $distData->grand_total_distribusi : 0; // Data Baru
                 
-                // Total Unit = Aset Repair + Alokasi
+                // Total Unit = Aset Lama + Alokasi Baru
                 $item->jumlah = $item->jumlah_repair + $item->total_alokasi;
                 
-                // Kebutuhan = BAP - (Diterima + Dikirim)
+                // RUMUS BARU: Kebutuhan = BAP - (Alokasi + Distribusi)
                 $kebutuhan = $item->ganti - $item->total_pemenuhan;
                 $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
                 
