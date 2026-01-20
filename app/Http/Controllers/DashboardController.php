@@ -54,7 +54,7 @@ class DashboardController extends Controller
 
         // (Data Chart tetap sama seperti sebelumnya...)
         $statusData = (clone $query)->select('status_perbaikan', DB::raw('count(*) as total'))->where('status_perbaikan', '!=', '-')->groupBy('status_perbaikan')->get();
-        $responData = (clone $query)->whereNotNull('respon_penyedia')->where('grade_kerusakan', '!=', 'Bisa Dipakai')->select('respon_penyedia', DB::raw('count(*) as total'))->groupBy('respon_penyedia')->get();
+        $responData = (clone $query)->where('grade_kerusakan', '!=', 'Bisa Dipakai')->select('respon_penyedia', DB::raw('count(*) as total'))->groupBy('respon_penyedia')->get();
         $totalWithVendor = $responData->sum('total');
         $gradeData = (clone $query)->select('grade_kerusakan', DB::raw('count(*) as total'))->groupBy('grade_kerusakan')->get();
 
