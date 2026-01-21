@@ -357,6 +357,7 @@
                                 <option value="{{ $alkes }}">{{ $alkes }}</option>
                             @endforeach
                             <option value="Antropometri Set">Antropometri Set</option>
+                            <option value="Tensimeter">Tensimeter</option>
                         </select>
                     </div>
                     <div class="row">
