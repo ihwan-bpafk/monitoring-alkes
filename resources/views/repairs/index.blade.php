@@ -236,7 +236,7 @@
                                                                     "RSUD dr. Zubir Mahmud Idi" => "Kab Aceh Timur/Idi Timur",
                                                                     "RSUD Fauziah Bireuen" => "Bireuen",
                                                                     "RSUD Datu Beru" => "Takengon",
-                                                                    "RSUD Tanjung Pura" => "Kab. Langkat/Tanjung Pura"
+                                                                    "RSUD Tanjung Pura" => "Kab. Langkat/Tanjung Pura",
                                                                     "RSUD H. Sahudin Kutacane" => "Kabupaten Aceh Tenggara, Kutacane",
                                                                 ];
                                                             @endphp
