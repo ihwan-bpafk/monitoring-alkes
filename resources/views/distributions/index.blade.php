@@ -153,6 +153,7 @@
                                                     <option value="RSUD Cut Meutia" {{ $dist->nama_rs == "RSUD Cut Meutia" ? 'selected' : '' }}>RSUD Cut Meutia</option>
                                                     <option value="Dinkes Kab Bireuen" {{ $dist->nama_rs == "Dinkes Kab Bireuen" ? 'selected' : '' }}>Dinkes Kab Bireuen</option>
                                                     <option value="Dinkes Prov. Aceh" {{ $dist->nama_rs == "Dinkes Prov. Aceh" ? 'selected' : '' }}>Dinkes Prov. Aceh</option>
+                                                    <option value="RSUD H. SAHUDIN KUTACANE" {{ $dist->nama_rs == "RSUD H. SAHUDIN KUTACANE" ? 'selected' : '' }}>RSUD H. SAHUDIN KUTACANE</option>
                                                 </select>
                                             </div>
                                             <div class="row">
@@ -262,6 +263,7 @@
                             <option value="RSUD Cut Meutia">RSUD Cut Meutia</option>
                             <option value="Dinkes Kab Bireuen">Dinkes Kab Bireuen</option>
                             <option value="Dinkes Prov. Aceh">Dinkes Prov. Aceh</option>
+                            <option value="RSUD H. SAHUDIN KUTACANE">RSUD H. SAHUDIN KUTACANE</option>
                         </select>
                     </div>
 
