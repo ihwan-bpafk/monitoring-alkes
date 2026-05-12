@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\AlkesSummaryExport;
 use App\Models\Distribution;
 use App\Models\Repair;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
@@ -98,23 +96,24 @@ class DashboardController extends Controller
         $selected_rs = $request->query('nama_rs');
         $selected_kategori = $request->query('kategori');
 
-        // 1. Ambil data distribusi (Alokasi vs Distribusi Nyata)
+        // 1. Ambil data distribusi (Pisahkan Alokasi vs Distribusi)
         $distQuery = \App\Models\Distribution::query()
             ->join('donations', 'distributions.donation_id', '=', 'donations.id');
+
         if ($selected_rs) {
             $distQuery->where('distributions.nama_rs', $selected_rs);
         }
 
         $donationsDist = $distQuery->select(
             'donations.nama_alkes',
-            DB::raw("SUM(CASE WHEN distributions.status = 'Alokasi' THEN distributions.jumlah_distribusi ELSE 0 END) as total_alokasi"),
-            DB::raw("SUM(CASE WHEN distributions.status != 'Alokasi' THEN distributions.jumlah_distribusi ELSE 0 END) as total_distribusi")
+            \DB::raw("SUM(CASE WHEN distributions.status = 'Alokasi' THEN distributions.jumlah_distribusi ELSE 0 END) as total_alokasi"),
+            \DB::raw("SUM(CASE WHEN distributions.status != 'Alokasi' THEN distributions.jumlah_distribusi ELSE 0 END) as total_distribusi")
         )
             ->groupBy('donations.nama_alkes')
             ->get()
             ->keyBy('nama_alkes');
 
-        // 2. Query Repair (Aset)
+        // 2. Query Utama Repair
         $query = \App\Models\Repair::query();
         if ($selected_rs) {
             $query->where('nama_rs', $selected_rs);
@@ -130,13 +129,16 @@ class DashboardController extends Controller
             \DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
         )
             ->groupBy('nama_alkes')
-            ->orderBy('nama_alkes', 'asc') // Urut Abjad
+            ->orderBy('nama_alkes', 'asc') // Sort Berdasarkan Abjad
             ->get()
             ->map(function ($item) use ($donationsDist) {
                 $distData = $donationsDist[$item->nama_alkes] ?? null;
+
+                // Masukkan ke object item agar bisa dibaca di class Export
                 $item->alokasi = $distData ? $distData->total_alokasi : 0;
                 $item->distribusi = $distData ? $distData->total_distribusi : 0;
 
+                // Rumus Kebutuhan: BAP - (Alokasi + Distribusi)
                 $total_masuk = $item->alokasi + $item->distribusi;
                 $kebutuhan = $item->ganti - $total_masuk;
                 $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
@@ -146,6 +148,6 @@ class DashboardController extends Controller
 
         $nama_file = 'Rekap_Alkes_'.($selected_rs ?? 'Semua_RS').'_'.date('Y-m-d').'.xlsx';
 
-        return Excel::download(new AlkesSummaryExport($alkesSummary), $nama_file);
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\AlkesSummaryExport($alkesSummary), $nama_file);
     }
 }
