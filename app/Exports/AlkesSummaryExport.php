@@ -1,15 +1,19 @@
+<?php
+
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class AlkesSummaryExport implements FromCollection, WithHeadings, WithMapping
+class AlkesSummaryExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
 {
     protected $data;
 
     public function __construct($data)
     {
+        // Data ini sudah di-sort berdasarkan abjad dari Controller
         $this->data = $data;
     }
 
@@ -18,7 +22,9 @@ class AlkesSummaryExport implements FromCollection, WithHeadings, WithMapping
         return $this->data;
     }
 
-    // Header Tabel Excel
+    /**
+     * Header Excel sesuai dengan kolom Dashboard
+     */
     public function headings(): array
     {
         return [
@@ -27,24 +33,26 @@ class AlkesSummaryExport implements FromCollection, WithHeadings, WithMapping
             'Bisa Dipakai',
             'Dalam Proses',
             'Harus Ganti (BAP)',
-            'Alokasi (Rencana)',
-            'Distribusi (Terkirim)',
-            'Kebutuhan'
+            'Alokasi',
+            'Distribusi',
+            'Kebutuhan',
         ];
     }
 
-    // Pemetaan Data per Baris
+    /**
+     * Mapping data per baris
+     */
     public function map($item): array
     {
         return [
             $item->nama_alkes,
-            $item->jumlah,
+            $item->jumlah, // Total Unit murni dari aset/repair
             $item->bisa_dipakai,
             $item->proses,
             $item->ganti,
-            $item->alokasi,
-            $item->distribusi,
-            $item->kebutuhan > 0 ? 'Butuh ' . $item->kebutuhan . ' Unit' : 'Terpenuhi'
+            $item->total_alokasi,   // Kolom Alokasi dipisah
+            $item->total_distribusi, // Kolom Distribusi dipisah
+            $item->kebutuhan > 0 ? $item->kebutuhan.' Unit' : 'Terpenuhi',
         ];
     }
 }
