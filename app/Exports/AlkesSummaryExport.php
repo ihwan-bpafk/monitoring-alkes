@@ -46,12 +46,12 @@ class AlkesSummaryExport implements FromCollection, ShouldAutoSize, WithHeadings
     {
         return [
             $item->nama_alkes,
-            $item->jumlah, // Total Unit murni dari aset/repair
+            $item->jumlah,
             $item->bisa_dipakai,
             $item->proses,
             $item->ganti,
-            $item->total_alokasi,   // Kolom Alokasi dipisah
-            $item->total_distribusi, // Kolom Distribusi dipisah
+            $item->alokasi,
+            $item->distribusi,
             $item->kebutuhan > 0 ? $item->kebutuhan.' Unit' : 'Terpenuhi',
         ];
     }
