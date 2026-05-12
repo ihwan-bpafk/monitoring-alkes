@@ -1,5 +1,3 @@
-<?php
-
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -20,19 +18,22 @@ class AlkesSummaryExport implements FromCollection, WithHeadings, WithMapping
         return $this->data;
     }
 
+    // Header Tabel Excel
     public function headings(): array
     {
         return [
             'Nama Alat Kesehatan',
-            'Total Unit',
+            'Total Unit (Aset)',
             'Bisa Dipakai',
             'Dalam Proses',
             'Harus Ganti (BAP)',
-            'Total Donasi',
+            'Alokasi (Rencana)',
+            'Distribusi (Terkirim)',
             'Kebutuhan'
         ];
     }
 
+    // Pemetaan Data per Baris
     public function map($item): array
     {
         return [
@@ -41,8 +42,9 @@ class AlkesSummaryExport implements FromCollection, WithHeadings, WithMapping
             $item->bisa_dipakai,
             $item->proses,
             $item->ganti,
-            $item->total_donasi,
-            $item->kebutuhan > 0 ? $item->kebutuhan . ' Unit' : 'Terpenuhi',
+            $item->alokasi,
+            $item->distribusi,
+            $item->kebutuhan > 0 ? 'Butuh ' . $item->kebutuhan . ' Unit' : 'Terpenuhi'
         ];
     }
 }
