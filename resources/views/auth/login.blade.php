@@ -9,7 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         body {
+            background: url("{{ asset('img/bg_login.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
             background-color: #f4f7f6;
+            /* Fallback color */
             height: 100vh;
             display: flex;
             align-items: center;
@@ -36,8 +39,13 @@
             font-weight: bold;
         }
 
-        .btn-primary:hover {
-            background-color: #035f5c;
+        .btn-primary:hover,
+        .btn-primary:active,
+        .btn-primary:focus,
+        .btn-primary:active:focus {
+            background-color: #035f5c !important;
+            border-color: #035f5c !important;
+            box-shadow: none !important;
         }
 
         .form-control:focus {
@@ -98,7 +106,7 @@
                         </form>
                     </div>
                 </div>
-                <p class="text-center mt-4 text-muted small">&copy; 2025 BPAFK Medan. All Rights Reserved.</p>
+                <p class="text-center mt-4 text-muted small" style="text-shadow: 0 0 5px white, 0 0 10px white;">&copy; 2026 BPAFK Medan. All Rights Reserved.</p>
             </div>
         </div>
     </div>

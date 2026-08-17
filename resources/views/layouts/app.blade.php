@@ -32,20 +32,32 @@
             background-color: #035f5c !important;
         }
 
+        .dropdown-menu {
+            border-radius: 12px;
+            padding: 8px;
+        }
+
         .dropdown-item {
-            color: var(--bs-primary) !important;
-            background-color: #ffffff !important;
+            color: var(--bs-primary);
+            border-radius: 8px;
+            transition: all 0.2s;
         }
 
         .dropdown-item:hover,
         .dropdown-item:focus,
-        .dropdown-item.active,
-        .dropdown-item:active {
-            background-color: var(--bs-primary) !important;
+        .dropdown-item.active {
+            background-color: var(--bs-primary);
             color: white !important;
         }
 
-        .dropdown-item:active .text-danger {
+        .dropdown-item-danger {
+            color: #dc3545 !important;
+        }
+
+        .dropdown-item-danger:hover,
+        .dropdown-item-danger:focus,
+        .dropdown-item-danger:active {
+            background-color: #dc3545 !important;
             color: white !important;
         }
 
@@ -230,7 +242,9 @@
                                         Alkes
                                     </a>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li>
                                     <a class="dropdown-item {{ request()->routeIs('activity_logs.*') ? 'active' : '' }}"
                                         href="{{ route('activity_logs.index') }}">
@@ -302,7 +316,7 @@
                                 <form action="{{ route('logout') }}" method="POST" id="logout-form">
                                     @csrf
                                     <button type="submit"
-                                        class="dropdown-item text-danger py-2 fw-bold d-flex align-items-center">
+                                        class="dropdown-item dropdown-item-danger py-2 fw-bold d-flex align-items-center">
                                         <i class="bi bi-box-arrow-right me-2 fs-5"></i>
                                         <span>Keluar</span>
                                     </button>
