@@ -2,10 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\BencanaScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Repair extends Model
 {
+    protected static function booted()
+    {
+        static::addGlobalScope(new BencanaScope);
+    }
+
+    public function bencana()
+    {
+        return $this->belongsTo(Bencana::class);
+    }
     protected $guarded = [];
 
     // WAJIB: Mengubah string JSON di DB menjadi array PHP otomatis

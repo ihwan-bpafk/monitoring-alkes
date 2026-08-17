@@ -2,10 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\BencanaScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Donation extends Model
 {
+    protected static function booted()
+    {
+        static::addGlobalScope(new BencanaScope);
+    }
+
+    public function bencana()
+    {
+        return $this->belongsTo(Bencana::class);
+    }
     protected $guarded = [];
 
     // Relasi untuk melihat riwayat tracking

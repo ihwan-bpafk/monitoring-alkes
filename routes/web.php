@@ -17,6 +17,7 @@ use App\Http\Controllers\DistributionController;
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('switch-bencana', [\App\Http\Controllers\BencanaController::class, 'switchBencana'])->name('switchBencana')->middleware('auth');
 
 
 // --- 2. Rute Terproteksi (Hanya untuk User Login) ---

@@ -34,6 +34,7 @@ class DonationUpdateRequest extends FormRequest
             'jumlah_donasi' => ['required', 'integer', 'min:' . $sudahDistribusi],
             'status_akhir'  => ['nullable', 'string'],
             'catatan'       => ['nullable', 'string'],
+            'bencana_id'    => ['nullable', 'exists:bencanas,id'],
         ];
     }
 

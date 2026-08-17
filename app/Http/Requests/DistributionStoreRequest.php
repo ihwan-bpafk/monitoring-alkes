@@ -29,6 +29,7 @@ class DistributionStoreRequest extends FormRequest
             'status'             => ['required', 'string'],
             'tanggal_distribusi' => ['nullable', 'date'],
             'keterangan'         => ['nullable', 'string'],
+            'bencana_id'         => ['nullable', 'exists:bencanas,id'],
         ];
     }
 }

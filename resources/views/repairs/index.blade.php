@@ -57,6 +57,7 @@
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
         <form action="{{ route('repairs.index') }}" method="GET">
+            <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
             <div class="row g-3 align-items-end">
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Rumah Sakit</label>
@@ -215,6 +216,7 @@
                                 </div>
                                 <form action="{{ route('repairs.updateStatus', $r->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
+                                    <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                     @method('POST')
                                     <div class="modal-body p-4">
                                         <div class="row g-3">
@@ -409,7 +411,9 @@
                                 </div>
                                 <div class="modal-footer justify-content-center border-0 pb-3">
                                     <form action="{{ route('repairs.destroy', $r->id) }}" method="POST">
-                                        @csrf @method('DELETE')
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                         <button type="submit" class="btn btn-danger px-4 shadow-sm">Ya, Hapus</button>
                                     </form>
                                 </div>
@@ -589,7 +593,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
+                    
+                    
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted small italic">Data tidak ditemukan.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="small text-muted">
+        Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
+    </div>
+    <div>
+        {{ $repairs->links('pagination::bootstrap-5') }}
+    </div>
+</div>
+
+<div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content border-0 shadow-lg">
                                 <div class="modal-header bg-primary text-white py-3 border-0">
@@ -598,6 +624,7 @@
                                 </div>
                                 <form action="{{ route('repairs.store') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
+                                    <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                     <div class="modal-body p-4">
                                         <div class="row mb-4">
                                             <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasiedit Lokasi</h6></div>
@@ -745,26 +772,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted small italic">Data tidak ditemukan.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <div class="small text-muted">
-        Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
-    </div>
-    <div>
-        {{ $repairs->links('pagination::bootstrap-5') }}
-    </div>
-</div>
 
 <script>
     document.addEventListener('change', function (e) {

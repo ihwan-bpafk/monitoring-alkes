@@ -21,7 +21,7 @@ class DistributionService
             'list_rs_master'     => Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs')->pluck('nama_rs'),
             'list_alkes_dist'    => Donation::whereHas('distributions')->distinct()->orderBy('nama_alkes')->pluck('nama_alkes'),
             'list_pemberi'       => Donation::whereHas('distributions')->distinct()->orderBy('pemberi_donasi')->pluck('pemberi_donasi'),
-            'list_status'        => Distribution::distinct()->pluck('status'),
+            'list_status'        => Distribution::whereHas('donation')->distinct()->pluck('status'),
             'availableDonations' => Donation::where('sisa_stok', '>', 0)->get(),
         ];
     }
@@ -31,7 +31,7 @@ class DistributionService
      */
     public function getFilteredDistributions(array $filters, bool $paginate = true)
     {
-        $query = Distribution::with('donation');
+        $query = Distribution::with('donation')->whereHas('donation');
 
         $query->when($filters['filter_rs'] ?? null, fn($q, $v) => $q->where('nama_rs', $v));
 

@@ -28,6 +28,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form action="{{ route('distributions.index') }}" method="GET" class="row g-2">
+                <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                 <div class="col-md-2">
                     <label class="small fw-bold">RS Tujuan</label>
                     <select name="filter_rs" class="form-select select2-filter" onchange="this.form.submit()">
@@ -137,7 +138,8 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <form action="{{ route('distributions.update', $dist->id) }}" method="POST" enctype="multipart/form-data">
-                                        @csrf @method('PATCH')
+                                        @csrf
+                                        <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}"> @method('PATCH')
                                         <div class="modal-body p-4">
                                             <div class="mb-3">
                                                 <label class="small fw-bold">Alat Kesehatan</label>
@@ -212,6 +214,7 @@
                                         <form action="{{ route('distributions.destroy', $dist->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
+                                            <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                             <button type="submit" class="btn btn-danger px-4 fw-bold shadow-sm">
                                                 YA, HAPUS & KEMBALIKAN STOK
                                             </button>
@@ -239,6 +242,7 @@
             
             <form action="{{ route('distributions.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="small fw-bold text-dark">Pilih Alat (Stok Tersedia)</label>

@@ -59,6 +59,7 @@ class RepairRequest extends FormRequest
             'file_bap'          => ['nullable', 'file'],
             'foto_kondisi'      => ['nullable', 'array'],
             'foto_kondisi.*'    => ['nullable', 'image'],
+            'bencana_id'        => ['nullable', 'exists:bencanas,id'],
         ];
     }
 }

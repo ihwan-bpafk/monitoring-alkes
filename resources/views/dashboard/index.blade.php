@@ -22,6 +22,7 @@
             </a>
 
             <form action="{{ route('dashboard') }}" method="GET" class="d-flex gap-2">
+                <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                 <select name="nama_rs" class="form-select shadow-sm border-primary" onchange="this.form.submit()" style="min-width: 200px;">
                     <option value="">-- Semua Rumah Sakit --</option>
                     @foreach($list_rs as $rs)

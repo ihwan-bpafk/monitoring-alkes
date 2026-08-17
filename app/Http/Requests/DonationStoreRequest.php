@@ -30,6 +30,7 @@ class DonationStoreRequest extends FormRequest
             'jumlah_donasi'  => ['required', 'integer', 'min:1'],
             'diterima_oleh'  => ['nullable', 'string'],
             'status_akhir'   => ['nullable', 'string'],
+            'bencana_id'     => ['nullable', 'exists:bencanas,id'],
         ];
     }
 }

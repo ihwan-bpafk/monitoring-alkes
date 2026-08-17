@@ -32,6 +32,15 @@
             background-color: #035f5c !important;
         }
 
+        .dropdown-item:active {
+            background-color: var(--bs-primary) !important;
+            color: white !important;
+        }
+
+        .dropdown-item:active .text-danger {
+            color: white !important;
+        }
+
         .navbar {
             border-bottom: 4px solid var(--bs-secondary);
         }
@@ -147,6 +156,33 @@
                 </div>
                 <!-- PENYESUAIAN LOGO DITJEN FARMALKES SELESAI -->
 
+                <!-- SELECT BENCANA -->
+                @auth
+                    @php
+                        $userBencanaId = Auth::user()->bencana_id;
+                        if ($userBencanaId) {
+                            $bencanas = \App\Models\Bencana::where('id', $userBencanaId)->get();
+                        } else {
+                            $bencanas = \App\Models\Bencana::where('is_active', true)->orderBy('id', 'desc')->get();
+                        }
+                        $activeBencanaId = session('active_bencana_id');
+                    @endphp
+                    @if($bencanas->isNotEmpty())
+                        <div class="me-3 d-flex align-items-center">
+                            <form action="{{ route('switchBencana') }}" method="POST" class="m-0" id="bencana-form">
+                                @csrf
+                                <select name="bencana_id" id="bencana-select" class="form-select form-select-sm" style="min-width: 150px;">
+                                    @foreach($bencanas as $bencana)
+                                        <option value="{{ $bencana->id }}" {{ $activeBencanaId == $bencana->id ? 'selected' : '' }}>
+                                            {{ $bencana->nama_bencana }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        </div>
+                    @endif
+                @endauth
+                <!-- END SELECT BENCANA -->
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                         id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -200,6 +236,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#bencana-select').select2({
+                theme: 'bootstrap-5',
+                minimumResultsForSearch: Infinity
+            }).on('select2:select', function (e) {
+                $('#bencana-form').submit();
+            });
+        });
+    </script>
 </body>
 
 </html>

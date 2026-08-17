@@ -28,6 +28,7 @@
 <div class="card filter-card shadow-sm mb-4">
     <div class="card-body p-4">
         <form id="filterForm" action="{{ route('repairs.export') }}" method="GET" target="_blank">
+            <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
             <div class="row g-3 align-items-end">
                 
                 <div class="col-md-2">

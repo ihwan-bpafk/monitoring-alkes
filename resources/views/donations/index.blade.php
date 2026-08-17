@@ -46,6 +46,7 @@
     <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
         <div class="card-body">
             <form action="{{ route('donations.index') }}" method="GET" class="row g-3 align-items-end">
+                <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                 <div class="col-md-3">
                     <label class="small fw-bold text-muted mb-1">Pemberi Donasi</label>
                     <select name="filter_pemberi" class="form-select form-select-sm select2-filter" onchange="this.form.submit()">
@@ -234,6 +235,7 @@
 
                                     <form action="{{ route('donations.updateStatus', $d->id) }}" method="POST">
                                         @csrf
+                                        <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                         @method('PATCH')
                                         <div class="modal-body p-4">
                                             <div class="mb-4 p-3 bg-light rounded border-start border-4 border-teal">
@@ -312,6 +314,7 @@
                                         <form action="{{ route('donations.destroy', $d->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
+                                            <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                             <button type="submit" class="btn btn-danger px-4 fw-bold shadow-sm">YA, HAPUS SEMUA</button>
                                         </form>
                                     </div>
@@ -344,6 +347,7 @@
             </div>
             <form action="{{ route('donations.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Pemberi Donasi</label>

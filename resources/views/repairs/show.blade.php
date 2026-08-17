@@ -16,6 +16,7 @@
                         <h6>Update Progress:</h6>
                         <form action="{{ route('repairs.updateStatus', $repair->id) }}" method="POST">
                             @csrf
+                            <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                             <div class="mb-2">
                                 <label class="small fw-bold">Petugas</label>
                                 <input type="text" name="petugas" class="form-control" required>
