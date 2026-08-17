@@ -13,7 +13,7 @@ class RepairService
     public function getFilterOptions(): array
     {
         return [
-            'list_rs'       => Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs', 'asc')->pluck('nama_rs'),
+            'list_rs'       => \App\Models\Fasyankes::orderBy('nama_fasyankes', 'asc')->pluck('lokasi', 'nama_fasyankes'),
             'list_alkes'    => Repair::whereNotNull('nama_alkes')->distinct()->orderBy('nama_alkes', 'asc')->pluck('nama_alkes'),
             'list_kategori' => Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori'),
             'list_grade'    => Repair::whereNotNull('grade_kerusakan')->distinct()->orderBy('grade_kerusakan', 'asc')->pluck('grade_kerusakan'),

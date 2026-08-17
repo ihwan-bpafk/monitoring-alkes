@@ -63,8 +63,8 @@
                     <label class="small fw-bold text-muted">Rumah Sakit</label>
                     <select name="nama_rs" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- Semua RS --</option>
-                        @foreach($list_rs as $rs)
-                            <option value="{{ $rs }}" {{ request('nama_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
+                        @foreach($list_rs as $nama => $lokasi)
+                            <option value="{{ $nama }}" {{ request('nama_rs') == $nama ? 'selected' : '' }}>{{ $nama }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -229,20 +229,6 @@
                                                         <label class="form-label small fw-bold text-muted">Nama Rumah Sakit</label>
                                                         <select name="nama_rs" class="form-select js-nama-rs select2-insidelop" required>
                                                             <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
-                                                            @php
-                                                                $list_rs = [
-                                                                    "RSUD Muda Sedia Aceh Tamiang" => "Kab. Aceh Tamiang",
-                                                                    "RSUD Sultan Abdul Aziz Syah" => "Kota Peureulak",
-                                                                    "RSUD Langsa" => "Kota Langsa",
-                                                                    "RSUD Muyang Kute" => "Bener Meriah",
-                                                                    "RSUD dr. Zubir Mahmud Idi" => "Kab Aceh Timur/Idi Timur",
-                                                                    "RSUD Fauziah Bireuen" => "Bireuen",
-                                                                    "RSUD Datu Beru" => "Takengon",
-                                                                    "RSUD Tanjung Pura" => "Kab. Langkat/Tanjung Pura",
-                                                                    "RSUD H. Sahudin Kutacane" => "Kabupaten Aceh Tenggara, Kutacane",
-                                                                ];
-                                                            @endphp
-
                                                             @foreach($list_rs as $nama => $lokasi)
                                                                 <option value="{{ $nama }}" data-lokasi="{{ $lokasi }}" {{ $r->nama_rs == $nama ? 'selected' : '' }}>
                                                                     {{ $nama }}

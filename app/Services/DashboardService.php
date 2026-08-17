@@ -14,7 +14,7 @@ class DashboardService
     public function getFilterOptions(): array
     {
         return [
-            'list_rs' => Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs', 'asc')->pluck('nama_rs'),
+            'list_rs' => \App\Models\Fasyankes::orderBy('nama_fasyankes', 'asc')->pluck('nama_fasyankes'),
             'list_kategori' => Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori'),
         ];
     }

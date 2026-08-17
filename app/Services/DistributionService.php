@@ -18,7 +18,7 @@ class DistributionService
     public function getFilterOptions(): array
     {
         return [
-            'list_rs_master'     => Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs')->pluck('nama_rs'),
+            'list_rs_master'     => \App\Models\Fasyankes::orderBy('nama_fasyankes')->pluck('nama_fasyankes'),
             'list_alkes_dist'    => Donation::whereHas('distributions')->distinct()->orderBy('nama_alkes')->pluck('nama_alkes'),
             'list_pemberi'       => Donation::whereHas('distributions')->distinct()->orderBy('pemberi_donasi')->pluck('pemberi_donasi'),
             'list_status'        => Distribution::whereHas('donation')->distinct()->pluck('status'),
