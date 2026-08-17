@@ -7,7 +7,6 @@
                 <h4 class="text-primary fw-bold mb-0">
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard Monitoring Alkes
                 </h4>
-                <p class="text-muted small mb-0">BPAFK Medan</p>
             </div>
             <div class="d-flex gap-2 align-items-center">
                 <form action="{{ route('dashboard') }}" method="GET" class="d-flex gap-2">
@@ -111,8 +110,10 @@
                     <small class="text-muted fw-normal">(Berdasarkan Filter)</small>
                 </div>
                 <div class="card border-0 shadow-sm mt-4">
-                    <div class="card-header bg-white fw-bold py-3 border-bottom d-flex justify-content-between align-items-center">
-                        <div class="text-primary"><i class="bi bi-grid-3x3-gap me-2"></i>Rincian Kondisi Akhir per Jenis Alat</div>
+                    <div
+                        class="card-header bg-white fw-bold py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <div class="text-primary"><i class="bi bi-grid-3x3-gap me-2"></i>Rincian Kondisi Akhir per Jenis
+                            Alat</div>
                         <a href="{{ route('dashboard.exportExcel', request()->all()) }}"
                             class="btn btn-sm btn-outline-success fw-bold px-3 shadow-sm rounded-pill">
                             <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
@@ -140,14 +141,24 @@
                                             <td><span
                                                     class="badge bg-primary rounded-pill px-3 shadow-sm">{{ $item->jumlah }}</span>
                                             </td>
-                                            <td class="{{ $item->bisa_dipakai > 0 ? 'text-success fw-bold' : 'text-muted' }}">{{ $item->bisa_dipakai }}</td>
-                                            <td class="{{ $item->proses > 0 ? 'text-warning text-dark fw-bold' : 'text-muted' }}">{{ $item->proses }}</td>
-                                            <td class="{{ $item->ganti > 0 ? 'text-danger fw-bold' : 'text-muted' }}">{{ $item->ganti }}</td>
-                                            <td class="{{ $item->total_alokasi > 0 ? 'text-primary fw-bold' : 'text-muted' }}">{{ $item->total_alokasi }}</td>
-                                            <td class="{{ $item->total_distribusi > 0 ? 'text-info fw-bold' : 'text-muted' }}">{{ $item->total_distribusi }}</td>
+                                            <td
+                                                class="{{ $item->bisa_dipakai > 0 ? 'text-success fw-bold' : 'text-muted' }}">
+                                                {{ $item->bisa_dipakai }}</td>
+                                            <td
+                                                class="{{ $item->proses > 0 ? 'text-warning text-dark fw-bold' : 'text-muted' }}">
+                                                {{ $item->proses }}</td>
+                                            <td class="{{ $item->ganti > 0 ? 'text-danger fw-bold' : 'text-muted' }}">
+                                                {{ $item->ganti }}</td>
+                                            <td
+                                                class="{{ $item->total_alokasi > 0 ? 'text-primary fw-bold' : 'text-muted' }}">
+                                                {{ $item->total_alokasi }}</td>
+                                            <td
+                                                class="{{ $item->total_distribusi > 0 ? 'text-info fw-bold' : 'text-muted' }}">
+                                                {{ $item->total_distribusi }}</td>
                                             <td class="bg-light">
                                                 @if ($item->kebutuhan > 0)
-                                                    <span class="badge bg-danger shadow-sm">Butuh {{ $item->kebutuhan }} Lagi</span>
+                                                    <span class="badge bg-danger shadow-sm">Butuh {{ $item->kebutuhan }}
+                                                        Lagi</span>
                                                 @else
                                                     <span class="text-success small fw-bold"><i class="bi bi-check-all"></i>
                                                         Terpenuhi</span>
@@ -214,7 +225,7 @@
                 const textX = Math.round((width - ctx.measureText(text).width) / 2);
                 const textY = height / 2;
                 ctx.fillText(text, textX, textY);
-                
+
                 ctx.font = '0.9rem "Nunito", sans-serif';
                 ctx.fillStyle = '#6c757d';
                 const label = 'Alat';
