@@ -2,196 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Distribution;
-use App\Models\Donation;
-use App\Models\DonationLog;
-use App\Models\Repair;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\DistributionFilterRequest;
+use App\Http\Requests\DistributionStoreRequest;
+use App\Http\Requests\DistributionUpdateRequest;
+use App\Services\DistributionService;
+use App\Exports\DistributionsExport;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class DistributionController extends Controller
 {
-    /**
-     * Menampilkan daftar distribusi dan alat yang tersedia untuk dialokasikan.
-     */
-    public function index(Request $request)
+    protected DistributionService $distributionService;
+
+    public function __construct(DistributionService $distributionService)
     {
-        // 1. Ambil Data untuk Dropdown Filter
-        $list_rs_master = \App\Models\Repair::whereNotNull('nama_rs')->distinct()->orderBy('nama_rs')->pluck('nama_rs');
-        
-        // Ambil list nama alkes yang sudah pernah didistribusikan
-        $list_alkes_dist = Donation::whereHas('distributions')->distinct()->orderBy('nama_alkes')->pluck('nama_alkes'); 
-
-        // BARU: Ambil list pemberi donasi yang alatnya sudah pernah didistribusikan
-        $list_pemberi = Donation::whereHas('distributions')->distinct()->orderBy('pemberi_donasi')->pluck('pemberi_donasi');
-
-        $list_status = Distribution::distinct()->pluck('status');
-
-        // 2. Query Utama
-        $query = Distribution::with('donation');
-
-        // Filter RS
-        $query->when($request->filter_rs, fn($q, $v) => $q->where('nama_rs', $v));
-
-        // Filter Nama Alat (via tabel donations)
-        $query->when($request->filter_alkes, function($q, $v) {
-            $q->whereHas('donation', function($query) use ($v) {
-                $query->where('nama_alkes', $v);
-            });
-        });
-
-        // BARU: Filter Pemberi Donasi (via tabel donations)
-        $query->when($request->filter_pemberi, function($q, $v) {
-            $q->whereHas('donation', function($query) use ($v) {
-                $query->where('pemberi_donasi', $v);
-            });
-        });
-
-        $query->when($request->filter_status, fn($q, $v) => $q->where('status', $v));
-
-        $distributions = $query->latest()->paginate(10)->withQueryString();
-        
-        $availableDonations = Donation::where('sisa_stok', '>', 0)->get();
-
-        return view('distributions.index', compact(
-            'distributions', 'availableDonations', 'list_rs_master', 'list_alkes_dist', 'list_status', 'list_pemberi'
-        ));
+        $this->distributionService = $distributionService;
     }
 
-    public function store(Request $request)
+    public function index(DistributionFilterRequest $request)
     {
-        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
-            return redirect()->back()->with('error', 'tidak memiliki akses!');
-        }
-        $request->validate([
-            'donation_id' => 'required',
-            'nama_rs' => 'required',
-            'jumlah_distribusi' => 'required|integer|min:1',
-            'status' => 'required', // Tambahkan validasi status
-        ]);
+        $filters = $request->validated();
 
-        $donation = Donation::findOrFail($request->donation_id);
+        $dropdowns = $this->distributionService->getFilterOptions();
+        $distributions = $this->distributionService->getFilteredDistributions($filters, true);
 
-        if ($donation->sisa_stok < $request->jumlah_distribusi) {
-            return redirect()->back()->with('error', 'Gagal! Stok tidak mencukupi.');
-        }
-
-        DB::transaction(function () use ($request, $donation) {
-            // Upload file BA (seperti kode sebelumnya)
-            $fileName = null;
-            if ($request->hasFile('file_ba')) {
-                $fileName = time() . '_' . $request->file('file_ba')->getClientOriginalName();
-                $request->file('file_ba')->move(public_path('uploads/berita_acara'), $fileName);
-            }
-
-            Distribution::create([
-                'donation_id' => $request->donation_id,
-                'nama_rs' => $request->nama_rs,
-                'jumlah_distribusi' => $request->jumlah_distribusi,
-                'tanggal_distribusi' => $request->tanggal_distribusi,
-                'status' => $request->status, // Mengambil dari input
-                'petugas_pengirim' => auth()->user()->name,
-                'file_ba' => $fileName,
-                'keterangan' => $request->keterangan,
-            ]);
-
-            $donation->decrement('sisa_stok', $request->jumlah_distribusi);
-
-            // Update Log Tracking
-            DonationLog::create([
-                'donation_id' => $donation->id,
-                'status' => 'Distribusi: ' . $request->status,
-                'diupdate_oleh' => auth()->user()->name,
-                'catatan' => "Kirim {$request->jumlah_distribusi} unit ke {$request->nama_rs} (Status: {$request->status})",
-            ]);
-        });
-
-        return redirect()->back()->with('success', 'Data distribusi berhasil disimpan.');
+        return view('distributions.index', array_merge(compact('distributions'), $dropdowns));
     }
 
-    public function update(Request $request, $id)
+    public function store(DistributionStoreRequest $request)
     {
-        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
-            return redirect()->back()->with('error', 'tidak memiliki akses!');
+        $data = $request->validated();
+        $file = $request->file('file_ba');
+        $userName = Auth::user()->name;
+
+        try {
+            $this->distributionService->createDistribution($data, $file, $userName);
+            return redirect()->back()->with('success', 'Data distribusi berhasil disimpan.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-        $request->validate([
-            'jumlah_distribusi' => 'required|integer|min:1',
-            'status' => 'required',
-        ]);
-
-        $dist = Distribution::findOrFail($id);
-        $donation = Donation::findOrFail($dist->donation_id);
-
-        $selisih = $dist->jumlah_distribusi - $request->jumlah_distribusi;
-
-        if (($donation->sisa_stok + $selisih) < 0) {
-            return redirect()->back()->with('error', 'Gagal! Stok di gudang tidak mencukupi.');
-        }
-
-        DB::transaction(function () use ($request, $dist, $donation, $selisih) {
-            // Update data distribusi termasuk STATUS
-            $dist->update([
-                'nama_rs' => $request->nama_rs,
-                'jumlah_distribusi' => $request->jumlah_distribusi,
-                'tanggal_distribusi' => $request->tanggal_distribusi,
-                'status' => $request->status, // Update Status Baru
-                'keterangan' => $request->keterangan,
-            ]);
-
-            $donation->increment('sisa_stok', $selisih);
-
-            DonationLog::create([
-                'donation_id' => $donation->id,
-                'status' => 'Update Distribusi: ' . $request->status,
-                'diupdate_oleh' => auth()->user()->name,
-                'catatan' => "Revisi distribusi ke {$request->nama_rs}. Status menjadi: {$request->status}",
-            ]);
-        });
-
-        return redirect()->back()->with('success', 'Data distribusi berhasil diperbarui.');
     }
 
-    // --- FUNGSI HAPUS ---
-    public function destroy($id)
+    public function update(DistributionUpdateRequest $request, string $id)
     {
-        if (auth()->user()->role !== 1 && auth()->user()->role !== 2) {
+        $data = $request->validated();
+        $userName = Auth::user()->name;
+
+        try {
+            $this->distributionService->updateDistribution($id, $data, $userName);
+            return redirect()->back()->with('success', 'Data distribusi berhasil diperbarui.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function destroy(string $id)
+    {
+        if (!Auth::check() || !in_array(Auth::user()->role, [1, 2])) {
             return redirect()->back()->with('error', 'tidak memiliki akses!');
         }
-        $dist = Distribution::findOrFail($id);
-        $donation = Donation::findOrFail($dist->donation_id);
 
-        DB::transaction(function () use ($dist, $donation) {
-            // 1. Kembalikan stok ke gudang
-            $donation->increment('sisa_stok', $dist->jumlah_distribusi);
-
-            // 2. Hapus file fisik jika ada
-            if ($dist->file_ba && file_exists(public_path('uploads/berita_acara/' . $dist->file_ba))) {
-                unlink(public_path('uploads/berita_acara/' . $dist->file_ba));
-            }
-
-            // 3. Catat log pembatalan
-            DonationLog::create([
-                'donation_id' => $donation->id,
-                'status' => 'Batal Distribusi',
-                'diupdate_oleh' => auth()->user()->name,
-                'catatan' => "Distribusi ke {$dist->nama_rs} sebanyak {$dist->jumlah_distribusi} unit dibatalkan. Stok dikembalikan.",
-            ]);
-
-            // 4. Hapus data distribusi
-            $dist->delete();
-        });
+        $userName = Auth::user()->name;
+        $this->distributionService->deleteDistribution($id, $userName);
 
         return redirect()->back()->with('success', 'Distribusi dibatalkan dan stok telah dikembalikan ke gudang.');
     }
 
-    public function exportExcel(Request $request) 
+    public function exportExcel(DistributionFilterRequest $request) 
     {
-        // Tambahkan filter_pemberi ke dalam array
-        $filters = $request->only(['filter_rs', 'filter_alkes', 'filter_status', 'filter_pemberi']);
-        
+        $filters = $request->validated();
         $fileName = 'Laporan_Distribusi_Alkes_' . now()->format('Ymd_His') . '.xlsx';
 
-        return (new \App\Exports\DistributionsExport($filters))->download($fileName);
+        return (new DistributionsExport($filters))->download($fileName);
     }
 }
