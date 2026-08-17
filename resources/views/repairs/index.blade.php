@@ -208,13 +208,12 @@
                     </tr>
 
                     <div class="modal fade" id="modalUpdate{{ $r->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content border-0">
+                        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <form action="{{ route('repairs.updateStatus', $r->id) }}" method="POST" enctype="multipart/form-data" class="modal-content border-0">
                                 <div class="modal-header bg-primary py-2 text-white border-0">
                                     <h6 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit & Update Data: {{ $r->nama_alkes }}</h6>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                 </div>
-                                <form action="{{ route('repairs.updateStatus', $r->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                     @method('POST')
@@ -381,7 +380,6 @@
                                         <button type="submit" class="btn btn-primary px-5 shadow-sm fw-bold">SIMPAN PERUBAHAN</button>
                                     </div>
                                 </form>
-                            </div>
                         </div>
                     </div>
 
@@ -602,28 +600,27 @@
 </div>
 
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <form action="{{ route('repairs.store') }}" method="POST" enctype="multipart/form-data" class="modal-content border-0 shadow-lg">
                                 <div class="modal-header bg-primary text-white py-3 border-0">
                                     <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus me-2"></i> Input Laporan Perbaikan Baru</h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                 </div>
-                                <form action="{{ route('repairs.store') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                     <div class="modal-body p-4">
                                         <div class="row mb-4">
                                             <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasiedit Lokasi</h6></div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Petugas Input</label>
                                                 <input type="text" name="input_by" class="form-control" value="{{ Auth::user()->name }}" required>
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold text-muted">Tanggal Input (Otomatis)</label>
                                                 <input type="date" class="form-control bg-light" value="{{ date('Y-m-d') }}" disabled>
                                                 <input type="hidden" name="tanggal_input" value="{{ date('Y-m-d') }}">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold text-muted">Nama Rumah Sakit</label>
                                                 <select name="nama_rs" class="form-select js-nama-rs select2-tambah" required>
                                                     <option value="" data-lokasi="">-- Pilih Rumah Sakit --</option>
@@ -632,8 +629,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-
-                                            <div class="mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="small fw-bold">Lokasi / Kota</label>
                                                 <input type="text" name="lokasi" class="form-control js-lokasi-input" readonly style="background-color: #f8f9fa;">
                                             </div>
@@ -641,19 +637,19 @@
 
                                         <div class="row mb-4">
                                             <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">2. Identitas Alat & Penyedia</h6></div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Nama Alat Kesehatan</label>
                                                 <input type="text" name="nama_alkes" class="form-control" required>
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Serial Number (SN)</label>
                                                 <input type="text" name="serial_number" class="form-control">
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Nama Penyedia (Vendor)</label>
                                                 <input type="text" name="nama_penyedia" class="form-control">
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Kategori</label>
                                                 <select name="kategori" class="form-select">
                                                     <option value="">-- Pilih --</option>
@@ -671,15 +667,15 @@
                                                     <option value="Gas Medis">Gas Medis</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Merek</label>
                                                 <input type="text" name="merek" class="form-control">
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Tipe/Model</label>
                                                 <input type="text" name="tipe_model" class="form-control">
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Kondisi Awal Alkes</label>
                                                 <select name="grade_kerusakan" class="form-select">
                                                     <option value="Bisa Dipakai">Bisa Dipakai</option>
@@ -687,7 +683,7 @@
                                                     <option value="Rusak Berat">Rusak Berat</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Kondisi Kontrak</label>
                                                 <select name="kondisi_kontrak" class="form-select">
                                                     <option value="Garansi" {{ (isset($r) && $r->kondisi_kontrak == 'Garansi') ? 'selected' : '' }}>Garansi</option>
@@ -699,7 +695,7 @@
 
                                         <div class="row">
                                             <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">3. Status, Respon & Berkas</h6></div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Update Status Alat</label>
                                                 <select name="status_perbaikan" class="form-select" required>
                                                     {{-- <option value="Berfungsi">Berfungsi</option> --}}
@@ -708,7 +704,7 @@
                                                     <option value="Harus di Ganti (BAP)">Harus di Ganti (BAP)</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Komponen Rusak</label>
                                                 <select name="komponen" class="form-select form-select-sm">
                                                     <option value="">-- Pilih --</option>
@@ -718,14 +714,14 @@
                                                     <option value="Lainnya">Lainnya</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Respon Penyedia</label>
                                                 <select name="respon_penyedia" class="form-select">
                                                     <option value="Datang">Datang</option>
                                                     <option value="Belum Datang">Belum Datang</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Tindakan Penyedia</label>
                                                 <textarea name="tindakan_penyedia" class="form-control" rows="1" placeholder="Analisa awal..."></textarea>
                                             </div>
@@ -755,7 +751,6 @@
                                         <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">SIMPAN DATA</button>
                                     </div>
                                 </form>
-                            </div>
                         </div>
                     </div>
 

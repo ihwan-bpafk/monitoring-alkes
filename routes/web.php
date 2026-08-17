@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DistributionController;
+use App\Http\Controllers\FasyankesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,9 +53,15 @@ Route::middleware(['auth'])->group(function () {
         // DISTRIBUTIONS
         Route::resource('distributions', DistributionController::class)->except(['index', 'show']);
         Route::patch('/distributions/{id}/status', [DistributionController::class, 'updateStatus'])->name('distributions.updateStatus');
+        
+        // FASYANKES
+        Route::resource('fasyankes', FasyankesController::class)->except(['create', 'show', 'edit', 'index']);
     });
 
     // Rute Index tetap di luar Lock agar data bisa dilihat
     Route::get('/donations', [DonationController::class, 'index'])->name('donations.index');
     Route::get('/distributions', [DistributionController::class, 'index'])->name('distributions.index');
+    
+    // Fasyankes
+    Route::get('/fasyankes', [FasyankesController::class, 'index'])->name('fasyankes.index');
 });
