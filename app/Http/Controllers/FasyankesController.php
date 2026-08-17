@@ -10,7 +10,7 @@ class FasyankesController extends Controller
     public function index()
     {
         abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
-        $fasyankes = Fasyankes::orderBy('nama_fasyankes')->get();
+        $fasyankes = Fasyankes::orderBy('nama_fasyankes')->paginate(10);
         return view('fasyankes.index', compact('fasyankes'));
     }
 

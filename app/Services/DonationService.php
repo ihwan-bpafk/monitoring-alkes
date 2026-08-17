@@ -18,7 +18,7 @@ class DonationService
             'list_pemberi'      => Donation::distinct()->orderBy('pemberi_donasi')->pluck('pemberi_donasi'),
             'list_alkes_donasi' => Donation::distinct()->orderBy('nama_alkes')->pluck('nama_alkes'),
             'list_penerima'     => Donation::distinct()->orderBy('diterima_oleh')->pluck('diterima_oleh'),
-            'list_alkes_master' => Repair::distinct()->orderBy('nama_alkes', 'asc')->pluck('nama_alkes'),
+            'list_alkes_master' => \App\Models\Alkes::orderBy('nama_alkes', 'asc')->pluck('nama_alkes'),
         ];
     }
 

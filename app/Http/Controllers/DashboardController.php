@@ -49,7 +49,7 @@ class DashboardController extends Controller
         $selected_kategori = $request->input('kategori');
 
         // Manfaatkan method yg sama di service untuk mencegah duplikasi (DRY)
-        $alkesSummary = $this->dashboardService->getAlkesSummary($selected_rs, $selected_kategori);
+        $alkesSummary = $this->dashboardService->getAlkesSummary($selected_rs, $selected_kategori, false);
         
         $nama_file = 'Rekap_Alkes_' . ($selected_rs ?? 'Semua_RS') . '_' . date('Y-m-d') . '.xlsx';
 

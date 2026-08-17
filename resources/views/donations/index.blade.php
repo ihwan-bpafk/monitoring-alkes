@@ -20,17 +20,6 @@
             <p class="text-muted small mb-0">Manajemen inventaris stok masuk sebelum dialokasikan ke Rumah Sakit.</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('dashboard') }}" class="btn btn-light border shadow-sm fw-bold">
-                <i class="bi bi-speedometer2 me-2 text-teal"></i>Dashboard
-            </a>
-
-            <a href="{{ route('distributions.index') }}" class="btn btn-info shadow-sm fw-bold text-white">
-                <i class="bi bi-truck me-2"></i>Menu Distribusi
-            </a>
-
-            <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold">
-                <i class="bi bi-tools me-2"></i>Data Perbaikan
-            </a>
             <a href="{{ route('donations.export', request()->all()) }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
             </a>
@@ -49,7 +38,7 @@
                 <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                 <div class="col-md-3">
                     <label class="small fw-bold text-muted mb-1">Pemberi Donasi</label>
-                    <select name="filter_pemberi" class="form-select form-select-sm select2-filter" onchange="this.form.submit()">
+                    <select name="filter_pemberi" class="form-select form-select-sm select2-filter shadow-sm border-primary">
                         <option value="">-- Cari Pemberi --</option>
                         @foreach($list_pemberi as $p)
                             <option value="{{ $p }}" {{ request('filter_pemberi') == $p ? 'selected' : '' }}>{{ $p }}</option>
@@ -59,7 +48,7 @@
 
                 <div class="col-md-3">
                     <label class="small fw-bold text-muted mb-1">Nama Alat</label>
-                    <select name="filter_alkes" class="form-select form-select-sm select2-filter" onchange="this.form.submit()">
+                    <select name="filter_alkes" class="form-select form-select-sm select2-filter shadow-sm border-primary">
                         <option value="">-- Cari Nama Alat --</option>
                         @foreach($list_alkes_donasi as $alk)
                             <option value="{{ $alk }}" {{ request('filter_alkes') == $alk ? 'selected' : '' }}>{{ $alk }}</option>
@@ -69,7 +58,7 @@
 
                 <div class="col-md-3">
                     <label class="small fw-bold text-muted mb-1">Penerima</label>
-                    <select name="filter_petugas" class="form-select form-select-sm select2-filter" onchange="this.form.submit()">
+                    <select name="filter_petugas" class="form-select form-select-sm select2-filter shadow-sm border-primary">
                         <option value="">-- Cari Penerima --</option>
                         @foreach($list_penerima as $p)
                             <option value="{{ $p }}" {{ request('filter_petugas') == $p ? 'selected' : '' }}>{{ $p }}</option>
@@ -79,7 +68,7 @@
 
                 <div class="col-md-3">
                     <label class="small fw-bold text-muted">Status Stok</label>
-                    <select name="filter_stok" class="form-select select2-filter" onchange="this.form.submit()">
+                    <select name="filter_stok" class="form-select select2-filter shadow-sm border-primary">
                         <option value="">-- Semua Status --</option>
                         <option value="tersedia" {{ request('filter_stok') == 'tersedia' ? 'selected' : '' }}>Tersedia (Sisa > 0)</option>
                         <option value="habis" {{ request('filter_stok') == 'habis' ? 'selected' : '' }}>Stok Habis (0)</option>
@@ -360,8 +349,6 @@
                             @foreach($list_alkes_master as $alkes)
                                 <option value="{{ $alkes }}">{{ $alkes }}</option>
                             @endforeach
-                            <option value="Antropometri Set">Antropometri Set</option>
-                            <option value="Tensimeter">Tensimeter</option>
                         </select>
                     </div>
                     <div class="row">

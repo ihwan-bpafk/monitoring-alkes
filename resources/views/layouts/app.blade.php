@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Monitoring Alkes BPAFK</title>
-    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/Ditjen_Farmalkes_Logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -32,6 +32,14 @@
             background-color: #035f5c !important;
         }
 
+        .dropdown-item {
+            color: var(--bs-primary) !important;
+            background-color: #ffffff !important;
+        }
+
+        .dropdown-item:hover,
+        .dropdown-item:focus,
+        .dropdown-item.active,
         .dropdown-item:active {
             background-color: var(--bs-primary) !important;
             color: white !important;
@@ -44,6 +52,25 @@
         .navbar {
             border-bottom: 4px solid var(--bs-secondary);
         }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffffff;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .navbar-nav .nav-link.active {
+            color: #ffffff !important;
+            border-bottom: 2px solid #ffffff;
+        }
+
 
         .timeline {
             border-left: 3px solid var(--bs-primary);
@@ -135,80 +162,143 @@
         .pagination .page-link:focus {
             box-shadow: 0 0 0 0.25rem rgba(4, 125, 121, 0.25);
         }
+
+        /* Override Select2 Bootstrap 5 theme highlight color */
+        .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--bs-primary) !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('repairs.index') }}">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('dashboard') }}">
                 <img src="{{ asset('img/logo BPAFK Medan.png') }}" alt="Logo" width="130" height="40"
                     class="d-inline-block align-top me-2">
-                <span class="d-none d-md-inline">BPAFK - Monitoring Alkes</span>
             </a>
 
-            <div class="d-flex align-items-center">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <!-- PENYESUAIAN LOGO DITJEN FARMALKES MULAI DI SINI -->
-                <div class="d-none d-lg-flex align-items-center bg-white rounded px-2 py-1 me-3 shadow-sm">
-                    <img src="{{ asset('img/Ditjen_Farmalkes_Logo.png') }}" alt="Logo Ditjen Farmalkes"
-                        style="height: 35px; width: auto;" class="d-inline-block">
-                </div>
-                <!-- PENYESUAIAN LOGO DITJEN FARMALKES SELESAI -->
-
-                <!-- SELECT BENCANA -->
-                @auth
-                    @php
-                        $userBencanaId = Auth::user()->bencana_id;
-                        if ($userBencanaId) {
-                            $bencanas = \App\Models\Bencana::where('id', $userBencanaId)->get();
-                        } else {
-                            $bencanas = \App\Models\Bencana::where('is_active', true)->orderBy('id', 'desc')->get();
-                        }
-                        $activeBencanaId = session('active_bencana_id');
-                    @endphp
-                    @if($bencanas->isNotEmpty())
-                        <div class="me-3 d-flex align-items-center">
-                            <form action="{{ route('switchBencana') }}" method="POST" class="m-0" id="bencana-form">
-                                @csrf
-                                <select name="bencana_id" id="bencana-select" class="form-select form-select-sm" style="min-width: 150px;">
-                                    @foreach($bencanas as $bencana)
-                                        <option value="{{ $bencana->id }}" {{ $activeBencanaId == $bencana->id ? 'selected' : '' }}>
-                                            {{ $bencana->nama_bencana }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </form>
-                        </div>
-                    @endif
-                @endauth
-                <!-- END SELECT BENCANA -->
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                        id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="text-end me-2 d-none d-sm-block">
-                            <small class="d-block lh-1 fw-bold">{{ Auth::user()->name }}</small>
-                            <small style="font-size: 0.7rem;" class="text-white-50">Username:
-                                {{ Auth::user()->username }}</small>
-                        </div>
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                            style="width: 35px; height: 35px;">
-                            <i class="bi bi-person-fill text-primary fs-5"></i>
-                        </div>
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="profileDropdown">
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                                @csrf
-                                <button type="submit"
-                                    class="dropdown-item text-danger py-2 fw-bold d-flex align-items-center">
-                                    <i class="bi bi-box-arrow-right me-2 fs-5"></i>
-                                    <span>Keluar</span>
-                                </button>
-                            </form>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-4 me-auto mb-2 mb-lg-0 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active fw-bold' : '' }}"
+                            href="{{ route('dashboard') }}">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('repairs.*') ? 'active fw-bold' : '' }}"
+                            href="{{ route('repairs.index') }}">
+                            Perbaikan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('donations.*') ? 'active fw-bold' : '' }}"
+                            href="{{ route('donations.index') }}">
+                            Stok Donasi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('distributions.*') ? 'active fw-bold' : '' }}"
+                            href="{{ route('distributions.index') }}">
+                            Distribusi
+                        </a>
+                    </li>
+                    @if (auth()->check() && auth()->user()->role === 1)
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') ? 'active fw-bold' : '' }}" href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Master Data
+                            </a>
+                            <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="masterDataDropdown">
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('fasyankes.*') ? 'active' : '' }}" href="{{ route('fasyankes.index') }}">
+                                        Fasyankes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('alkes.*') ? 'active' : '' }}" href="{{ route('alkes.index') }}">
+                                        Alkes
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                    </ul>
+                    @endif
+                </ul>
+
+                <div class="d-flex align-items-center mt-3 mt-lg-0 pb-3 pb-lg-0">
+
+                    <!-- PENYESUAIAN LOGO DITJEN FARMALKES MULAI DI SINI -->
+                    <div class="d-none d-lg-flex align-items-center bg-white rounded px-2 py-1 me-3 shadow-sm">
+                        <img src="{{ asset('img/Ditjen_Farmalkes_Logo.png') }}" alt="Logo Ditjen Farmalkes"
+                            style="height: 35px; width: auto;" class="d-inline-block">
+                    </div>
+                    <!-- PENYESUAIAN LOGO DITJEN FARMALKES SELESAI -->
+
+                    <!-- SELECT BENCANA -->
+                    @auth
+                        @php
+                            $userBencanaId = Auth::user()->bencana_id;
+                            if ($userBencanaId) {
+                                $bencanas = \App\Models\Bencana::where('id', $userBencanaId)->get();
+                            } else {
+                                $bencanas = \App\Models\Bencana::where('is_active', true)->orderBy('id', 'desc')->get();
+                            }
+                            $activeBencanaId = session('active_bencana_id');
+                        @endphp
+                        @if ($bencanas->isNotEmpty())
+                            <div class="me-3 d-flex align-items-center">
+                                <form action="{{ route('switchBencana') }}" method="POST" class="m-0"
+                                    id="bencana-form">
+                                    @csrf
+                                    <select name="bencana_id" id="bencana-select" class="form-select form-select-sm"
+                                        style="min-width: 150px;">
+                                        @foreach ($bencanas as $bencana)
+                                            <option value="{{ $bencana->id }}"
+                                                {{ $activeBencanaId == $bencana->id ? 'selected' : '' }}>
+                                                {{ $bencana->nama_bencana }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </div>
+                        @endif
+                    @endauth
+                    <!-- END SELECT BENCANA -->
+                    <div class="dropdown">
+                        <a href="#"
+                            class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                            id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="text-end me-2 d-none d-sm-block">
+                                <small class="d-block lh-1 fw-bold">{{ Auth::user()->name }}</small>
+                                <small style="font-size: 0.7rem;" class="text-white-50">Username:
+                                    {{ Auth::user()->username }}</small>
+                            </div>
+                            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                                style="width: 35px; height: 35px;">
+                                <i class="bi bi-person-fill text-primary fs-5"></i>
+                            </div>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2"
+                            aria-labelledby="profileDropdown">
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST" id="logout-form">
+                                    @csrf
+                                    <button type="submit"
+                                        class="dropdown-item text-danger py-2 fw-bold d-flex align-items-center">
+                                        <i class="bi bi-box-arrow-right me-2 fs-5"></i>
+                                        <span>Keluar</span>
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -241,9 +331,55 @@
             $('#bencana-select').select2({
                 theme: 'bootstrap-5',
                 minimumResultsForSearch: Infinity
-            }).on('select2:select', function (e) {
+            }).on('select2:select', function(e) {
                 $('#bencana-form').submit();
             });
+            
+            // Initialize global select2 filters if they exist
+            $('.select2-filter').select2({
+                theme: 'bootstrap-5'
+            }).on('select2:select', function(e) {
+                $(this).closest('form').submit();
+            });
+        });
+    </script>
+    <script>
+        // Fitur Paginasi Seamless (Diem Aja)
+        document.addEventListener('click', function (e) {
+            let paginationLink = e.target.closest('.pagination a');
+            if (!paginationLink) return;
+
+            e.preventDefault();
+            let url = paginationLink.href;
+            let container = paginationLink.closest('.card-body');
+            
+            if (!container) return;
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Cari secara spesifik card-body yang memiliki elemen tabel (table-responsive)
+                    // untuk menghindari tertukarnya dengan card-body lain di halaman (seperti card statistik)
+                    let newTable = doc.querySelector('.table-responsive');
+                    let newContainer = newTable ? newTable.closest('.card-body') : null;
+
+                    if (newContainer) {
+                        // Swap HTML secara instan, tanpa animasi, tanpa pindah scroll
+                        container.innerHTML = newContainer.innerHTML;
+                        window.history.pushState({ path: url }, '', url);
+                    }
+                })
+                .catch(error => {
+                    window.location.href = url;
+                });
+        });
+
+        // Tangani navigasi back/forward
+        window.addEventListener('popstate', function () {
+            window.location.reload(); 
         });
     </script>
 </body>

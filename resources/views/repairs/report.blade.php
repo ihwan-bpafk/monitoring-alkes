@@ -33,7 +33,7 @@
                 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Rumah Sakit</label>
-                    <select name="nama_rs" class="form-select form-select-sm filter-input">
+                    <select name="nama_rs" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
                         <option value="">-- Semua --</option>
                         @foreach($list_rs as $rs)
                             <option value="{{ $rs }}" {{ request('nama_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
@@ -43,7 +43,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Nama Alat</label>
-                    <select name="nama_alkes" class="form-select form-select-sm filter-input">
+                    <select name="nama_alkes" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
                         <option value="">-- Semua Alat --</option>
                         @foreach($list_alkes as $alkes)
                             <option value="{{ $alkes }}" {{ request('nama_alkes') == $alkes ? 'selected' : '' }}>
@@ -55,7 +55,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Kategori</label>
-                    <select name="kategori" class="form-select form-select-sm filter-input">
+                    <select name="kategori" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
                         <option value="">-- Semua --</option>
                         @foreach($list_kategori as $kat)
                             <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>{{ $kat }}</option>
@@ -65,7 +65,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Kondisi Awal Alkes</label>
-                    <select name="grade_kerusakan" class="form-select form-select-sm filter-input">
+                    <select name="grade_kerusakan" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
                         <option value="">-- Semua --</option>
                         @foreach($list_grade as $grade)
                             <option value="{{ $grade }}" {{ request('grade_kerusakan') == $grade ? 'selected' : '' }}>{{ $grade }}</option>
@@ -75,7 +75,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Status Akhir</label>
-                    <select name="status_perbaikan" class="form-select form-select-sm filter-input">
+                    <select name="status_perbaikan" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
                         <option value="">-- Semua Status --</option>
                         @foreach($list_status as $status)
                             <option value="{{ $status }}" {{ request('status_perbaikan') == $status ? 'selected' : '' }}>{{ $status }}</option>
@@ -85,7 +85,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-primary">Respon Penyedia</label>
-                    <select name="respon_penyedia" class="form-select form-select-sm filter-input">
+                    <select name="respon_penyedia" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
                         <option value="">-- Semua Respon --</option>
                         @foreach($list_respon as $respon)
                             <option value="{{ $respon }}" {{ request('respon_penyedia') == $respon ? 'selected' : '' }}>{{ $respon }}</option>
@@ -149,6 +149,13 @@
         inputs.forEach(input => {
             // "input" event akan mendeteksi setiap ketikan/perubahan select
             input.addEventListener('input', debounceFetch);
+        });
+
+        // Inisialisasi Select2 untuk tampilan yang konsisten dengan halaman lain
+        $('.select2-custom').select2({
+            theme: 'bootstrap-5'
+        }).on('change', function() {
+            debounceFetch();
         });
 
         let timeout = null;

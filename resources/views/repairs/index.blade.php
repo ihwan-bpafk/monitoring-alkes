@@ -32,17 +32,6 @@
     <h4 class="fw-bold text-primary"><i class="bi bi-tools me-2"></i>Monitoring Perbaikan Alkes</h4>
     
     <div class="d-flex gap-2">
-        <a href="{{ route('dashboard') }}" class="btn btn-light border shadow-sm fw-bold">
-            <i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard
-        </a>
-
-        <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
-            <i class="bi bi-box-seam me-2"></i>Stok Donasi
-        </a>
-        <a href="{{ route('distributions.index') }}" class="btn btn-info shadow-sm fw-bold text-white">
-            <i class="bi bi-truck me-2"></i>Menu Distribusi
-        </a>
-
         <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold">
             <i class="bi bi-file-earmark-excel me-1"></i>Reporting
         </a>
@@ -61,7 +50,7 @@
             <div class="row g-3 align-items-end">
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Rumah Sakit</label>
-                    <select name="nama_rs" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="nama_rs" class="form-select form-select-sm select2-filter border-primary shadow-sm">
                         <option value="">-- Semua RS --</option>
                         @foreach($list_rs as $nama => $lokasi)
                             <option value="{{ $nama }}" {{ request('nama_rs') == $nama ? 'selected' : '' }}>{{ $nama }}</option>
@@ -71,7 +60,7 @@
 
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Nama Alat</label>
-                    <select name="nama_alkes" id="nama_alkes" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="nama_alkes" id="nama_alkes" class="form-select form-select-sm select2-filter border-primary shadow-sm">
                         <option value="">-- Semua Alat --</option>
                         @foreach($list_alkes as $alkes)
                             <option value="{{ $alkes }}" {{ request('nama_alkes') == $alkes ? 'selected' : '' }}>
@@ -83,7 +72,7 @@
 
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Kategori</label>
-                    <select name="kategori" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="kategori" class="form-select form-select-sm select2-filter border-primary shadow-sm">
                         <option value="">-- Semua --</option>
                         @foreach($list_kategori as $kat)
                             <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>{{ $kat }}</option>
@@ -93,7 +82,7 @@
 
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Kondisi Awal</label>
-                    <select name="grade_kerusakan" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="grade_kerusakan" class="form-select form-select-sm select2-filter border-primary shadow-sm">
                         <option value="">-- Semua --</option>
                         @foreach($list_grade as $grade)
                             <option value="{{ $grade }}" {{ request('grade_kerusakan') == $grade ? 'selected' : '' }}>{{ $grade }}</option>
@@ -103,7 +92,7 @@
 
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Status Akhir</label>
-                    <select name="status_perbaikan" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="status_perbaikan" class="form-select form-select-sm select2-filter border-primary shadow-sm">
                         <option value="">-- Semua --</option>
                         @foreach($list_status as $status)
                             <option value="{{ $status }}" {{ request('status_perbaikan') == $status ? 'selected' : '' }}>{{ $status }}</option>
@@ -113,7 +102,7 @@
 
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted">Respon Penyedia</label>
-                    <select name="respon_penyedia" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="respon_penyedia" class="form-select form-select-sm select2-filter border-primary shadow-sm">
                         <option value="">-- Semua --</option>
                         @foreach($list_respon as $respon)
                             <option value="{{ $respon }}" {{ request('respon_penyedia') == $respon ? 'selected' : '' }}>{{ $respon }}</option>
@@ -134,6 +123,14 @@
 
 <div class="card shadow-sm border-0" style="border-radius: 12px;">
     <div class="card-body p-0">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <div class="small text-muted">
+                Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
+            </div>
+            <div>
+                {{ $repairs->links() }}
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="">
@@ -243,7 +240,12 @@
                                                     </div>
                                                     <div class="mb-2">
                                                         <label class="small fw-bold">Nama Alkes</label>
-                                                        <input type="text" name="nama_alkes" class="form-control form-control-sm" value="{{ $r->nama_alkes }}">
+                                                        <select name="nama_alkes" class="form-select form-select-sm select2-insidelop" required>
+                                                            <option value="">-- Pilih Alkes --</option>
+                                                            @foreach($list_alkes_master as $alkes)
+                                                                <option value="{{ $alkes }}" {{ $r->nama_alkes == $alkes ? 'selected' : '' }}>{{ $alkes }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                     <div class="row g-2">
                                                         <div class="col-6 mb-2">
@@ -587,15 +589,15 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
-
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <div class="small text-muted">
-        Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
-    </div>
-    <div>
-        {{ $repairs->links('pagination::bootstrap-5') }}
+        
+        <div class="d-flex justify-content-between align-items-center p-3 border-top">
+            <div class="small text-muted">
+                Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
+            </div>
+            <div>
+                {{ $repairs->links() }}
+            </div>
+        </div>
     </div>
 </div>
 
@@ -639,7 +641,12 @@
                                             <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">2. Identitas Alat & Penyedia</h6></div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Nama Alat Kesehatan</label>
-                                                <input type="text" name="nama_alkes" class="form-control" required>
+                                                <select name="nama_alkes" class="form-select select2-tambah" required>
+                                                    <option value="">-- Pilih Alat --</option>
+                                                    @foreach($list_alkes_master as $alkes)
+                                                        <option value="{{ $alkes }}">{{ $alkes }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Serial Number (SN)</label>

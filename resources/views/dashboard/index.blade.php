@@ -9,26 +9,10 @@
                 </h4>
                 <p class="text-muted small mb-0">BPAFK Medan</p>
             </div>
-
             <div class="d-flex gap-2 align-items-center">
-                <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold px-3">
-                    <i class="bi bi-tools me-2"></i>Data Perbaikan
-                </a>
-                <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
-                    <i class="bi bi-box-seam me-2"></i>Stok Donasi
-                </a>
-                <a href="{{ route('distributions.index') }}" class="btn btn-info shadow-sm fw-bold text-white">
-                    <i class="bi bi-truck me-2"></i>Menu Distribusi
-                </a>
-                @if (auth()->user()->role === 1)
-                    <a href="{{ route('fasyankes.index') }}" class="btn btn-secondary shadow-sm fw-bold text-dark">
-                        <i class="bi bi-building me-2"></i>Fasyankes
-                    </a>
-                @endif
-
                 <form action="{{ route('dashboard') }}" method="GET" class="d-flex gap-2">
                     <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
-                    <select name="nama_rs" class="form-select shadow-sm border-primary" onchange="this.form.submit()"
+                    <select name="nama_rs" class="form-select shadow-sm border-primary select2-filter"
                         style="min-width: 200px;">
                         <option value="">-- Semua Rumah Sakit --</option>
                         @foreach ($list_rs as $rs)
@@ -37,7 +21,7 @@
                         @endforeach
                     </select>
 
-                    <select name="kategori" class="form-select shadow-sm border-primary" onchange="this.form.submit()"
+                    <select name="kategori" class="form-select shadow-sm border-primary select2-filter"
                         style="min-width: 180px;">
                         <option value="">-- Semua Kategori --</option>
                         @foreach ($list_kategori as $kat)
@@ -127,12 +111,12 @@
                     <small class="text-muted fw-normal">(Berdasarkan Filter)</small>
                 </div>
                 <div class="card border-0 shadow-sm mt-4">
-                    <a href="{{ route('dashboard.exportExcel', request()->all()) }}"
-                        class="btn btn-success shadow-sm fw-bold px-3">
-                        <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
-                    </a>
-                    <div class="card-header bg-white fw-bold py-3 border-0">
-                        <i class="bi bi-grid-3x3-gap me-2 text-primary"></i>Rincian Kondisi Akhir per Jenis Alat
+                    <div class="card-header bg-white fw-bold py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <div class="text-primary"><i class="bi bi-grid-3x3-gap me-2"></i>Rincian Kondisi Akhir per Jenis Alat</div>
+                        <a href="{{ route('dashboard.exportExcel', request()->all()) }}"
+                            class="btn btn-sm btn-outline-success fw-bold px-3 shadow-sm rounded-pill">
+                            <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+                        </a>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -141,11 +125,11 @@
                                     <tr>
                                         <th class="ps-4 text-start">Nama Alat Kesehatan</th>
                                         <th>Total Unit</th>
-                                        <th class="text-success">Bisa Dipakai</th>
-                                        <th class="text-warning">Proses</th>
-                                        <th class="text-danger">Harus Ganti (BAP)</th>
-                                        <th class="text-primary">Alokasi</th>
-                                        <th class="text-info">Distribusi</th>
+                                        <th>Bisa Dipakai</th>
+                                        <th>Proses</th>
+                                        <th>Harus Ganti (BAP)</th>
+                                        <th>Alokasi</th>
+                                        <th>Distribusi</th>
                                         <th class="bg-dark text-white">Kebutuhan</th>
                                     </tr>
                                 </thead>
@@ -154,19 +138,19 @@
                                         <tr>
                                             <td class="ps-4 text-start fw-bold text-dark">{{ $item->nama_alkes }}</td>
                                             <td><span
-                                                    class="badge bg-secondary rounded-pill px-3">{{ $item->jumlah }}</span>
+                                                    class="badge bg-primary rounded-pill px-3 shadow-sm">{{ $item->jumlah }}</span>
                                             </td>
-                                            <td class="text-success">{{ $item->bisa_dipakai }}</td>
-                                            <td class="text-warning">{{ $item->proses }}</td>
-                                            <td class="text-danger">{{ $item->ganti }}</td>
-                                            <td class="text-primary fw-bold">{{ $item->total_alokasi }}</td>
-                                            <td class="text-info fw-bold">{{ $item->total_distribusi }}</td>
+                                            <td class="{{ $item->bisa_dipakai > 0 ? 'text-success fw-bold' : 'text-muted' }}">{{ $item->bisa_dipakai }}</td>
+                                            <td class="{{ $item->proses > 0 ? 'text-warning text-dark fw-bold' : 'text-muted' }}">{{ $item->proses }}</td>
+                                            <td class="{{ $item->ganti > 0 ? 'text-danger fw-bold' : 'text-muted' }}">{{ $item->ganti }}</td>
+                                            <td class="{{ $item->total_alokasi > 0 ? 'text-primary fw-bold' : 'text-muted' }}">{{ $item->total_alokasi }}</td>
+                                            <td class="{{ $item->total_distribusi > 0 ? 'text-info fw-bold' : 'text-muted' }}">{{ $item->total_distribusi }}</td>
                                             <td class="bg-light">
                                                 @if ($item->kebutuhan > 0)
-                                                    <span class="badge bg-danger">Butuh {{ $item->kebutuhan }} Lagi</span>
+                                                    <span class="badge bg-danger shadow-sm">Butuh {{ $item->kebutuhan }} Lagi</span>
                                                 @else
-                                                    <span class="text-success small fw-bold"><i
-                                                            class="bi bi-check-all"></i> Terpenuhi</span>
+                                                    <span class="text-success small fw-bold"><i class="bi bi-check-all"></i>
+                                                        Terpenuhi</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -178,6 +162,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="p-3">{{ $alkesSummary->links() }}</div>
                     </div>
                 </div>
             </div>
@@ -212,8 +197,35 @@
             return '#212529';
         }
 
+        // Plugin untuk Teks di Tengah Donut Chart
+        const centerTextPlugin = {
+            id: 'centerText',
+            beforeDraw: function(chart) {
+                if (chart.config.type !== 'doughnut' || !chart.config.options.plugins.centerText) return;
+                const ctx = chart.ctx;
+                const width = chart.width;
+                const height = chart.height;
+                const text = chart.config.options.plugins.centerText.text;
+
+                ctx.restore();
+                ctx.font = 'bold 2rem "Nunito", sans-serif';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#047d79';
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 2;
+                ctx.fillText(text, textX, textY);
+                
+                ctx.font = '0.9rem "Nunito", sans-serif';
+                ctx.fillStyle = '#6c757d';
+                const label = 'Alat';
+                const labelX = Math.round((width - ctx.measureText(label).width) / 2);
+                ctx.fillText(label, labelX, textY + 25);
+                ctx.save();
+            }
+        };
+
         // Fungsi Render Chart
-        function renderDoughnut(ctxId, labels, values) {
+        function renderDoughnut(ctxId, labels, values, totalText) {
             const bgColors = labels.map(label => getColorByLabel(label));
             const ctx = document.getElementById(ctxId).getContext('2d');
 
@@ -235,10 +247,14 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        centerText: {
+                            text: totalText.toString()
                         }
                     },
                     cutout: '75%'
-                }
+                },
+                plugins: [centerTextPlugin]
             });
         }
 
@@ -269,19 +285,19 @@
         // 1. Kondisi Awal Alkes
         const awalLabels = {!! json_encode($gradeData->pluck('grade_kerusakan')) !!};
         const awalValues = {!! json_encode($gradeData->pluck('total')) !!};
-        renderDoughnut('chartAwal', awalLabels, awalValues);
+        renderDoughnut('chartAwal', awalLabels, awalValues, totalDataGlobal);
         renderLegend('legendAwal', awalLabels, awalValues);
 
         // 2. Respon Penyedia
         const responLabels = {!! json_encode($responData->pluck('respon_penyedia')) !!};
         const responValues = {!! json_encode($responData->pluck('total')) !!};
-        renderDoughnut('chartRespon', responLabels, responValues);
+        renderDoughnut('chartRespon', responLabels, responValues, totalWithVendor);
         renderLegend('legendRespon', responLabels, responValues, true); // true karena hitung dari total vendor
 
         // 3. Kondisi Akhir Alkes
         const akhirLabels = {!! json_encode($statusData->pluck('status_perbaikan')) !!};
         const akhirValues = {!! json_encode($statusData->pluck('total')) !!};
-        renderDoughnut('chartAkhir', akhirLabels, akhirValues);
+        renderDoughnut('chartAkhir', akhirLabels, akhirValues, totalDataGlobal);
         renderLegend('legendAkhir', akhirLabels, akhirValues);
     </script>
 

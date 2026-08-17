@@ -15,6 +15,7 @@ class RepairService
         return [
             'list_rs'       => \App\Models\Fasyankes::orderBy('nama_fasyankes', 'asc')->pluck('lokasi', 'nama_fasyankes'),
             'list_alkes'    => Repair::whereNotNull('nama_alkes')->distinct()->orderBy('nama_alkes', 'asc')->pluck('nama_alkes'),
+            'list_alkes_master' => \App\Models\Alkes::orderBy('nama_alkes', 'asc')->pluck('nama_alkes'),
             'list_kategori' => Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori'),
             'list_grade'    => Repair::whereNotNull('grade_kerusakan')->distinct()->orderBy('grade_kerusakan', 'asc')->pluck('grade_kerusakan'),
             'list_status'   => Repair::whereNotNull('status_perbaikan')->distinct()->orderBy('status_perbaikan', 'asc')->pluck('status_perbaikan'),
@@ -50,7 +51,7 @@ class RepairService
             $query->orderBy($orderBy, $direction);
         }
 
-        return $paginate ? $query->paginate(15)->withQueryString() : $query->get();
+        return $paginate ? $query->paginate(10)->withQueryString() : $query->get();
     }
 
     /**

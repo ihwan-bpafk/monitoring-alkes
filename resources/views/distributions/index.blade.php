@@ -4,19 +4,10 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold text-teal mb-0"><i class="bi bi-truck me-2"></i>Distribusi Alat Donasi</h4>
+            <h4 class="fw-bold text-primary mb-0"><i class="bi bi-truck me-2"></i>Distribusi Alat Donasi</h4>
             <p class="text-muted small mb-0">Kelola pengiriman alat kesehatan dari BPAFK ke Rumah Sakit tujuan.</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('dashboard') }}" class="btn btn-light border shadow-sm fw-bold">
-                <i class="bi bi-speedometer2 me-2 text-teal"></i>Dashboard
-            </a>
-            <a href="{{ route('repairs.index') }}" class="btn btn-warning shadow-sm fw-bold px-3">
-                <i class="bi bi-tools me-2"></i>Data Perbaikan
-            </a>
-            <a href="{{ route('donations.index') }}" class="btn btn-success shadow-sm fw-bold">
-                <i class="bi bi-box-seam me-2"></i>Stok Donasi
-            </a>
             <a href="{{ route('distributions.export', request()->all()) }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
             </a>
@@ -31,7 +22,7 @@
                 <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                 <div class="col-md-2">
                     <label class="small fw-bold">RS Tujuan</label>
-                    <select name="filter_rs" class="form-select select2-filter" onchange="this.form.submit()">
+                    <select name="filter_rs" class="form-select select2-filter shadow-sm border-primary">
                         <option value="">-- RS --</option>
                         @foreach($list_rs_master as $rs)
                             <option value="{{ $rs }}" {{ request('filter_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
@@ -41,7 +32,7 @@
 
                 <div class="col-md-3">
                     <label class="small fw-bold">Nama Alat</label>
-                    <select name="filter_alkes" class="form-select select2-filter" onchange="this.form.submit()">
+                    <select name="filter_alkes" class="form-select select2-filter shadow-sm border-primary">
                         <option value="">-- Semua Alat --</option>
                         @foreach($list_alkes_dist as $name)
                             <option value="{{ $name }}" {{ request('filter_alkes') == $name ? 'selected' : '' }}>{{ $name }}</option>
@@ -51,7 +42,7 @@
 
                 <div class="col-md-3">
                     <label class="small fw-bold">Pemberi Donasi</label>
-                    <select name="filter_pemberi" class="form-select select2-filter" onchange="this.form.submit()">
+                    <select name="filter_pemberi" class="form-select select2-filter shadow-sm border-primary">
                         <option value="">-- Semua Pemberi --</option>
                         @foreach($list_pemberi as $pemberi)
                             <option value="{{ $pemberi }}" {{ request('filter_pemberi') == $pemberi ? 'selected' : '' }}>{{ $pemberi }}</option>
@@ -61,7 +52,7 @@
 
                 <div class="col-md-2">
                     <label class="small fw-bold">Status</label>
-                    <select name="filter_status" class="form-select select2-filter" onchange="this.form.submit()">
+                    <select name="filter_status" class="form-select select2-filter shadow-sm border-primary">
                         <option value="">-- Status --</option>
                         @foreach($list_status as $st)
                             <option value="{{ $st }}" {{ request('filter_status') == $st ? 'selected' : '' }}>{{ $st }}</option>

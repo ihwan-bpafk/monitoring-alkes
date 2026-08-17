@@ -58,7 +58,7 @@ class DashboardService
     /**
      * Mengambil ringkasan inventaris Alkes dan perhitungan kebutuhannya
      */
-    public function getAlkesSummary(?string $selectedRs, ?string $selectedKategori)
+    public function getAlkesSummary(?string $selectedRs, ?string $selectedKategori, bool $paginate = true)
     {
         // 1. Data Distribusi
         $distQuery = Distribution::query()
@@ -87,7 +87,7 @@ class DashboardService
             $query->where('kategori', $selectedKategori);
         }
 
-        return (clone $query)->select(
+            $baseQuery = (clone $query)->select(
                 'nama_alkes',
                 DB::raw('count(*) as jumlah_repair'),
                 DB::raw("SUM(CASE WHEN status_perbaikan = 'Bisa Dipakai' THEN 1 ELSE 0 END) as bisa_dipakai"),
@@ -95,26 +95,34 @@ class DashboardService
                 DB::raw("SUM(CASE WHEN status_perbaikan = 'Harus di Ganti (BAP)' THEN 1 ELSE 0 END) as ganti")
             )
             ->groupBy('nama_alkes')
-            ->orderBy('nama_alkes', 'asc') // Sortir abjad
-            ->get()
-            ->map(function ($item) use ($donationsDist) {
-                $distData = $donationsDist[$item->nama_alkes] ?? null;
+            ->orderBy('nama_alkes', 'asc'); // Sortir abjad
 
-                $item->total_alokasi = $distData ? $distData->total_alokasi : 0;
-                $item->total_distribusi = $distData ? $distData->total_distribusi : 0;
-                
-                // Alias properti untuk kompatibilitas class Export Excel (AlkesSummaryExport)
-                $item->alokasi = $item->total_alokasi;
-                $item->distribusi = $item->total_distribusi;
+        $mapFunction = function ($item) use ($donationsDist) {
+            $distData = $donationsDist[$item->nama_alkes] ?? null;
 
-                $item->jumlah = $item->jumlah_repair;
+            $item->total_alokasi = $distData ? $distData->total_alokasi : 0;
+            $item->total_distribusi = $distData ? $distData->total_distribusi : 0;
+            
+            // Alias properti untuk kompatibilitas class Export Excel (AlkesSummaryExport)
+            $item->alokasi = $item->total_alokasi;
+            $item->distribusi = $item->total_distribusi;
 
-                // Rumus Kebutuhan: BAP - (Alokasi + Distribusi)
-                $total_masuk = $item->total_alokasi + $item->total_distribusi;
-                $kebutuhan = $item->ganti - $total_masuk;
-                $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
+            $item->jumlah = $item->jumlah_repair;
 
-                return $item;
-            });
+            // Rumus Kebutuhan: BAP - (Alokasi + Distribusi)
+            $total_masuk = $item->total_alokasi + $item->total_distribusi;
+            $kebutuhan = $item->ganti - $total_masuk;
+            $item->kebutuhan = $kebutuhan > 0 ? $kebutuhan : 0;
+
+            return $item;
+        };
+
+        if ($paginate) {
+            $paginator = $baseQuery->paginate(10)->withQueryString();
+            $paginator->getCollection()->transform($mapFunction);
+            return $paginator;
+        } else {
+            return $baseQuery->get()->map($mapFunction);
+        }
     }
 }

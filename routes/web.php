@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\FasyankesController;
+use App\Http\Controllers\AlkesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,9 @@ Route::middleware(['auth'])->group(function () {
         
         // FASYANKES
         Route::resource('fasyankes', FasyankesController::class)->except(['create', 'show', 'edit', 'index']);
+        
+        // ALKES
+        Route::resource('alkes', AlkesController::class)->except(['create', 'show', 'edit', 'index']);
     });
 
     // Rute Index tetap di luar Lock agar data bisa dilihat
@@ -64,4 +68,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Fasyankes
     Route::get('/fasyankes', [FasyankesController::class, 'index'])->name('fasyankes.index');
+
+    // Alkes
+    Route::get('/alkes', [AlkesController::class, 'index'])->name('alkes.index');
 });
