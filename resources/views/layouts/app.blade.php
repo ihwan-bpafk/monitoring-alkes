@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Monitoring Alkes BPAFK</title>
-    <link rel="icon" type="image/png" href="{{ asset('img/Ditjen_Farmalkes_Logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('Logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -171,7 +171,7 @@
     </style>
 </head>
 
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('dashboard') }}">
@@ -212,17 +212,21 @@
                     </li>
                     @if (auth()->check() && auth()->user()->role === 1)
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') ? 'active fw-bold' : '' }}" href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') ? 'active fw-bold' : '' }}"
+                                href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 Master Data
                             </a>
                             <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="masterDataDropdown">
                                 <li>
-                                    <a class="dropdown-item {{ request()->routeIs('fasyankes.*') ? 'active' : '' }}" href="{{ route('fasyankes.index') }}">
+                                    <a class="dropdown-item {{ request()->routeIs('fasyankes.*') ? 'active' : '' }}"
+                                        href="{{ route('fasyankes.index') }}">
                                         Fasyankes
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item {{ request()->routeIs('alkes.*') ? 'active' : '' }}" href="{{ route('alkes.index') }}">
+                                    <a class="dropdown-item {{ request()->routeIs('alkes.*') ? 'active' : '' }}"
+                                        href="{{ route('alkes.index') }}">
                                         Alkes
                                     </a>
                                 </li>
@@ -320,9 +324,17 @@
         </div>
     @endif
 
-    <div class="container">
+    <div class="container flex-grow-1">
         @yield('content')
     </div>
+
+    <footer class="bg-white text-center py-3 mt-5 mt-auto border-top shadow-sm">
+        <div class="container">
+            <small class="text-muted fw-bold">
+                &copy; {{ date('Y') }} Balai Pengamanan Fasilitas Kesehatan (BPAFK) Medan. All Rights Reserved.
+            </small>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -334,25 +346,36 @@
             }).on('select2:select', function(e) {
                 $('#bencana-form').submit();
             });
-            
+
             // Initialize global select2 filters if they exist
             $('.select2-filter').select2({
                 theme: 'bootstrap-5'
             }).on('select2:select', function(e) {
                 $(this).closest('form').submit();
             });
+
+            // Global Select2 init for modals
+            $('.modal').on('shown.bs.modal', function() {
+                $(this).find('select:not(.select2-hidden-accessible)').each(function() {
+                    $(this).select2({
+                        theme: 'bootstrap-5',
+                        dropdownParent: $(this).closest('.modal'),
+                        width: '100%'
+                    });
+                });
+            });
         });
     </script>
     <script>
         // Fitur Paginasi Seamless (Diem Aja)
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             let paginationLink = e.target.closest('.pagination a');
             if (!paginationLink) return;
 
             e.preventDefault();
             let url = paginationLink.href;
             let container = paginationLink.closest('.card-body');
-            
+
             if (!container) return;
 
             fetch(url)
@@ -360,7 +383,7 @@
                 .then(html => {
                     let parser = new DOMParser();
                     let doc = parser.parseFromString(html, 'text/html');
-                    
+
                     // Cari secara spesifik card-body yang memiliki elemen tabel (table-responsive)
                     // untuk menghindari tertukarnya dengan card-body lain di halaman (seperti card statistik)
                     let newTable = doc.querySelector('.table-responsive');
@@ -369,7 +392,9 @@
                     if (newContainer) {
                         // Swap HTML secara instan, tanpa animasi, tanpa pindah scroll
                         container.innerHTML = newContainer.innerHTML;
-                        window.history.pushState({ path: url }, '', url);
+                        window.history.pushState({
+                            path: url
+                        }, '', url);
                     }
                 })
                 .catch(error => {
@@ -378,8 +403,8 @@
         });
 
         // Tangani navigasi back/forward
-        window.addEventListener('popstate', function () {
-            window.location.reload(); 
+        window.addEventListener('popstate', function() {
+            window.location.reload();
         });
     </script>
 </body>

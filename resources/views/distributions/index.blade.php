@@ -78,7 +78,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="text-white text-center bg-teal">
+                    <thead class="text-white text-center bg-teal align-middle">
                         <tr>
                             <th width="50">No</th>
                             <th class="text-start">Nama Alat</th>
@@ -96,7 +96,7 @@
                             <td>{{ ($distributions->currentPage() - 1) * $distributions->perPage() + $loop->iteration }}</td>
                             <td class="text-start">
                                 <div class="fw-bold text-teal">{{ $dist->donation->nama_alkes }}</div>
-                                <small class="text-muted">Pemberi: {{ $dist->donation->pemberi_donasi }}</small>
+                                <small class="text-muted">Pemberi: <span class="fw-bold text-dark">{{ $dist->donation->pemberi_donasi }}</span></small>
                             </td>
                             <td class="text-start fw-bold text-dark">{{ $dist->nama_rs }}</td>
                             <td><span class="badge bg-info text-dark">{{ $dist->jumlah_distribusi }} Unit</span></td>
@@ -110,11 +110,11 @@
                             <td>
                                 @if(auth()->user()->role === 1 || auth()->user()->role === 2)
                                 <div class="d-flex gap-1 justify-content-center">
-                                    <button class="btn btn-sm btn-warning shadow-sm" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $dist->id }}" title="Edit Data">
-                                        <i class="bi bi-pencil"></i>
+                                    <button class="btn btn-sm btn-outline-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $dist->id }}" title="Edit Data">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalHapus{{ $dist->id }}" title="Batalkan Distribusi">
+                                    <button class="btn btn-sm btn-outline-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalHapus{{ $dist->id }}" title="Batalkan Distribusi">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>

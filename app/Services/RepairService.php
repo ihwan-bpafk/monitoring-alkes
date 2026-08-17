@@ -26,7 +26,7 @@ class RepairService
     /**
      * Mengambil data perbaikan dengan filter, pencarian, dan opsi pagination
      */
-    public function getFilteredRepairs(array $filters, bool $paginate = true, string $orderBy = 'nama_alkes', string $direction = 'asc')
+    public function getFilteredRepairs(array $filters, bool $paginate = true, string $orderBy = 'nama_alkes', string $direction = 'asc', ?int $limit = null)
     {
         $query = Repair::query();
 
@@ -49,6 +49,10 @@ class RepairService
             $query->latest();
         } else {
             $query->orderBy($orderBy, $direction);
+        }
+
+        if ($limit && !$paginate) {
+            $query->limit($limit);
         }
 
         return $paginate ? $query->paginate(10)->withQueryString() : $query->get();

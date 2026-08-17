@@ -94,7 +94,7 @@ class RepairController extends Controller
     {
         $dropdowns = $this->repairService->getFilterOptions();
         // Menggunakan latest() -> ini diterjemahkan ke getFilteredRepairs tanpa search/filter
-        $repairs = $this->repairService->getFilteredRepairs([], false, 'latest');
+        $repairs = $this->repairService->getFilteredRepairs([], false, 'latest', 'asc', 50);
 
         return view('repairs.report', array_merge(compact('repairs'), $dropdowns));
     }
@@ -103,7 +103,7 @@ class RepairController extends Controller
     {
         $filters = $request->validated();
         
-        $repairs = $this->repairService->getFilteredRepairs($filters, false, 'latest');
+        $repairs = $this->repairService->getFilteredRepairs($filters, false, 'latest', 'asc', 50);
 
         return view('repairs._report_rows', compact('repairs'))->render();
     }

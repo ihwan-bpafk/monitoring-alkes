@@ -89,7 +89,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="text-white text-center bg-teal">
+                    <thead class="text-white text-center bg-teal align-middle">
                         <tr>
                             <th width="50">No</th>
                             <th class="text-start">Pemberi Donasi</th>
@@ -109,9 +109,10 @@
                                 <small class="text-muted">{{ $d->merek ?? '-' }}</small>
                             </td>
                             <td>
-                                <span class="badge {{ $d->sisa_stok > 0 ? 'bg-success' : 'bg-danger' }} badge-stok">
-                                    {{ $d->sisa_stok }} / {{ $d->jumlah_donasi }} Unit
-                                </span>
+                                <div class="fw-bold {{ $d->sisa_stok > 0 ? 'text-success' : 'text-danger' }}">
+                                    <i class="bi bi-circle-fill me-1" style="font-size: 0.4rem; vertical-align: middle;"></i> 
+                                    {{ $d->sisa_stok }} <span class="text-muted fw-normal">/ {{ $d->jumlah_donasi }} Unit</span>
+                                </div>
                             </td>
                             <td>
                                 @if($d->distributions->isNotEmpty())
@@ -130,18 +131,18 @@
                                             @endphp
 
                                             @foreach($summaryDistribusi as $rs => $total)
-                                                <div class="d-flex justify-content-between border-bottom mb-1 pb-1" style="font-size: 0.7rem;">
-                                                    <span class="text-muted fw-bold">{{ $rs }}</span>
-                                                    <span class="badge bg-light text-dark border ms-2">{{ $total }} Unit</span>
+                                                <div class="mb-1" style="font-size: 0.75rem;">
+                                                    <span class="text-muted">• {{ $rs }}</span>
+                                                    <span class="fw-bold text-dark ms-1">({{ $total }} Unit)</span>
                                                 </div>
                                             @endforeach
                                         </div>
                                     </div>
                                 @else
                                     {{-- Jika masih di posisi awal (Gudang/BPAFK) --}}
-                                    <span class="badge border text-teal border-teal">
-                                        <i class="bi bi-geo-alt-fill me-1"></i>{{ $d->status_akhir }}
-                                    </span>
+                                    <div class="fw-bold text-teal">
+                                        <i class="bi bi-geo-alt-fill me-1 small"></i>{{ $d->status_akhir }}
+                                    </div>
                                 @endif
                             </td>
                             <td>
@@ -151,11 +152,11 @@
                                         <i class="bi bi-clock-history"></i>
                                     </button>
                                     
-                                    <button class="btn btn-sm text-white shadow-sm bg-teal" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $d->id }}">
+                                    <button class="btn btn-sm btn-outline-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $d->id }}" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalHapusDonasi{{ $d->id }}">
+                                    <button class="btn btn-sm btn-outline-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalHapusDonasi{{ $d->id }}" title="Hapus">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                     @endif
@@ -244,7 +245,7 @@
 
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold text-dark">Status/Posisi Baru</label>
-                                                <select name="status_akhir" class="form-select select2-filter">
+                                                <select name="status_akhir" class="form-select">
                                                     @php
                                                         $options = ['BPAFK Medan', 'BPAFK Jakarta', 'IFP', 'PUSKRIS', 'DINKES aceh', 'Dinkes sumut', 'RS lainnya', 'Vendor'];
                                                     @endphp
@@ -315,13 +316,8 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-                <div class="small text-muted">
-                    Menampilkan {{ $donations->firstItem() ?? 0 }} - {{ $donations->lastItem() ?? 0 }} dari {{ $donations->total() }} data
-                </div>
-                <div>
-                    {{ $donations->links() }}
-                </div>
+            <div class="p-3 border-top bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                {{ $donations->links() }}
             </div>
         </div>
     </div>

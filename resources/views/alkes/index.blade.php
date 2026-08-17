@@ -40,27 +40,27 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
+                    <thead class="bg-teal text-white align-middle">
                         <tr>
-                            <th class="px-4 py-3 text-secondary" width="5%">No</th>
-                            <th class="py-3 text-secondary">Nama Alkes</th>
-                            <th class="px-4 py-3 text-secondary text-center" width="15%">Aksi</th>
+                            <th class="px-4 py-3 text-center" width="5%">No</th>
+                            <th class="py-3">Nama Alkes</th>
+                            <th class="px-4 py-3 text-center" width="15%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($alkes as $index => $item)
                         <tr>
-                            <td class="px-4 fw-bold text-muted">{{ $alkes->firstItem() + $index }}</td>
+                            <td class="px-4 fw-bold text-muted text-center">{{ $alkes->firstItem() + $index }}</td>
                             <td class="fw-bold">{{ $item->nama_alkes }}</td>
                             <td class="px-4 text-center">
-                                <div class="btn-group shadow-sm">
+                                <div class="d-flex gap-1 justify-content-center">
                                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $item->id }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <form action="{{ route('alkes.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger">
+                                        <button class="btn btn-sm btn-outline-danger shadow-sm">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

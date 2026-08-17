@@ -29,21 +29,20 @@
     <div class="card-body p-4">
         <form id="filterForm" action="{{ route('repairs.export') }}" method="GET" target="_blank">
             <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
-            <div class="row g-3 align-items-end">
-                
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-primary">Rumah Sakit</label>
-                    <select name="nama_rs" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Rumah Sakit</label>
+                    <select name="nama_rs" class="form-select filter-input select2-custom">
                         <option value="">-- Semua --</option>
-                        @foreach($list_rs as $rs)
-                            <option value="{{ $rs }}" {{ request('nama_rs') == $rs ? 'selected' : '' }}>{{ $rs }}</option>
+                        @foreach($list_rs as $nama => $lokasi)
+                            <option value="{{ $nama }}" {{ request('nama_rs') == $nama ? 'selected' : '' }}>{{ $nama }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-primary">Nama Alat</label>
-                    <select name="nama_alkes" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Nama Alat</label>
+                    <select name="nama_alkes" class="form-select filter-input select2-custom">
                         <option value="">-- Semua Alat --</option>
                         @foreach($list_alkes as $alkes)
                             <option value="{{ $alkes }}" {{ request('nama_alkes') == $alkes ? 'selected' : '' }}>
@@ -53,9 +52,9 @@
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-primary">Kategori</label>
-                    <select name="kategori" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Kategori</label>
+                    <select name="kategori" class="form-select filter-input select2-custom">
                         <option value="">-- Semua --</option>
                         @foreach($list_kategori as $kat)
                             <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>{{ $kat }}</option>
@@ -63,9 +62,9 @@
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-primary">Kondisi Awal Alkes</label>
-                    <select name="grade_kerusakan" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Kondisi Awal Alkes</label>
+                    <select name="grade_kerusakan" class="form-select filter-input select2-custom">
                         <option value="">-- Semua --</option>
                         @foreach($list_grade as $grade)
                             <option value="{{ $grade }}" {{ request('grade_kerusakan') == $grade ? 'selected' : '' }}>{{ $grade }}</option>
@@ -73,9 +72,9 @@
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-primary">Status Akhir</label>
-                    <select name="status_perbaikan" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Status Akhir</label>
+                    <select name="status_perbaikan" class="form-select filter-input select2-custom">
                         <option value="">-- Semua Status --</option>
                         @foreach($list_status as $status)
                             <option value="{{ $status }}" {{ request('status_perbaikan') == $status ? 'selected' : '' }}>{{ $status }}</option>
@@ -83,18 +82,20 @@
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-primary">Respon Penyedia</label>
-                    <select name="respon_penyedia" class="form-select form-select-sm filter-input select2-custom border-primary shadow-sm">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Respon Penyedia</label>
+                    <select name="respon_penyedia" class="form-select filter-input select2-custom">
                         <option value="">-- Semua Respon --</option>
                         @foreach($list_respon as $respon)
                             <option value="{{ $respon }}" {{ request('respon_penyedia') == $respon ? 'selected' : '' }}>{{ $respon }}</option>
                         @endforeach
                     </select>
                 </div>
-
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm py-1">
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success fw-bold shadow-sm px-4">
                         <i class="bi bi-file-earmark-excel me-1"></i> Download Excel
                     </button>
                 </div>
@@ -109,11 +110,11 @@
         <span class="badge bg-light text-primary border" id="data-count">Total Data: {{ $repairs->count() }}</span>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive" style="overflow-x: auto;">
+        <div class="table-responsive" style="max-height: 60vh; overflow-y: auto; overflow-x: auto;">
             <table class="table table-hover mb-0" style="min-width: 2000px; font-size: 0.8rem;">
-                <thead class="bg-light text-center align-middle">
+                <thead class="text-center align-middle" style="position: sticky; top: 0; z-index: 10;">
                     <tr>
-                        <th width="50" class="bg-light sticky-left">No</th>
+                        <th width="50" class="ps-3">No</th>
                         <th>Tanggal Input</th>
                         <th>Rumah Sakit</th>
                         <th>Lokasi</th>

@@ -1,6 +1,6 @@
 @forelse($repairs as $index => $r)
-<tr data-row>
-    <td class="text-center bg-light">{{ $index + 1 }}</td>
+<tr data-row class="align-middle text-center">
+    <td class="ps-3">{{ $index + 1 }}</td>
     <td>{{ $r->tanggal_input ?? '-' }}</td>
     <td class="fw-bold">{{ $r->nama_rs ?? '-' }}</td>
     <td>{{ $r->lokasi ?? '-' }}</td>

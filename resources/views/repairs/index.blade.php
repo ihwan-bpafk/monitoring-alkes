@@ -123,17 +123,12 @@
 
 <div class="card shadow-sm border-0" style="border-radius: 12px;">
     <div class="card-body p-0">
-        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
-            <div class="small text-muted">
-                Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
-            </div>
-            <div>
-                {{ $repairs->links() }}
-            </div>
+        <div class="p-3 border-bottom">
+            {{ $repairs->links() }}
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="">
+                <thead class="align-middle">
                     <tr>
                         <th class="ps-3" width="50">No</th>
                         <th>RS / Lokasi / Petugas</th>
@@ -156,30 +151,35 @@
                         </td>
                         <td>
                             <div class="fw-bold text-primary">{{ $r->nama_alkes ?? '-' }}</div>
-                            <div class="badge bg-light text-dark border">{{ $r->kategori ?? '-' }}</div>
-                            <small class="text-muted d-block">SN: <strong>{{ $r->serial_number ?? '-' }}</strong></small>
-                            <small class="badge
-                                {{ $r->status_perbaikan == 'Bisa Dipakai' ? 'bg-success' : 
-                                ($r->status_perbaikan == 'Dalam Proses Perbaikan' ? 'bg-warning' : 
-                                ($r->status_perbaikan == 'Harus di Ganti (BAP)' ? 'bg-danger' : 'text-dark')) }}">
-                                Kondisi Akhir: {{ $r->status_perbaikan }}
-                            </small>
-                            <small class="text-muted d-block">Merk/Model: {{ $r->merek }} / {{ $r->tipe_model }}</small>
-                            <small class="text-dark d-block mt-1"><i class="bi bi-truck"></i> Penyedia: <strong>{{ $r->nama_penyedia ?? '-' }}</strong></small>
-                            <small class="text-dark d-block mt-1">Respon Penyedia : {{ $r->respon_penyedia }}</small>
-                            <small class="text-dark d-block mt-1">Tindakan Penyedia : {{ $r->tindakan_penyedia }}</small>
+                            <div class="badge bg-light text-dark border mb-2">{{ $r->kategori ?? '-' }}</div>
+                            
+                            <div style="font-size: 0.85rem;">
+                                <span class="text-muted">SN:</span> <span class="fw-bold text-dark">{{ $r->serial_number ?? '-' }}</span>
+                                <span class="badge ms-2
+                                    {{ $r->status_perbaikan == 'Bisa Dipakai' ? 'bg-success' : 
+                                    ($r->status_perbaikan == 'Dalam Proses Perbaikan' ? 'bg-warning text-dark' : 
+                                    ($r->status_perbaikan == 'Harus di Ganti (BAP)' ? 'bg-danger' : 'text-dark border')) }}">
+                                    {{ $r->status_perbaikan }}
+                                </span>
+                            </div>
+                            <div style="font-size: 0.85rem;"><span class="text-muted">Merk/Model:</span> <span class="fw-bold text-dark">{{ $r->merek }} / {{ $r->tipe_model }}</span></div>
+                            <div style="font-size: 0.85rem;" class="mt-1"><span class="text-muted"><i class="bi bi-truck"></i> Penyedia:</span> <span class="fw-bold text-dark">{{ $r->nama_penyedia ?? '-' }}</span></div>
+                            <div style="font-size: 0.85rem;"><span class="text-muted">Respon:</span> <span class="fw-bold text-dark">{{ $r->respon_penyedia }}</span></div>
+                            <div style="font-size: 0.85rem;"><span class="text-muted">Tindakan:</span> <span class="fw-bold text-dark">{{ $r->tindakan_penyedia }}</span></div>
                         </td>
                         <td>
-                            <div class="p-2 bg-light rounded border shadow-sm" style="max-height: 120px; overflow-y: auto; font-size: 0.8rem;">
-                                @foreach($r->histories as $h)
-                                <div class="mb-2 pb-2 {{ !$loop->last ? 'border-bottom' : '' }}">
+                            <div class="pe-2" style="max-height: 140px; overflow-y: auto; font-size: 0.85rem;">
+                                @forelse($r->histories as $h)
+                                <div class="mb-2 pb-2 {{ !$loop->last ? 'border-bottom border-light' : '' }}">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="badge bg-primary" style="font-size: 0.6rem;">{{ $h->status_perbaikan }}</span>
-                                        <small class="text-muted" style="font-size: 0.65rem;">{{ $h->created_at->format('d/m/y H:i') }}</small>
+                                        <span class="fw-bold text-primary"><i class="bi bi-check2-circle"></i> {{ $h->status_perbaikan }}</span>
+                                        <small class="text-muted" style="font-size: 0.7rem;">{{ $h->created_at->format('d/m/y H:i') }}</small>
                                     </div>
-                                    <div class="text-dark fw-medium">{{ $h->keterangan_perubahan }}</div>
+                                    <div class="text-dark">{{ $h->keterangan_perubahan }}</div>
                                 </div>
-                                @endforeach
+                                @empty
+                                <span class="text-muted small italic">Belum ada log</span>
+                                @endforelse
                             </div>
                         </td>
                         <td class="text-center">
@@ -193,17 +193,38 @@
                         </td>
                         <td class="text-center">
                             @if(auth()->user()->role === 1)
-                            <div class="btn-group shadow-sm">
-                                <button class="btn btn-info btn-sm text-white fw-bold px-2" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $r->id }}">
-                                    <i class="bi bi-eye"></i> Detail
+                            <div class="d-flex justify-content-center gap-1">
+                                <button class="btn btn-outline-info btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $r->id }}" title="Detail">
+                                    <i class="bi bi-eye"></i>
                                 </button>
-                                <button class="btn btn-primary btn-sm fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $r->id }}">Update</button>
-                                <button class="btn btn-danger btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalHapus{{ $r->id }}"><i class="bi bi-trash"></i></button>
+                                <button class="btn btn-outline-primary btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalUpdate{{ $r->id }}" title="Update">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalHapus{{ $r->id }}" title="Hapus">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </div>
                             @endif
                         </td>
                     </tr>
 
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted small italic">Data tidak ditemukan.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="p-3 border-top">
+            {{ $repairs->links() }}
+        </div>
+    </div>
+</div>
+
+
+@foreach($repairs as $r)
                     <div class="modal fade" id="modalUpdate{{ $r->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                         <form action="{{ route('repairs.updateStatus', $r->id) }}" method="POST" enctype="multipart/form-data" class="modal-content border-0">
@@ -233,9 +254,9 @@
                                                         </select>
                                                     </div>
 
-                                                    <div class="mb-2">
-                                                        <label class="small fw-bold">Lokasi / Kota</label>
-                                                        <input type="text" name="lokasi" class="form-control form-control-sm js-lokasi-input" value="{{ $r->lokasi }}" readonly style="background-color: #f0f0f0;">
+                                                    <div class="mb-3">
+                                                        <label class="small fw-bold text-muted">Lokasi / Kota</label>
+                                                        <input type="text" name="lokasi" class="form-control form-control-sm js-lokasi-input bg-light" value="{{ $r->lokasi }}" readonly>
                                                         <small class="text-muted" style="font-size: 0.65rem;">*Lokasi terisi otomatis berdasarkan RS.</small>
                                                     </div>
                                                     <div class="mb-2">
@@ -271,7 +292,10 @@
                                                                 </div>
                                                             @endforeach
                                                         @else
-                                                            <div class="col-12 text-muted small p-2 text-center bg-white rounded border border-dashed">No Image</div>
+                                                            <div class="col-12 text-muted small p-4 text-center bg-light rounded border border-dashed d-flex flex-column align-items-center justify-content-center">
+                                                                <i class="bi bi-image fs-3 mb-1 opacity-50"></i>
+                                                                <span>No Image Available</span>
+                                                            </div>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -280,12 +304,12 @@
                                             <div class="col-md-8">
                                                 <div class="card border-0 shadow-sm p-3">
                                                     <div class="row">
-                                                        <div class="col-md-4 mb-2">
-                                                            <label class="small fw-bold">Petugas Update</label>
-                                                            <input type="text" name="input_by" class="form-control form-control-sm" value="{{ Auth::user()->name }}" required>
+                                                        <div class="col-md-4 mb-3">
+                                                            <label class="small fw-bold text-muted">Petugas Update</label>
+                                                            <input type="text" name="input_by" class="form-control form-control-sm bg-light" value="{{ Auth::user()->name }}" readonly>
                                                         </div>
-                                                        <div class="col-md-4 mb-2">
-                                                            <label class="small fw-bold">Kategori Alkes</label>
+                                                        <div class="col-md-4 mb-3">
+                                                            <label class="small fw-bold text-muted">Kategori Alkes</label>
                                                             <select name="kategori" class="form-select form-select-sm">
                                                                 <option value="Elektromedik" {{ $r->kategori == 'Elektromedik' ? 'selected' : '' }}>Elektromedik</option>
                                                                 <option value="Radiologi" {{ $r->kategori == 'Radiologi' ? 'selected' : '' }}>Radiologi</option>
@@ -301,24 +325,24 @@
                                                                 <option value="Gas Medis" {{ $r->kategori == 'Gas Medis' ? 'selected' : '' }}>Gas Medis</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-4 mb-2">
-                                                            <label class="small fw-bold">Kondisi Kontrak</label>
-                                                            <select name="kondisi_kontrak" class="form-select">
+                                                        <div class="col-md-4 mb-3">
+                                                            <label class="small fw-bold text-muted">Kondisi Kontrak</label>
+                                                            <select name="kondisi_kontrak" class="form-select form-select-sm">
                                                                 <option value="Garansi" {{ $r->kondisi_kontrak == 'Garansi' ? 'selected' : '' }}>Garansi</option>
                                                                 <option value="Garansi Habis" {{ $r->kondisi_kontrak == 'Garansi Habis' ? 'selected' : '' }}>Garansi Habis</option>
                                                                 <option value="KSO" {{ $r->kondisi_kontrak == 'KSO' ? 'selected' : '' }}>KSO</option>
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-md-6 mb-2">
-                                                            <label class="small fw-bold">Kondisi Awal (Grade)</label>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="small fw-bold text-muted">Kondisi Awal (Grade)</label>
                                                             <select name="grade_kerusakan" class="form-select form-select-sm">
                                                                 <option value="Bisa Dipakai" {{ $r->grade_kerusakan == 'Bisa Dipakai' ? 'selected' : '' }}>Bisa Dipakai</option>
                                                                 <option value="Rusak Ringan" {{ $r->grade_kerusakan == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
                                                                 <option value="Rusak Berat" {{ $r->grade_kerusakan == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-6 mb-2">
+                                                        <div class="col-md-6 mb-3">
                                                             <label class="small fw-bold text-primary">Update Status Akhir</label>
                                                             <select name="status_perbaikan" class="form-select form-select-sm border-primary" required>
                                                                 <option value="Bisa Dipakai" {{ $r->status_perbaikan == 'Bisa Dipakai' ? 'selected' : '' }}>Bisa Dipakai</option>
@@ -327,12 +351,12 @@
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-md-6 mb-2">
-                                                            <label class="small fw-bold">Nama Penyedia / Vendor</label>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="small fw-bold text-muted">Nama Penyedia / Vendor</label>
                                                             <input type="text" name="nama_penyedia" class="form-control form-control-sm" value="{{ $r->nama_penyedia }}">
                                                         </div>
-                                                        <div class="col-md-6 mb-2">
-                                                            <label class="small fw-bold">Komponen / Sparepart</label>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="small fw-bold text-muted">Komponen / Sparepart</label>
                                                             <select name="komponen" class="form-select form-select-sm">
                                                                 <option value="">-- Pilih --</option>
                                                                 <option value="Power Supply" {{ $r->komponen == 'Power Supply' ? 'selected' : '' }}>Power Supply</option>
@@ -342,25 +366,25 @@
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-md-6 mb-2">
-                                                            <label class="small fw-bold">Respon Penyedia</label>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="small fw-bold text-muted">Respon Penyedia</label>
                                                             <select name="respon_penyedia" class="form-select form-select-sm">
                                                                 <option value="Datang" {{ $r->respon_penyedia == 'Datang' ? 'selected' : '' }}>Datang</option>
                                                                 <option value="Belum Datang" {{ $r->respon_penyedia == 'Belum Datang' ? 'selected' : '' }}>Belum Datang</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-6 mb-2">
-                                                            <label class="small fw-bold">Tindakan Penyedia</label>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="small fw-bold text-muted">Tindakan Penyedia</label>
                                                             <textarea name="tindakan_penyedia" class="form-control form-control-sm" rows="1">{{ $r->tindakan_penyedia }}</textarea>
                                                         </div>
 
-                                                        <div class="col-md-12 mb-2">
-                                                            <label class="small fw-bold">Rencana Tindak Lanjut (RTL)</label>
+                                                        <div class="col-md-12 mb-3">
+                                                            <label class="small fw-bold text-muted">Rencana Tindak Lanjut (RTL)</label>
                                                             <textarea name="rtl" class="form-control form-control-sm" rows="2">{{ $r->rtl }}</textarea>
                                                         </div>
 
                                                         <div class="col-md-12 mb-3">
-                                                            <label class="small fw-bold">Keterangan Tambahan / Log</label>
+                                                            <label class="small fw-bold text-muted">Keterangan Tambahan / Log</label>
                                                             <textarea name="keterangan_lain" class="form-control form-control-sm" rows="2">{{ $r->keterangan_lain }}</textarea>
                                                         </div>
 
@@ -581,25 +605,7 @@
                     </div>
                     
                     
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted small italic">Data tidak ditemukan.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="d-flex justify-content-between align-items-center p-3 border-top">
-            <div class="small text-muted">
-                Menampilkan {{ $repairs->firstItem() ?? 0 }} - {{ $repairs->lastItem() ?? 0 }} dari {{ $repairs->total() }} data
-            </div>
-            <div>
-                {{ $repairs->links() }}
-            </div>
-        </div>
-    </div>
-</div>
+@endforeach
 
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -612,10 +618,10 @@
                                     <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                                     <div class="modal-body p-4">
                                         <div class="row mb-4">
-                                            <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasiedit Lokasi</h6></div>
+                                            <div class="col-12"><h6 class="text-primary border-bottom pb-2 mb-3 fw-bold">1. Informasi Lokasi</h6></div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold">Petugas Input</label>
-                                                <input type="text" name="input_by" class="form-control" value="{{ Auth::user()->name }}" required>
+                                                <input type="text" name="input_by" class="form-control bg-light" value="{{ Auth::user()->name }}" readonly>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label small fw-bold text-muted">Tanggal Input (Otomatis)</label>
@@ -843,8 +849,8 @@
     });
 
     $(document).ready(function() {
-        // Terapkan Select2 ke semua dropdown filter
-        $('select[name="nama_rs"], select[name="nama_alkes"], select[name="kategori"], select[name="grade_kerusakan"], select[name="status_perbaikan"], select[name="respon_penyedia"]').select2({
+        // Terapkan Select2 ke semua dropdown
+        $('select[name="nama_rs"], select[name="nama_alkes"], select[name="kategori"], select[name="grade_kerusakan"], select[name="status_perbaikan"], select[name="respon_penyedia"], select[name="kondisi_kontrak"], select[name="komponen"]').select2({
             theme: 'bootstrap-5',
             placeholder: function() {
                 return $(this).find('option:first').text();
