@@ -12,7 +12,7 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->role !== 1, 403, 'Unauthorized access.');
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $fasyankes = Fasyankes::orderBy('nama_fasyankes')->paginate(10);
         return view('fasyankes.index', compact('fasyankes'));
     }
@@ -21,7 +21,7 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->role !== 1, 403, 'Unauthorized access.');
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $request->validate([
             'nama_fasyankes' => 'required|string|max:255',
             'jenis' => 'required|string',
@@ -42,7 +42,7 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->role !== 1, 403, 'Unauthorized access.');
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $request->validate([
             'nama_fasyankes' => 'required|string|max:255',
             'jenis' => 'required|string',
@@ -63,7 +63,7 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->role !== 1, 403, 'Unauthorized access.');
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $fasyankes = Fasyankes::findOrFail($id);
         $fasyankes->delete();
 

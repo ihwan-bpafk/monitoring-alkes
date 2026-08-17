@@ -210,9 +210,9 @@
                             Distribusi
                         </a>
                     </li>
-                    @if (auth()->check() && auth()->user()->role === 1)
+                    @if (auth()->check() && auth()->user()->name === 'Administrator')
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') ? 'active fw-bold' : '' }}"
+                            <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') || request()->routeIs('activity_logs.*') ? 'active fw-bold' : '' }}"
                                 href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                                 Master Data
@@ -228,6 +228,13 @@
                                     <a class="dropdown-item {{ request()->routeIs('alkes.*') ? 'active' : '' }}"
                                         href="{{ route('alkes.index') }}">
                                         Alkes
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('activity_logs.*') ? 'active' : '' }}"
+                                        href="{{ route('activity_logs.index') }}">
+                                        Log Aktivitas
                                     </a>
                                 </li>
                             </ul>

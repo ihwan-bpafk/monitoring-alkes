@@ -48,7 +48,7 @@
     <a href="{{ route('distributions.index') }}" class="btn btn-nav-modern {{ isset($active) && $active == 'distributions' ? 'active' : '' }}">
         <i class="bi bi-truck me-2"></i>Distribusi
     </a>
-    @if (auth()->check() && auth()->user()->role === 1)
+    @if (auth()->check() && auth()->user()->name === 'Administrator')
         <a href="{{ route('fasyankes.index') }}" class="btn btn-nav-modern {{ isset($active) && $active == 'fasyankes' ? 'active' : '' }}">
             <i class="bi bi-building me-2"></i>Fasyankes
         </a>

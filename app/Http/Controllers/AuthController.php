@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthLoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
+use App\Traits\LogsActivity;
 
 class AuthController extends Controller
 {
@@ -19,6 +21,18 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            
+            // Log Login Activity
+            $ip = request()->ip();
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'Login',
+                'description' => 'User logged in',
+                'ip_address' => $ip,
+                'location' => LogsActivity::getLocationFromIp($ip),
+                'user_agent' => request()->userAgent(),
+            ]);
+
             return redirect()->intended('repairs');
         }
 
@@ -27,6 +41,19 @@ class AuthController extends Controller
 
     public function logout(Request $request) 
     {
+        // Log Logout Activity
+        if (Auth::check()) {
+            $ip = request()->ip();
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'Logout',
+                'description' => 'User logged out',
+                'ip_address' => $ip,
+                'location' => LogsActivity::getLocationFromIp($ip),
+                'user_agent' => request()->userAgent(),
+            ]);
+        }
+
         Auth::logout();
         
         $request->session()->invalidate();

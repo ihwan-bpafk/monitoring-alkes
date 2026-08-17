@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Scopes\BencanaScope;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivity;
 
 class Repair extends Model
 {

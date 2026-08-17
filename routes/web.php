@@ -8,6 +8,7 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\FasyankesController;
 use App\Http\Controllers\AlkesController;
+use App\Http\Controllers\ActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,4 +72,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Alkes
     Route::get('/alkes', [AlkesController::class, 'index'])->name('alkes.index');
+
+    // Activity Logs
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
 });

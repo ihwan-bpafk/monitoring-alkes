@@ -9,14 +9,18 @@ class AlkesController extends Controller
 {
     public function index()
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $alkes = Alkes::orderBy('nama_alkes')->paginate(10);
         return view('alkes.index', compact('alkes'));
     }
 
     public function store(Request $request)
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $request->validate([
             'nama_alkes' => 'required|string|max:255|unique:alkes,nama_alkes',
         ]);
@@ -28,9 +32,11 @@ class AlkesController extends Controller
         return redirect()->route('alkes.index')->with('success', 'Master Alkes berhasil ditambahkan');
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $request->validate([
             'nama_alkes' => 'required|string|max:255|unique:alkes,nama_alkes,'.$id,
         ]);
@@ -43,9 +49,11 @@ class AlkesController extends Controller
         return redirect()->route('alkes.index')->with('success', 'Master Alkes berhasil diupdate');
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
+        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
         $alkes = Alkes::findOrFail($id);
         $alkes->delete();
 
