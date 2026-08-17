@@ -3,20 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Fasyankes;
 
 class FasyankesController extends Controller
 {
     public function index()
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        abort_if($user->role !== 1, 403, 'Unauthorized access.');
         $fasyankes = Fasyankes::orderBy('nama_fasyankes')->paginate(10);
         return view('fasyankes.index', compact('fasyankes'));
     }
 
     public function store(Request $request)
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        abort_if($user->role !== 1, 403, 'Unauthorized access.');
         $request->validate([
             'nama_fasyankes' => 'required|string|max:255',
             'jenis' => 'required|string',
@@ -33,9 +38,11 @@ class FasyankesController extends Controller
         return redirect()->route('fasyankes.index')->with('success', 'Fasyankes berhasil ditambahkan');
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        abort_if($user->role !== 1, 403, 'Unauthorized access.');
         $request->validate([
             'nama_fasyankes' => 'required|string|max:255',
             'jenis' => 'required|string',
@@ -52,9 +59,11 @@ class FasyankesController extends Controller
         return redirect()->route('fasyankes.index')->with('success', 'Fasyankes berhasil diupdate');
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
-        abort_if(auth()->user()->role !== 1, 403, 'Unauthorized access.');
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        abort_if($user->role !== 1, 403, 'Unauthorized access.');
         $fasyankes = Fasyankes::findOrFail($id);
         $fasyankes->delete();
 
