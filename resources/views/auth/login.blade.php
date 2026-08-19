@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Monitoring Alkes BPAFK</title>
-    <link rel="icon" type="image/png" href="{{ asset('Logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -107,7 +107,8 @@
                         </form>
                     </div>
                 </div>
-                <p class="text-center mt-4 text-muted small" style="text-shadow: 0 0 5px white, 0 0 10px white;">&copy; 2026 BPAFK Medan. All Rights Reserved.</p>
+                <p class="text-center mt-4 text-muted small" style="text-shadow: 0 0 5px white, 0 0 10px white;">&copy;
+                    2026 BPAFK Medan. All Rights Reserved.</p>
             </div>
         </div>
     </div>
