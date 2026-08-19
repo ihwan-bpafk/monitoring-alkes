@@ -9,8 +9,8 @@
         <p class="text-muted mt-1 mb-0">Riwayat seluruh aktivitas (Login, Logout, Tambah, Ubah, Hapus)</p>
     </div>
     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <form action="{{ route('activity_logs.index') }}" method="GET" class="d-flex justify-content-md-end">
-            <div class="input-group" style="max-width: 300px;">
+        <form action="{{ route('activity_logs.index') }}" method="GET" class="d-flex justify-content-md-end w-100">
+            <div class="input-group w-100 w-md-auto" style="max-width: 100%;">
                 <input type="text" name="search" class="form-control" placeholder="Cari aktivitas, user, modul..." value="{{ request('search') }}">
                 <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
             </div>

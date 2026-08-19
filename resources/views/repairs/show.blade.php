@@ -7,10 +7,10 @@
             <div class="card-header bg-primary text-white fw-bold">Detail Laporan Perbaikan</div>
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-6"><small class="text-muted d-block">Nama RS / Lokasi</small><strong>{{ $repair->nama_rs }} ({{ $repair->lokasi }})</strong></div>
-                    <div class="col-6"><small class="text-muted d-block">Alat Kesehatan</small><strong>{{ $repair->nama_alkes }}</strong></div>
-                    <div class="col-6"><small class="text-muted d-block">Kategori / Kondisi Awal</small><strong>{{ $repair->kategori }} - <span class="text-danger">{{ $repair->grade_kerusakan }}</span></strong></div>
-                    <div class="col-6"><small class="text-muted d-block">Merek / Tipe</small><strong>{{ $repair->merek }} ({{ $repair->tipe_model }})</strong></div>
+                    <div class="col-12 col-sm-6"><small class="text-muted d-block">Nama RS / Lokasi</small><strong>{{ $repair->nama_rs }} ({{ $repair->lokasi }})</strong></div>
+                    <div class="col-12 col-sm-6"><small class="text-muted d-block">Alat Kesehatan</small><strong>{{ $repair->nama_alkes }}</strong></div>
+                    <div class="col-12 col-sm-6"><small class="text-muted d-block">Kategori / Kondisi Awal</small><strong>{{ $repair->kategori }} - <span class="text-danger">{{ $repair->grade_kerusakan }}</span></strong></div>
+                    <div class="col-12 col-sm-6"><small class="text-muted d-block">Merek / Tipe</small><strong>{{ $repair->merek }} ({{ $repair->tipe_model }})</strong></div>
                     <div class="col-12"><hr></div>
                     <div class="col-md-6">
                         <h6>Update Progress:</h6>

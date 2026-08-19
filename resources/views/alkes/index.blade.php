@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
         <div>
             <h4 class="text-primary fw-bold mb-0">
                 <i class="bi bi-box-seam me-2"></i>Master Data Alkes
@@ -10,7 +10,7 @@
             <p class="text-muted small mb-0">Kelola daftar Alat Kesehatan (Alkes)</p>
         </div>
         
-        <div class="d-flex gap-2">
+        <div class="d-grid d-sm-flex gap-2">
             <button class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambah">
                 <i class="bi bi-plus-lg me-1"></i>Tambah Alkes
             </button>

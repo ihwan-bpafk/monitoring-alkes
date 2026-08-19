@@ -2,12 +2,12 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
         <div>
             <h4 class="fw-bold text-primary mb-0"><i class="bi bi-truck me-2"></i>Distribusi Alat Donasi</h4>
             <p class="text-muted small mb-0">Kelola pengiriman alat kesehatan dari BPAFK ke Rumah Sakit tujuan.</p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-grid d-sm-flex gap-2">
             <a href="{{ route('distributions.export', request()->all()) }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
             </a>

@@ -28,10 +28,10 @@
     .pagination { margin-bottom: 0; }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold text-primary"><i class="bi bi-tools me-2"></i>Monitoring Perbaikan Alkes</h4>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+    <h4 class="fw-bold text-primary mb-0"><i class="bi bi-tools me-2"></i>Monitoring Perbaikan Alkes</h4>
     
-    <div class="d-flex gap-2">
+    <div class="d-grid d-sm-flex gap-2">
         <a href="{{ route('repairs.report') }}" class="btn btn-success shadow-sm fw-bold">
             <i class="bi bi-file-earmark-excel me-1"></i>Reporting
         </a>

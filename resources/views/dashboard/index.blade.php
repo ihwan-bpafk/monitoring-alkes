@@ -2,14 +2,14 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
                 <h4 class="text-primary fw-bold mb-0">
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard Monitoring Alkes
                 </h4>
             </div>
-            <div class="d-flex gap-2 align-items-center">
-                <form action="{{ route('dashboard') }}" method="GET" class="d-flex gap-2">
+            <div class="d-flex w-100 w-md-auto justify-content-md-end">
+                <form action="{{ route('dashboard') }}" method="GET" class="d-flex flex-column flex-sm-row gap-2 w-100">
                     <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
                     <select name="nama_rs" class="form-select shadow-sm border-primary select2-filter"
                         style="min-width: 200px;">
@@ -111,7 +111,7 @@
                 </div>
                 <div class="card border-0 shadow-sm mt-4">
                     <div
-                        class="card-header bg-white fw-bold py-3 border-bottom d-flex justify-content-between align-items-center">
+                        class="card-header bg-white fw-bold py-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
                         <div class="text-primary"><i class="bi bi-grid-3x3-gap me-2"></i>Rincian Kondisi Akhir per Jenis
                             Alat</div>
                         <a href="{{ route('dashboard.exportExcel', request()->all()) }}"

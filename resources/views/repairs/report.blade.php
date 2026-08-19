@@ -15,14 +15,16 @@
     }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
     <div>
         <h4 class="text-primary fw-bold mb-0"><i class="bi bi-file-earmark-bar-graph me-2"></i>Reporting Perbaikan Alkes</h4>
         <p class="text-muted small mb-0">Atur filter dan pratinjau data sebelum export ke Excel.</p>
     </div>
-    <a href="{{ route('repairs.index') }}" class="btn btn-light border shadow-sm fw-bold">
-        <i class="bi bi-arrow-left me-1"></i> Kembali
-    </a>
+    <div class="d-grid d-sm-block">
+        <a href="{{ route('repairs.index') }}" class="btn btn-light border shadow-sm fw-bold">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+        </a>
+    </div>
 </div>
 
 <div class="card filter-card shadow-sm mb-4">
@@ -105,7 +107,7 @@
 </div>
 
 <div class="card border-0 shadow-sm table-preview-container">
-    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+    <div class="card-header bg-white border-0 py-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
         <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-table me-2 text-primary"></i>Pratinjau Hasil Export (Live)</h6>
         <span class="badge bg-light text-primary border" id="data-count">Total Data: {{ $repairs->count() }}</span>
     </div>

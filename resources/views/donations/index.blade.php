@@ -14,12 +14,12 @@
 </style>
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
         <div>
             <h4 class="fw-bold text-teal mb-0"><i class="bi bi-gift-fill me-2"></i>Monitoring Donasi & Stok Alat</h4>
             <p class="text-muted small mb-0">Manajemen inventaris stok masuk sebelum dialokasikan ke Rumah Sakit.</p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-grid d-sm-flex gap-2">
             <a href="{{ route('donations.export', request()->all()) }}" class="btn btn-success shadow-sm fw-bold">
                 <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
             </a>
