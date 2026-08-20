@@ -8,6 +8,8 @@ use App\Traits\LogsActivity;
 
 class Donation extends Model
 {
+    use LogsActivity;
+
     protected static function booted()
     {
         static::addGlobalScope(new BencanaScope);

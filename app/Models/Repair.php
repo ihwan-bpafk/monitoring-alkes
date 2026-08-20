@@ -8,9 +8,12 @@ use App\Traits\LogsActivity;
 
 class Repair extends Model
 {
+    use LogsActivity;
+
     protected static function booted()
     {
         static::addGlobalScope(new BencanaScope);
+        static::addGlobalScope(new \App\Models\Scopes\RsScope);
     }
 
     public function bencana()

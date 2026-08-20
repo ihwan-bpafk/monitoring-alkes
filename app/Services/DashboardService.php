@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Distribution;
 use App\Models\Repair;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardService
 {
@@ -13,8 +14,14 @@ class DashboardService
      */
     public function getFilterOptions(): array
     {
+        $listRsQuery = \App\Models\Fasyankes::orderBy('nama_fasyankes', 'asc');
+        
+        if (Auth::check() && Auth::user()->role == 2) {
+            $listRsQuery->where('nama_fasyankes', Auth::user()->name);
+        }
+
         return [
-            'list_rs' => \App\Models\Fasyankes::orderBy('nama_fasyankes', 'asc')->pluck('nama_fasyankes'),
+            'list_rs' => $listRsQuery->pluck('nama_fasyankes'),
             'list_kategori' => Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori'),
         ];
     }

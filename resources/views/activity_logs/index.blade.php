@@ -122,16 +122,52 @@
                         
                         <div class="row">
                             @if($log->before)
+                                @php 
+                                    $beforeData = is_string($log->before) ? json_decode($log->before, true) : $log->before; 
+                                @endphp
                                 <div class="col-md-6 mb-3">
                                     <h6 class="fw-bold text-danger border-bottom pb-2">Data Sebelumnya (Before)</h6>
-                                    <pre class="bg-light p-3 rounded border" style="max-height: 400px; overflow-y: auto;"><code class="text-danger">{{ json_encode($log->before, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</code></pre>
+                                    <div class="table-responsive border rounded" style="max-height: 400px; overflow-y: auto;">
+                                        @if(is_iterable($beforeData))
+                                            <table class="table table-sm table-hover mb-0">
+                                                <tbody>
+                                                    @foreach($beforeData as $key => $value)
+                                                        <tr>
+                                                            <td width="40%" class="fw-semibold bg-light text-capitalize text-muted">{{ str_replace('_', ' ', $key) }}</td>
+                                                            <td class="text-danger">{{ is_array($value) || is_object($value) ? json_encode($value) : $value }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        @else
+                                            <div class="p-2 text-danger">{{ $beforeData }}</div>
+                                        @endif
+                                    </div>
                                 </div>
                             @endif
                             
                             @if($log->after)
+                                @php 
+                                    $afterData = is_string($log->after) ? json_decode($log->after, true) : $log->after; 
+                                @endphp
                                 <div class="col-md-6 mb-3">
                                     <h6 class="fw-bold text-success border-bottom pb-2">Data Baru (After)</h6>
-                                    <pre class="bg-light p-3 rounded border" style="max-height: 400px; overflow-y: auto;"><code class="text-success">{{ json_encode($log->after, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</code></pre>
+                                    <div class="table-responsive border rounded" style="max-height: 400px; overflow-y: auto;">
+                                        @if(is_iterable($afterData))
+                                            <table class="table table-sm table-hover mb-0">
+                                                <tbody>
+                                                    @foreach($afterData as $key => $value)
+                                                        <tr>
+                                                            <td width="40%" class="fw-semibold bg-light text-capitalize text-muted">{{ str_replace('_', ' ', $key) }}</td>
+                                                            <td class="text-success">{{ is_array($value) || is_object($value) ? json_encode($value) : $value }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        @else
+                                            <div class="p-2 text-success">{{ $afterData }}</div>
+                                        @endif
+                                    </div>
                                 </div>
                             @endif
                         </div>

@@ -9,6 +9,7 @@ use App\Models\Repair;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 
 class DistributionService
 {
@@ -17,8 +18,14 @@ class DistributionService
      */
     public function getFilterOptions(): array
     {
+        $listRsQuery = \App\Models\Fasyankes::orderBy('nama_fasyankes');
+        
+        if (Auth::check() && Auth::user()->role == 2) {
+            $listRsQuery->where('nama_fasyankes', Auth::user()->name);
+        }
+
         return [
-            'list_rs_master'     => \App\Models\Fasyankes::orderBy('nama_fasyankes')->pluck('nama_fasyankes'),
+            'list_rs_master'     => $listRsQuery->pluck('nama_fasyankes'),
             'list_alkes_dist'    => Donation::whereHas('distributions')->distinct()->orderBy('nama_alkes')->pluck('nama_alkes'),
             'list_pemberi'       => Donation::whereHas('distributions')->distinct()->orderBy('pemberi_donasi')->pluck('pemberi_donasi'),
             'list_status'        => Distribution::whereHas('donation')->distinct()->pluck('status'),

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
  */
 trait LogsActivity
 {
-    protected static function bootLogsActivity()
+    public static function bootLogsActivity()
     {
         static::created(function ($model) {
             self::logAction('Create', $model);
@@ -32,6 +32,7 @@ trait LogsActivity
 
     public static function logAction(string $action, \Illuminate\Database\Eloquent\Model $model)
     {
+        \Illuminate\Support\Facades\Log::info("LogsActivity triggered for {$action} on " . class_basename($model));
         if (Auth::check()) {
             $before = null;
             $after = null;
@@ -61,8 +62,8 @@ trait LogsActivity
                 'model_type' => class_basename($model),
                 'model_id' => $model->id ?? null,
                 'description' => "$action data " . class_basename($model),
-                'before' => $before ? json_encode($before) : null,
-                'after' => $after ? json_encode($after) : null,
+                'before' => $before ? $before : null,
+                'after' => $after ? $after : null,
                 'ip_address' => $ip,
                 'location' => $location,
                 'user_agent' => request()->userAgent(),

@@ -8,7 +8,12 @@ use App\Traits\LogsActivity;
 
 class Distribution extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new \App\Models\Scopes\RsScope);
+    }
 
     protected $fillable = [
         'donation_id', 'nama_rs', 'jumlah_distribusi', 

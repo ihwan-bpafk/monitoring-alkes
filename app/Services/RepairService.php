@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Repair;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class RepairService
 {
@@ -12,8 +13,14 @@ class RepairService
      */
     public function getFilterOptions(): array
     {
+        $listRsQuery = \App\Models\Fasyankes::orderBy('nama_fasyankes', 'asc');
+        
+        if (Auth::check() && Auth::user()->role == 2) {
+            $listRsQuery->where('nama_fasyankes', Auth::user()->name);
+        }
+
         return [
-            'list_rs'       => \App\Models\Fasyankes::orderBy('nama_fasyankes', 'asc')->pluck('lokasi', 'nama_fasyankes'),
+            'list_rs'       => $listRsQuery->pluck('lokasi', 'nama_fasyankes'),
             'list_alkes'    => Repair::whereNotNull('nama_alkes')->distinct()->orderBy('nama_alkes', 'asc')->pluck('nama_alkes'),
             'list_alkes_master' => \App\Models\Alkes::orderBy('nama_alkes', 'asc')->pluck('nama_alkes'),
             'list_kategori' => Repair::whereNotNull('kategori')->distinct()->orderBy('kategori', 'asc')->pluck('kategori'),
