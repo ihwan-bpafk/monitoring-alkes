@@ -211,6 +211,7 @@
                             Perbaikan
                         </a>
                     </li>
+                    @if (auth()->check() && auth()->user()->role !== 2)
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('donations.*') ? 'active fw-bold' : '' }}"
                             href="{{ route('donations.index') }}">
@@ -223,6 +224,7 @@
                             Distribusi
                         </a>
                     </li>
+                    @endif
                     @if (auth()->check() && auth()->user()->name === 'Administrator')
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') || request()->routeIs('activity_logs.*') ? 'active fw-bold' : '' }}"

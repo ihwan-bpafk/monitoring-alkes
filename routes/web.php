@@ -37,8 +37,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/repairs/report', [RepairController::class, 'reportPage'])->name('repairs.report');
     Route::get('/repairs/report-preview', [RepairController::class, 'previewExport'])->name('repairs.reportPreview');
     
-    Route::get('donations/export-excel', [DonationController::class, 'exportExcel'])->name('donations.export');
-    Route::get('distributions/export-excel', [DistributionController::class, 'exportExcel'])->name('distributions.export');
+    Route::middleware([\App\Http\Middleware\BlockRsMiddleware::class])->group(function () {
+        Route::get('donations/export-excel', [DonationController::class, 'exportExcel'])->name('donations.export');
+        Route::get('distributions/export-excel', [DistributionController::class, 'exportExcel'])->name('distributions.export');
+    });
 
     // --- RUTE DENGAN PROTEKSI LOCK DATA (Mencegah Update/Input saat Laporan Menkes) ---
     // Middleware 'lock.report' akan memblokir method POST, PATCH, PUT, dan DELETE jika APP_DATA_LOCKED=true
@@ -48,13 +50,15 @@ Route::middleware(['auth'])->group(function () {
         Route::post('repairs/{id}/update-status', [RepairController::class, 'updateStatus'])->name('repairs.updateStatus');
         Route::resource('repairs', RepairController::class);
 
-        // DONATIONS
-        Route::resource('donations', DonationController::class)->except(['index', 'show']);
-        Route::patch('/donations/{id}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
+        Route::middleware([\App\Http\Middleware\BlockRsMiddleware::class])->group(function () {
+            // DONATIONS
+            Route::resource('donations', DonationController::class)->except(['index', 'show']);
+            Route::patch('/donations/{id}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
 
-        // DISTRIBUTIONS
-        Route::resource('distributions', DistributionController::class)->except(['index', 'show']);
-        Route::patch('/distributions/{id}/status', [DistributionController::class, 'updateStatus'])->name('distributions.updateStatus');
+            // DISTRIBUTIONS
+            Route::resource('distributions', DistributionController::class)->except(['index', 'show']);
+            Route::patch('/distributions/{id}/status', [DistributionController::class, 'updateStatus'])->name('distributions.updateStatus');
+        });
         
         // FASYANKES
         Route::resource('fasyankes', FasyankesController::class)->except(['create', 'show', 'edit', 'index']);
@@ -64,8 +68,10 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Rute Index tetap di luar Lock agar data bisa dilihat
-    Route::get('/donations', [DonationController::class, 'index'])->name('donations.index');
-    Route::get('/distributions', [DistributionController::class, 'index'])->name('distributions.index');
+    Route::middleware([\App\Http\Middleware\BlockRsMiddleware::class])->group(function () {
+        Route::get('/donations', [DonationController::class, 'index'])->name('donations.index');
+        Route::get('/distributions', [DistributionController::class, 'index'])->name('distributions.index');
+    });
     
     // Fasyankes
     Route::get('/fasyankes', [FasyankesController::class, 'index'])->name('fasyankes.index');
