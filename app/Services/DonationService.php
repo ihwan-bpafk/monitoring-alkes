@@ -63,6 +63,7 @@ class DonationService
             $statusAwal = $data['status_akhir'] ?? '-';
 
             $donation = Donation::create([
+                'bencana_id'     => $data['bencana_id'] ?? session('active_bencana_id'),
                 'pemberi_donasi' => $data['pemberi_donasi'],
                 'nama_alkes'     => $data['nama_alkes'],
                 'merek'          => $data['merek'] ?? null,
