@@ -64,6 +64,10 @@ class DashboardService
         $distQuery = Distribution::query()
             ->join('donations', 'distributions.donation_id', '=', 'donations.id');
 
+        if (session()->has('active_bencana_id')) {
+            $distQuery->where('donations.bencana_id', session('active_bencana_id'));
+        }
+
         if ($selectedRs) {
             $distQuery->where('distributions.nama_rs', $selectedRs);
         }
