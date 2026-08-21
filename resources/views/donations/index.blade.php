@@ -365,6 +365,8 @@
                         <select name="status_akhir" class="form-select select2-tambah" required>
                             <option value="BPAFK Medan" selected>BPAFK Medan</option>
                             <option value="BPAFK Jakarta">BPAFK Jakarta</option>
+                            <option value="BPAFK Surabaya">BPAFK Surabaya</option>
+                            <option value="KPP Labuan Bajo">KPP Labuan Bajo</option>
                             <option value="IFP">IFP</option>
                             <option value="PUSKRIS">PUSKRIS</option>
                             <option value="DINKES aceh">DINKES aceh</option>
