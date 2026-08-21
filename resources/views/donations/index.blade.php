@@ -257,7 +257,7 @@
                                         <label class="form-label small fw-bold text-dark">Status/Posisi Baru</label>
                                         <select name="status_akhir" class="form-select">
                                             @php
-                                                $options = ['BPAFK Medan', 'BPAFK Jakarta', 'IFP', 'PUSKRIS', 'DINKES aceh', 'Dinkes sumut', 'RS lainnya', 'Vendor'];
+                                                $options = ['BPAFK Medan', 'BPAFK Jakarta', 'BPAFK Surabaya', 'KPP Labuan Bajo', 'IFP', 'PUSKRIS', 'DINKES aceh', 'Dinkes sumut', 'RS lainnya', 'Vendor'];
                                             @endphp
                                             
                                             <option value="-">-- Reset Status --</option>
