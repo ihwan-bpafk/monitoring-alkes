@@ -38,12 +38,11 @@
 
     <div class="card border-0 shadow-sm mb-3">
         <div class="card-body py-2">
-            <form action="{{ route('alkes.index') }}" method="GET" class="d-flex align-items-center" style="max-width: 400px;">
-                <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Cari nama alkes..." value="{{ request('search') }}">
-                <button type="submit" class="btn btn-sm btn-primary fw-bold"><i class="bi bi-search"></i> Cari</button>
-                @if(request('search'))
-                    <a href="{{ route('alkes.index') }}" class="btn btn-sm btn-outline-secondary ms-2 fw-bold"><i class="bi bi-x-circle"></i> Reset</a>
-                @endif
+            <form action="{{ route('alkes.index') }}" method="GET" class="ajax-search" style="max-width: 400px;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0 ps-0 shadow-none" placeholder="Cari nama alkes..." value="{{ request('search') }}" oninput="debounceSearch(this.form)">
+                </div>
             </form>
         </div>
     </div>

@@ -433,6 +433,58 @@
                 });
         });
 
+        // Fitur Pencarian Seamless (AJAX)
+        let searchTimeout;
+        window.debounceSearch = function(form) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            }, 500);
+        };
+
+        document.addEventListener('submit', function(e) {
+            let form = e.target.closest('.ajax-search');
+            if (!form) return;
+
+            e.preventDefault();
+            
+            // Serialize form data to URL search params
+            let url = new URL(form.action || window.location.href);
+            let formData = new FormData(form);
+            
+            // Remove empty params to keep URL clean
+            let params = new URLSearchParams();
+            for (let [key, value] of formData.entries()) {
+                if (value.trim() !== '') {
+                    params.append(key, value);
+                }
+            }
+            url.search = params.toString();
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(html, 'text/html');
+
+                    let newTable = doc.querySelector('.table-responsive');
+                    let oldTable = document.querySelector('.table-responsive');
+                    
+                    if (newTable && oldTable) {
+                        let newContainer = newTable.closest('.card-body');
+                        let container = oldTable.closest('.card-body');
+                        
+                        if (newContainer && container) {
+                            container.innerHTML = newContainer.innerHTML;
+                            window.history.pushState({ path: url.href }, '', url.href);
+                        }
+                    }
+                })
+                .catch(error => {
+                    window.location.href = url;
+                });
+        });
+
         // Tangani navigasi back/forward
         window.addEventListener('popstate', function() {
             window.location.reload();
