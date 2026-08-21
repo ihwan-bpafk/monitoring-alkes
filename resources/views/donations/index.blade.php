@@ -163,154 +163,6 @@
                                 </div>
                             </td>
                         </tr>
-
-                        <div class="modal fade" id="modalLog{{ $d->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
-                                    <div class="modal-header bg-primary text-white" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                                        <h5 class="modal-title fw-bold"><i class="bi bi-journal-text me-2"></i>Riwayat Pergerakan Alat</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body p-4">
-                                        <div class="mb-3">
-                                            <h6 class="fw-bold text-teal text-uppercase">{{ $d->nama_alkes }} - {{ $d->merek }}</h6>
-                                            <p class="small text-muted">Sumber: {{ $d->pemberi_donasi }}</p>
-                                        </div>
-
-                                        <div class="timeline-container">
-                                            @forelse($d->logs as $log)
-                                            <div class="d-flex mb-4">
-                                                <div class="me-3 text-center" style="width: 50px;">
-                                                    <div class="bg-teal rounded-circle d-inline-flex align-items-center justify-content-center text-white shadow" style="width: 35px; height: 35px;">
-                                                        <i class="bi bi-check2"></i>
-                                                    </div>
-                                                    <div class="vr h-100 mt-2" style="width: 2px; background-color: #dee2e6;"></div>
-                                                </div>
-                                                <div class="card card-body border-0 shadow-sm p-3 bg-white w-100">
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                        <span class="badge bg-teal">{{ $log->status }}</span>
-                                                        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ $log->created_at->format('d M Y, H:i') }}</small>
-                                                    </div>
-                                                    <p class="mb-1 small text-dark">{{ $log->catatan ?? 'Tidak ada catatan tambahan.' }}</p>
-                                                    <div class="d-flex align-items-center mt-2 border-top pt-2">
-                                                        <i class="bi bi-person-circle text-muted me-2"></i>
-                                                        <small class="text-muted">Petugas: <strong>{{ $log->diupdate_oleh }}</strong></small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @empty
-                                            <div class="text-center py-4">
-                                                <i class="bi bi-info-circle fs-2 text-muted"></i>
-                                                <p class="text-muted mt-2">Belum ada riwayat update status.</p>
-                                            </div>
-                                            @endforelse
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer bg-light border-0">
-                                        <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Tutup</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal fade" id="modalUpdate{{ $d->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
-                                    <div class="modal-header text-white bg-teal" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                                        <h5 class="modal-title fw-bold">
-                                            <i class="bi bi-arrow-repeat me-2"></i>Update Status Akhir
-                                        </h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-
-                                    <form action="{{ route('donations.updateStatus', $d->id) }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
-                                        @method('PATCH')
-                                        <div class="modal-body p-4">
-                                            <div class="mb-4 p-3 bg-light rounded border-start border-4 border-teal">
-                                                <label class="small text-muted d-block">Nama Alat Kesehatan:</label>
-                                                <span class="fw-bold text-dark">{{ $d->nama_alkes }}</span>
-                                                <hr class="my-2">
-                                                <label class="small text-muted d-block">Status Saat Ini:</label>
-                                                <span class="badge bg-teal">{{ $d->status_akhir }}</span>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold text-dark">Jumlah Total Donasi (Unit)</label>
-                                                <input type="number" name="jumlah_donasi" class="form-control" value="{{ $d->jumlah_donasi }}" min="1" required>
-                                                <div class="form-text mt-1 small text-muted">
-                                                    <i class="bi bi-info-circle me-1"></i> Saat ini terpakai: <strong>{{ $d->jumlah_donasi - $d->sisa_stok }} Unit</strong>.
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold text-dark">Status/Posisi Baru</label>
-                                                <select name="status_akhir" class="form-select">
-                                                    @php
-                                                        $options = ['BPAFK Medan', 'BPAFK Jakarta', 'IFP', 'PUSKRIS', 'DINKES aceh', 'Dinkes sumut', 'RS lainnya', 'Vendor'];
-                                                    @endphp
-                                                    
-                                                    <option value="-">-- Reset Status --</option>
-                                                    @foreach($options as $opt)
-                                                        <option value="{{ $opt }}" {{ $d->status_akhir == $opt ? 'selected' : '' }}>
-                                                            {{ $opt }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold text-dark">Catatan Tambahan</label>
-                                                <textarea name="catatan" class="form-control" rows="3" placeholder="Alasan perubahan status..."></textarea>
-                                            </div>
-
-                                            <div class="d-flex align-items-center p-2 rounded shadow-sm bg-white border">
-                                                <i class="bi bi-person-check-fill fs-4 me-3 text-teal"></i>
-                                                <div>
-                                                    <div class="small text-muted" style="font-size: 0.7rem;">Petugas Update:</div>
-                                                    <div class="fw-bold text-teal">{{ Auth::user()->name }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer bg-light border-0" style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
-                                            <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn text-white px-4 fw-bold shadow-sm bg-teal">SIMPAN PERUBAHAN</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal fade" id="modalHapusDonasi{{ $d->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
-                                    <div class="modal-header bg-danger text-white" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                                        <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Hapus Data Master</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body p-4 text-center">
-                                        <i class="bi bi-trash3 text-danger mb-3" style="font-size: 3rem;"></i>
-                                        <h5 class="fw-bold text-dark">Hapus Donasi Ini?</h5>
-                                        <p class="text-muted small">
-                                            Menghapus <strong>{{ $d->nama_alkes }}</strong> ({{ $d->pemberi_donasi }}) akan menghapus <strong>SELURUH</strong> data distribusi dan log riwayat terkait secara permanen.
-                                        </p>
-                                        <div class="alert alert-warning border-0 small">
-                                            <i class="bi bi-info-circle me-1"></i> Data yang sudah dihapus tidak dapat dikembalikan.
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer bg-light border-0" style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
-                                        <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Batal</button>
-                                        <form action="{{ route('donations.destroy', $d->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
-                                            <button type="submit" class="btn btn-danger px-4 fw-bold shadow-sm">YA, HAPUS SEMUA</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         @endforeach
                     </tbody>
                 </table>
@@ -319,6 +171,157 @@
             <div class="p-3 border-top bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                 {{ $donations->links() }}
             </div>
+            
+            @foreach($donations as $d)
+                <!-- Re-insert modals inside card-body -->
+                <div class="modal fade" id="modalLog{{ $d->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+                            <div class="modal-header bg-primary text-white" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                                <h5 class="modal-title fw-bold"><i class="bi bi-journal-text me-2"></i>Riwayat Pergerakan Alat</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-teal text-uppercase">{{ $d->nama_alkes }} - {{ $d->merek }}</h6>
+                                    <p class="small text-muted">Sumber: {{ $d->pemberi_donasi }}</p>
+                                </div>
+
+                                <div class="timeline-container">
+                                    @forelse($d->logs as $log)
+                                    <div class="d-flex mb-4">
+                                        <div class="me-3 text-center" style="width: 50px;">
+                                            <div class="bg-teal rounded-circle d-inline-flex align-items-center justify-content-center text-white shadow" style="width: 35px; height: 35px;">
+                                                <i class="bi bi-check2"></i>
+                                            </div>
+                                            <div class="vr h-100 mt-2" style="width: 2px; background-color: #dee2e6;"></div>
+                                        </div>
+                                        <div class="card card-body border-0 shadow-sm p-3 bg-white w-100">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="badge bg-teal">{{ $log->status }}</span>
+                                                <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ $log->created_at->format('d M Y, H:i') }}</small>
+                                            </div>
+                                            <p class="mb-1 small text-dark">{{ $log->catatan ?? 'Tidak ada catatan tambahan.' }}</p>
+                                            <div class="d-flex align-items-center mt-2 border-top pt-2">
+                                                <i class="bi bi-person-circle text-muted me-2"></i>
+                                                <small class="text-muted">Petugas: <strong>{{ $log->diupdate_oleh }}</strong></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @empty
+                                    <div class="text-center py-4">
+                                        <i class="bi bi-info-circle fs-2 text-muted"></i>
+                                        <p class="text-muted mt-2">Belum ada riwayat update status.</p>
+                                    </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light border-0">
+                                <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modalUpdate{{ $d->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+                            <div class="modal-header text-white bg-teal" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                                <h5 class="modal-title fw-bold">
+                                    <i class="bi bi-arrow-repeat me-2"></i>Update Status Akhir
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <form action="{{ route('donations.updateStatus', $d->id) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
+                                @method('PATCH')
+                                <div class="modal-body p-4">
+                                    <div class="mb-4 p-3 bg-light rounded border-start border-4 border-teal">
+                                        <label class="small text-muted d-block">Nama Alat Kesehatan:</label>
+                                        <span class="fw-bold text-dark">{{ $d->nama_alkes }}</span>
+                                        <hr class="my-2">
+                                        <label class="small text-muted d-block">Status Saat Ini:</label>
+                                        <span class="badge bg-teal">{{ $d->status_akhir }}</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Jumlah Total Donasi (Unit)</label>
+                                        <input type="number" name="jumlah_donasi" class="form-control" value="{{ $d->jumlah_donasi }}" min="1" required>
+                                        <div class="form-text mt-1 small text-muted">
+                                            <i class="bi bi-info-circle me-1"></i> Saat ini terpakai: <strong>{{ $d->jumlah_donasi - $d->sisa_stok }} Unit</strong>.
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Status/Posisi Baru</label>
+                                        <select name="status_akhir" class="form-select">
+                                            @php
+                                                $options = ['BPAFK Medan', 'BPAFK Jakarta', 'IFP', 'PUSKRIS', 'DINKES aceh', 'Dinkes sumut', 'RS lainnya', 'Vendor'];
+                                            @endphp
+                                            
+                                            <option value="-">-- Reset Status --</option>
+                                            @foreach($options as $opt)
+                                                <option value="{{ $opt }}" {{ $d->status_akhir == $opt ? 'selected' : '' }}>
+                                                    {{ $opt }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Catatan Tambahan</label>
+                                        <textarea name="catatan" class="form-control" rows="3" placeholder="Alasan perubahan status..."></textarea>
+                                    </div>
+
+                                    <div class="d-flex align-items-center p-2 rounded shadow-sm bg-white border">
+                                        <i class="bi bi-person-check-fill fs-4 me-3 text-teal"></i>
+                                        <div>
+                                            <div class="small text-muted" style="font-size: 0.7rem;">Petugas Update:</div>
+                                            <div class="fw-bold text-teal">{{ Auth::user()->name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer bg-light border-0" style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
+                                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn text-white px-4 fw-bold shadow-sm bg-teal">SIMPAN PERUBAHAN</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modalHapusDonasi{{ $d->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+                            <div class="modal-header bg-danger text-white" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                                <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Hapus Data Master</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body p-4 text-center">
+                                <i class="bi bi-trash3 text-danger mb-3" style="font-size: 3rem;"></i>
+                                <h5 class="fw-bold text-dark">Hapus Donasi Ini?</h5>
+                                <p class="text-muted small">
+                                    Menghapus <strong>{{ $d->nama_alkes }}</strong> ({{ $d->pemberi_donasi }}) akan menghapus <strong>SELURUH</strong> data distribusi dan log riwayat terkait secara permanen.
+                                </p>
+                                <div class="alert alert-warning border-0 small">
+                                    <i class="bi bi-info-circle me-1"></i> Data yang sudah dihapus tidak dapat dikembalikan.
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 d-flex justify-content-center pb-4">
+                                <form action="{{ route('donations.destroy', $d->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="bencana_id" value="{{ session('active_bencana_id') }}">
+                                    <button type="button" class="btn btn-secondary px-4 me-2" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-danger px-4 shadow-sm">Ya, Hapus Permanen</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 </div>

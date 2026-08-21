@@ -220,12 +220,9 @@
         <div class="p-3 border-top">
             {{ $repairs->links() }}
         </div>
-    </div>
-</div>
 
-
-@foreach($repairs as $r)
-                    <div class="modal fade" id="modalUpdate{{ $r->id }}" tabindex="-1" aria-hidden="true">
+        @foreach($repairs as $r)
+            <div class="modal fade" id="modalUpdate{{ $r->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                         <form action="{{ route('repairs.updateStatus', $r->id) }}" method="POST" enctype="multipart/form-data" class="modal-content border-0">
                                 <div class="modal-header bg-primary py-2 text-white border-0">
@@ -604,8 +601,9 @@
                         </div>
                     </div>
                     
-                    
 @endforeach
+    </div>
+</div>
 
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">

@@ -378,8 +378,8 @@
                 $(this).closest('form').submit();
             });
 
-            // Global Select2 init for modals
-            $('.modal').on('shown.bs.modal', function() {
+            // Global Select2 init for modals (menggunakan event delegation agar mendukung AJAX pagination)
+            $(document).on('shown.bs.modal', '.modal', function() {
                 $(this).find('select:not(.select2-hidden-accessible)').each(function() {
                     $(this).select2({
                         theme: 'bootstrap-5',

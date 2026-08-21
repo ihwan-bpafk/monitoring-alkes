@@ -121,6 +121,13 @@
                                 @endif
                             </td>
                         </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-3">{{ $distributions->links() }}</div>
+
+            @foreach($distributions as $dist)
                         <div class="modal fade" id="modalEdit{{ $dist->id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content border-0 shadow-lg">
@@ -209,11 +216,7 @@
                                 </div>
                             </div>
                         </div>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="p-3">{{ $distributions->links() }}</div>
+            @endforeach
         </div>
     </div>
 </div>
