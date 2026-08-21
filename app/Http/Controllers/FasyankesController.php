@@ -8,12 +8,21 @@ use App\Models\Fasyankes;
 
 class FasyankesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
         abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
-        $fasyankes = Fasyankes::orderBy('nama_fasyankes')->paginate(10);
+        
+        $query = Fasyankes::orderBy('nama_fasyankes');
+        
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_fasyankes', 'like', '%' . $request->search . '%')
+                  ->orWhere('jenis', 'like', '%' . $request->search . '%')
+                  ->orWhere('lokasi', 'like', '%' . $request->search . '%');
+        }
+
+        $fasyankes = $query->paginate(10)->withQueryString();
         return view('fasyankes.index', compact('fasyankes'));
     }
 

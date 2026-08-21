@@ -36,6 +36,18 @@
     </div>
     @endif
 
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body py-2">
+            <form action="{{ route('alkes.index') }}" method="GET" class="d-flex align-items-center" style="max-width: 400px;">
+                <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Cari nama alkes..." value="{{ request('search') }}">
+                <button type="submit" class="btn btn-sm btn-primary fw-bold"><i class="bi bi-search"></i> Cari</button>
+                @if(request('search'))
+                    <a href="{{ route('alkes.index') }}" class="btn btn-sm btn-outline-secondary ms-2 fw-bold"><i class="bi bi-x-circle"></i> Reset</a>
+                @endif
+            </form>
+        </div>
+    </div>
+
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">

@@ -7,12 +7,19 @@ use App\Models\Alkes;
 
 class AlkesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = \Illuminate\Support\Facades\Auth::user();
         abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
-        $alkes = Alkes::orderBy('nama_alkes')->paginate(10);
+        
+        $query = Alkes::orderBy('nama_alkes');
+        
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_alkes', 'like', '%' . $request->search . '%');
+        }
+
+        $alkes = $query->paginate(10)->withQueryString();
         return view('alkes.index', compact('alkes'));
     }
 
