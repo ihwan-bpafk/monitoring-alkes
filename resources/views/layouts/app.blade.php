@@ -372,10 +372,15 @@
             });
 
             // Initialize global select2 filters if they exist
-            $('.select2-filter').select2({
-                theme: 'bootstrap-5'
-            }).on('select2:select', function(e) {
-                $(this).closest('form').submit();
+            $('.select2-filter').each(function() {
+                $(this).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: $(this).data('placeholder') || '-- Pilih --',
+                    allowClear: true
+                }).on('select2:select', function(e) {
+                    $(this).closest('form').submit();
+                });
             });
 
             // Global Select2 init for modals (menggunakan event delegation agar mendukung AJAX pagination)
@@ -384,7 +389,9 @@
                     $(this).select2({
                         theme: 'bootstrap-5',
                         dropdownParent: $(this).closest('.modal'),
-                        width: '100%'
+                        width: '100%',
+                        placeholder: $(this).data('placeholder') || $(this).find('option:first').text() || '-- Pilih --',
+                        allowClear: $(this).find('option:first').val() === '',
                     });
                 });
             });

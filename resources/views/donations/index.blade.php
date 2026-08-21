@@ -390,29 +390,5 @@
         </div>
     </div>
 </div>
-<script>
-$(document).ready(function() {
-    // 1. Inisialisasi Select2 untuk SEMUA Filter di atas tabel
-    $('.select2-filter').select2({
-        theme: 'bootstrap-5',
-        width: '100%',
-        placeholder: function() {
-            return $(this).data('placeholder');
-        },
-        allowClear: true
-    });
 
-    // 2. Inisialisasi Select2 khusus untuk Modal Tambah Donasi
-    $('.select2-tambah').select2({
-        theme: 'bootstrap-5',
-        dropdownParent: $('#modalTambahDonasi'), // Wajib agar bisa diketik di dalam modal
-        width: '100%',
-        placeholder: "-- Pilih Alat dari Master Repair --",
-        allowClear: true
-    });
-
-    // 3. Inisialisasi Select2 untuk Modal Update Status (Jika ada dropdown di sana)
-    // Gunakan class khusus jika Ahmad ingin status akhir juga berupa pilihan dropdown
-});
-</script>
 @endsection

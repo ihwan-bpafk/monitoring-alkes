@@ -300,21 +300,5 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function() {
-        $('.select2-dist').select2({
-            theme: 'bootstrap-5',
-            dropdownParent: $('#modalTambahDistribusi'),
-            width: '100%',
-            placeholder: "-- Ketik Nama Alat --"
-        });
-    });
-    $(document).ready(function() {
-        $('.select2-filter').select2({ theme: 'bootstrap-5' });
-        $('.select2-tambah').select2({ 
-            theme: 'bootstrap-5', 
-            dropdownParent: $('#modalTambahDistribusi') 
-        });
-    });
-    </script>
+
 @endsection

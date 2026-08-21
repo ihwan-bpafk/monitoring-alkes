@@ -818,53 +818,21 @@
 
     // PENTING: Jika menggunakan Select2, tambahkan ini agar Select2 memicu event 'change' 
     // yang bisa dibaca oleh document.addEventListener di atas.
-    $(document).ready(function() {
-        // Inisialisasi Select2 untuk dropdown di dalam modal
-        $('.js-nama-rs').each(function() {
-            $(this).select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                dropdownParent: $(this).closest('.modal')
-            });
-        });
+    // Event saat Nama RS dipilih menggunakan event delegation (agar jalan di modal AJAX pagination)
+    $(document).on('select2:select', '.js-nama-rs', function (e) {
+        // Ambil data-lokasi dari elemen option yang dipilih
+        const selectedOption = $(this).find(':selected');
+        const lokasiValue = selectedOption.data('lokasi');
+        
+        // Temukan input lokasi di dalam modal yang sama
+        const modal = $(this).closest('.modal');
+        const inputLokasi = modal.find('.js-lokasi-input');
 
-        // Event saat Nama RS dipilih
-        $('.js-nama-rs').on('select2:select', function (e) {
-            // Ambil data-lokasi dari elemen option yang dipilih
-            const selectedOption = $(this).find(':selected');
-            const lokasiValue = selectedOption.data('lokasi');
-            
-            // Temukan input lokasi di dalam modal yang sama
-            const modal = $(this).closest('.modal');
-            const inputLokasi = modal.find('.js-lokasi-input');
-
-            if (lokasiValue) {
-                inputLokasi.val(lokasiValue);
-            } else {
-                inputLokasi.val('');
-            }
-        });
-    });
-
-    $(document).ready(function() {
-        // Terapkan Select2 ke semua dropdown
-        $('select[name="nama_rs"], select[name="nama_alkes"], select[name="kategori"], select[name="grade_kerusakan"], select[name="status_perbaikan"], select[name="respon_penyedia"], select[name="kondisi_kontrak"], select[name="komponen"]').select2({
-            theme: 'bootstrap-5',
-            placeholder: function() {
-                return $(this).find('option:first').text();
-            },
-            allowClear: true,
-            width: '100%',
-            minimumResultsForSearch: 5, // Hanya tampilkan search jika opsi > 5
-            language: {
-                noResults: function() {
-                    return "Tidak ada hasil";
-                },
-                searching: function() {
-                    return "Mencari...";
-                }
-            }
-        });
+        if (lokasiValue) {
+            inputLokasi.val(lokasiValue);
+        } else {
+            inputLokasi.val('');
+        }
     });
 
 </script>
