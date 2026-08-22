@@ -12,14 +12,14 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
-        
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
+
         $query = Fasyankes::orderBy('nama_fasyankes');
-        
+
         if ($request->has('search') && $request->search != '') {
             $query->where('nama_fasyankes', 'like', '%' . $request->search . '%')
-                  ->orWhere('jenis', 'like', '%' . $request->search . '%')
-                  ->orWhere('lokasi', 'like', '%' . $request->search . '%');
+                ->orWhere('jenis', 'like', '%' . $request->search . '%')
+                ->orWhere('lokasi', 'like', '%' . $request->search . '%');
         }
 
         $fasyankes = $query->paginate(10)->withQueryString();
@@ -30,7 +30,7 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
         $request->validate([
             'nama_fasyankes' => 'required|string|max:255',
             'jenis' => 'required|string',
@@ -51,7 +51,7 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
         $request->validate([
             'nama_fasyankes' => 'required|string|max:255',
             'jenis' => 'required|string',
@@ -72,7 +72,7 @@ class FasyankesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
         $fasyankes = Fasyankes::findOrFail($id);
         $fasyankes->delete();
 

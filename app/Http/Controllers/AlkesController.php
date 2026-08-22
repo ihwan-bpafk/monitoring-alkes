@@ -11,10 +11,10 @@ class AlkesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = \Illuminate\Support\Facades\Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
-        
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
+
         $query = Alkes::orderBy('nama_alkes');
-        
+
         if ($request->has('search') && $request->search != '') {
             $query->where('nama_alkes', 'like', '%' . $request->search . '%');
         }
@@ -27,7 +27,7 @@ class AlkesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = \Illuminate\Support\Facades\Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
         $request->validate([
             'nama_alkes' => 'required|string|max:255|unique:alkes,nama_alkes',
         ]);
@@ -43,9 +43,9 @@ class AlkesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = \Illuminate\Support\Facades\Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
         $request->validate([
-            'nama_alkes' => 'required|string|max:255|unique:alkes,nama_alkes,'.$id,
+            'nama_alkes' => 'required|string|max:255|unique:alkes,nama_alkes,' . $id,
         ]);
 
         $alkes = Alkes::findOrFail($id);
@@ -60,7 +60,7 @@ class AlkesController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = \Illuminate\Support\Facades\Auth::user();
-        abort_if($user->name !== 'Administrator', 403, 'Unauthorized access.');
+        abort_if(!in_array($user->name, ['Administrator', 'Prodis Alkes']), 403, 'Unauthorized access.');
         $alkes = Alkes::findOrFail($id);
         $alkes->delete();
 
