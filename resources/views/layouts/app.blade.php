@@ -212,20 +212,20 @@
                         </a>
                     </li>
                     @if (auth()->check() && auth()->user()->role !== 2)
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('donations.*') ? 'active fw-bold' : '' }}"
-                            href="{{ route('donations.index') }}">
-                            Stok Donasi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('distributions.*') ? 'active fw-bold' : '' }}"
-                            href="{{ route('distributions.index') }}">
-                            Distribusi
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('donations.*') ? 'active fw-bold' : '' }}"
+                                href="{{ route('donations.index') }}">
+                                Stok Donasi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('distributions.*') ? 'active fw-bold' : '' }}"
+                                href="{{ route('distributions.index') }}">
+                                Distribusi
+                            </a>
+                        </li>
                     @endif
-                    @if (auth()->check() && auth()->user()->name === 'Administrator')
+                    @if (auth()->check() && in_array(auth()->user()->role, ['admin', 'prodis_alkes']))
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') || request()->routeIs('activity_logs.*') ? 'active fw-bold' : '' }}"
                                 href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown"
@@ -390,7 +390,8 @@
                         theme: 'bootstrap-5',
                         dropdownParent: $(this).closest('.modal'),
                         width: '100%',
-                        placeholder: $(this).data('placeholder') || $(this).find('option:first').text() || '-- Pilih --',
+                        placeholder: $(this).data('placeholder') || $(this).find(
+                            'option:first').text() || '-- Pilih --',
                         allowClear: $(this).find('option:first').val() === '',
                     });
                 });
@@ -438,7 +439,10 @@
         window.debounceSearch = function(form) {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                form.dispatchEvent(new Event('submit', {
+                    cancelable: true,
+                    bubbles: true
+                }));
             }, 500);
         };
 
@@ -447,11 +451,11 @@
             if (!form) return;
 
             e.preventDefault();
-            
+
             // Serialize form data to URL search params
             let url = new URL(form.action || window.location.href);
             let formData = new FormData(form);
-            
+
             // Remove empty params to keep URL clean
             let params = new URLSearchParams();
             for (let [key, value] of formData.entries()) {
@@ -469,14 +473,16 @@
 
                     let newTable = doc.querySelector('.table-responsive');
                     let oldTable = document.querySelector('.table-responsive');
-                    
+
                     if (newTable && oldTable) {
                         let newContainer = newTable.closest('.card-body');
                         let container = oldTable.closest('.card-body');
-                        
+
                         if (newContainer && container) {
                             container.innerHTML = newContainer.innerHTML;
-                            window.history.pushState({ path: url.href }, '', url.href);
+                            window.history.pushState({
+                                path: url.href
+                            }, '', url.href);
                         }
                     }
                 })
