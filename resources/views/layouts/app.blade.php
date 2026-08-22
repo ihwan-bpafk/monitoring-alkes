@@ -225,7 +225,7 @@
                             </a>
                         </li>
                     @endif
-                    @if (auth()->check() && in_array(auth()->user()->role, ['admin', 'prodis_alkes']))
+                    @if (auth()->check() && in_array(auth()->user()->name, ['administrator', 'Prodis Alkes']))
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->routeIs('fasyankes.*') || request()->routeIs('alkes.*') || request()->routeIs('activity_logs.*') ? 'active fw-bold' : '' }}"
                                 href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown"
